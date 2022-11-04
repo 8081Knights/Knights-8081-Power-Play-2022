@@ -7,10 +7,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class HardwareSoftware {
 
     HardwareMap hw = null;
-    DcMotorEx frontRight = null;
-    DcMotorEx backRight  = null;
-    DcMotorEx backLeft   = null;
-    DcMotorEx frontLeft  = null;
+    DcMotorEx frontRight  = null;
+    DcMotorEx backRight   = null;
+    DcMotorEx backLeft    = null;
+    DcMotorEx frontLeft   = null;
+    DcMotorEx encoder     = null;
     DcMotorEx turnEncoder = null;
 
 
@@ -23,18 +24,21 @@ public class HardwareSoftware {
         backLeft = hw.get(DcMotorEx.class, "backLeft");
         frontLeft = hw.get(DcMotorEx.class, "frontLeft");
         turnEncoder = hw.get(DcMotorEx.class, "turnEncoder");
+        encoder = hw.get(DcMotorEx.class, "encoder");
 
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        encoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         frontRight.setPower(0);
         backRight.setPower(0);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         turnEncoder.setPower(0);
+        encoder.setPower(0);
 
 
 
@@ -57,5 +61,7 @@ public class HardwareSoftware {
     }
 
     public DcMotorEx turnEncoder() { return turnEncoder;}
+
+    public DcMotorEx encoder() {return encoder;}
 
 }

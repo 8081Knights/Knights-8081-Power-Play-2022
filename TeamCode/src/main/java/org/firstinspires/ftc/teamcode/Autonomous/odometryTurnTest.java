@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
 @Autonomous(name="Odometry Turn Test Code")
 
-public class OdometryTurnTest extends LinearOpMode {
+public class odometryTurnTest extends LinearOpMode {
 
     HardwareSoftware robot = new HardwareSoftware();
 
@@ -82,7 +82,7 @@ public class OdometryTurnTest extends LinearOpMode {
 
         }
 
-        odoReset(); //for future uses of command
+        odoTurnReset(); //for future uses of command
 
     }
 
@@ -95,10 +95,10 @@ public class OdometryTurnTest extends LinearOpMode {
         robot.backRight().setPower(rightPower);
     }
 
-    public void odoReset() {
+    public void odoTurnReset() {
         //resets the encoder to zero
-        robot.turnEncoder().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.turnEncoder().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.turnEncoder().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        robot.turnEncoder().setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class OdometryTurnTest extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        odoReset();
+        odoTurnReset();
 
 
         waitForStart();
