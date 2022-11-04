@@ -9,18 +9,24 @@ public class odometry {
 
     HardwareSoftware robot = new HardwareSoftware();
 
-    public void runDriveTrain(double leftPower, double rightPower){
+    public void runDriveTrain(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
         //sets power for all drivetrain motors
-        robot.frontLeft().setPower(-leftPower);
-        robot.backLeft().setPower(-leftPower);
-        robot.frontRight().setPower(rightPower);
-        robot.backRight().setPower(rightPower);
+        robot.frontLeft().setPower(-frontLeftPower);
+        robot.backLeft().setPower(-backLeftPower);
+        robot.frontRight().setPower(frontRightPower);
+        robot.backRight().setPower(backRightPower);
     }
 
     public void odoReset() {
         //resets the encoder to zero
         robot.encoder().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         robot.encoder().setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void odoStrafeReset() {
+        //resets the encoder to zero
+        robot.strafeEncoder().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        robot.strafeEncoder().setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void odoTurnReset() {
@@ -67,7 +73,7 @@ public class odometry {
                     motorPower = -motorPower;
                 }
 
-                runDriveTrain(motorPower, motorPower);
+                runDriveTrain(motorPower, motorPower, motorPower, motorPower);
 
                 telemetry.addData("Power:", motorPower);
                 telemetry.addData("Distance:", distanceToTarget);
@@ -77,7 +83,7 @@ public class odometry {
 
             }
 
-            runDriveTrain(0, 0);
+            runDriveTrain(0, 0, 0, 0);
 
             sleep(500);
 
@@ -90,6 +96,70 @@ public class odometry {
         }
 
         odoReset();
+
+    }
+
+    public void odoStrafe(int distanceCm) throws InterruptedException {
+        //method for moving robot using odometry. set parameter to distance in centimeters and the robot should move that far
+
+        //initializing variables for method
+        int targetEncoderValue = distanceCm*522; //522 is the number of ticks the encoder turns per centimeter of distance it moves
+
+        int distanceToTarget = targetEncoderValue - robot.strafeEncoder().getCurrentPosition();
+
+        int distanceMagnitude = Math.abs(distanceToTarget);
+
+        double motorPower = 0;
+
+
+        int tolerance = 300;
+
+        int[] distanceCurve = {50000, 25000, 10000, 500}; //these 2 arrays should be same length with each value corresponding to the value in the same place at the other array.
+
+        double[] powerCurve = {0.5, 0.3, 0.15, 0.1}; // You put in a distance from target for the distance array and a motor power for the power array.
+
+
+        while (-tolerance > distanceToTarget || distanceToTarget > tolerance){ //same while loop twice so that it can wait a moment then double check that it is within the target range
+
+            while (-tolerance > distanceToTarget || distanceToTarget > tolerance) {
+
+                distanceMagnitude = Math.abs(distanceToTarget);
+
+                motorPower = 0.8;
+
+                for (int i = 0; i <= (distanceCurve.length-1); i++) {
+                    if (distanceMagnitude < distanceCurve[i]){
+                        motorPower = powerCurve[i];
+                    }
+                }
+
+                if (distanceToTarget < 0) {
+                    motorPower = -motorPower;
+                }
+
+                runDriveTrain(motorPower, -motorPower, -motorPower, motorPower);
+
+                telemetry.addData("Power:", motorPower);
+                telemetry.addData("Distance:", distanceToTarget);
+                telemetry.update();
+
+                distanceToTarget = targetEncoderValue - robot.strafeEncoder().getCurrentPosition();
+
+            }
+
+            runDriveTrain(0, 0, 0, 0);
+
+            sleep(500);
+
+            distanceToTarget = targetEncoderValue - robot.strafeEncoder().getCurrentPosition();
+            telemetry.addData("Power:", motorPower);
+            telemetry.addData("ticks to destination:", distanceToTarget);
+            telemetry.addData("Distance CM:", (robot.strafeEncoder().getCurrentPosition()/522));
+            telemetry.update();
+
+        }
+
+        odoStrafeReset();
 
     }
 
@@ -137,7 +207,7 @@ public class odometry {
                     motorPower = -motorPower;
                 }
 
-                runDriveTrain(motorPower, -motorPower);
+                runDriveTrain(motorPower, -motorPower, motorPower, -motorPower);
 
                 distanceToTarget = targetEncoderValue - robot.turnEncoder().getCurrentPosition();
 
@@ -150,7 +220,7 @@ public class odometry {
 
             }
 
-            runDriveTrain(0, 0);
+            runDriveTrain(0, 0,0, 0);
 
             sleep(500);
 
