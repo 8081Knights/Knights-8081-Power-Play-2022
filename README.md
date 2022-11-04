@@ -54,10 +54,57 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 8.0 (20220907-131644)
+
+### Breaking Changes
+* Increases the Robocol version.
+  * This means an 8.0 or later Robot Controller or Driver Station will not be able to communicate with a 7.2 or earlier Driver Station or Robot Controller.
+  * If you forget to update both apps at the same time, an error message will be shown explaining which app is older and should be updated.
+* Initializing I2C devices now happens when you retrieve them from the `HardwareMap` for the first time.
+  * Previously, all I2C devices would be initialized before the Op Mode even began executing,
+    whether you were actually going to use them or not. This could result in reduced performance and
+    unnecessary warnings.
+  * With this change, it is very important for Java users to retrieve all needed devices from the
+    `HardwareMap` **during the Init phase of the Op Mode**. Namely, declare a variable for each hardware
+    device the Op Mode will use, and assign a value to each. Do not do this during the Run phase, or your
+    Op Mode may briefly hang while the devices you are retrieving get initialized.
+  * Op Modes that do not use all of the I2C devices specified in the configuration file should take
+    less time to initialize. Op Modes that do use all of the specified I2C devices should take the
+    same amount of time as previously.
+* Fixes [issue #251](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251) by changing the order in which axis rotation rates are read from the angular velocity vector in the BNO055 IMU driver.
+* Deprecates `pitchMode` in `BNO055IMU.Parameters`.
+  * Setting `pitchMode` to `PitchMode.WINDOWS` would break the coordinate conventions used by the driver.
+* Moves `OpModeManagerImpl` to the `com.qualcomm.robotcore.eventloop.opmode` package.
+  * This breaks third party libraries EasyOpenCV (version 1.5.1 and earlier) and FTC Dashboard (version 0.4.4 and earlier).
+* Deletes the deprecated `OpMode` method `resetStartTime()` (use `resetRuntime()` instead).
+* Deletes the protected `LinearOpMode.LinearOpModeHelper` class (which was not meant for use by Op Modes).
+* Removes I2C Device (Synchronous) config type (deprecated since 2018)
+
+### Enhancements
+* Uncaught exceptions in Op Modes no longer require a Restart Robot
+  * A blue screen popping up with a stacktrace is not an SDK error; this replaces the red text in the telemetry area.
+  * Since the very first SDK release, Op Mode crashes have put the robot into "EMERGENCY STOP" state, only showing the first line of the exception, and requiring the user to press "Restart Robot" to continue
+  * Exceptions during an Op Mode now open a popup window with the same color scheme as the log viewer, containing 15 lines of the exception stacktrace to allow easily tracing down the offending line without needing to connect to view logs over ADB or scroll through large amounts of logs in the log viewer.
+  * The exception text in the popup window is both zoomable and scrollable just like a webpage.
+  * Pressing the "OK" button in the popup window will return to the main screen of the Driver Station and allow an Op Mode to be run again immediately, without the need to perform a "Restart Robot"
+* Adds new Java sample to demonstrate using a hardware class to abstract robot actuators, and share them across multiple Op Modes.
+  * Sample Op Mode is [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptExternalHardwareClass.java](ConceptExternalHardwareClass.java)
+  * Abstracted hardware class is [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/RobotHardware.java](RobotHardware.java))
+* Updates RobotAutoDriveByGyro_Linear Java sample to use REV Control/Expansion hub IMU.
+* Updates Vuforia samples to reference PowerPlay assets and have correct names and field locations of image targets.
+* Updates TensorFlow samples to reference PowerPlay assets.
+* Adds opt-in support for Java 8 language features to the OnBotJava editor.
+  * To opt in, open the OnBotJava Settings, and check `Enable beta Java 8 support`.
+  * Note that Java 8 code will only compile when the Robot Controller runs Android 7.0 Nougat or later.
+  * Please report issues [here](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues).
+* In OnBotJava, clicking on build errors now correctly jumps to the correct location.
+* Improves OnBotJava autocomplete behavior, to provide better completion options in most cases.
+* Adds a QR code to the Robot Controller Inspection Report when viewed from the Driver Station for scanning by inspectors at competition.
+* Improves I2C performance and reliability in some scenarios.
+
 ## Version 7.2 (20220723-130006)
 
 ### Breaking Changes
-
 * Updates the build tooling.  For Android Studio users, this change requires Android Studio Chipmunk 2021.2.1.
 * Removes support for devices that are not competition legal, including Modern Robotics Core Control Modules, the Matrix Controller, and HiTechnic/NXT controllers and sensors.  Support remains for Modern Robotics I2C sensors.
 
@@ -220,7 +267,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes [ftc_app issue 673](https://github.com/ftctechnh/ftc_app/issues/673) Latest matchlog is being deleted instead of old ones by RobotLog
 * Fixes ConceptVuforiaUltimateGoalNavigationWebcam sample opmode by correctly orienting camera on robot.
 * Fixes issue where logcat would be spammed with InterruptedExceptions when stop is requested from the Driver Station (this behavior was accidentally introduced in v5.3). This change has no impact on functionality.
-* Fixes issue where the blocks editor fails to load if the name of any org.firstinspires.ftc.teamcode.TeleOp opmode contains an apostrophe.
+* Fixes issue where the blocks editor fails to load if the name of any TeleOp opmode contains an apostrophe.
 
 ## Version 6.1 (20201209-113742)
 * Makes the scan button on the configuration screen update the list of Expansion Hubs connected via RS-485
@@ -235,7 +282,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Adds support for the Control Hub OS 1.1.2 Robot Controller watchdog
     * The Robot Controller app will be restarted if it stops responding for more than 10 seconds
 * Adds support for using the Driver Station app on Android 10+
-* Introduces an automatic org.firstinspires.ftc.teamcode.TeleOp preselection feature
+* Introduces an automatic TeleOp preselection feature
     * For details and usage guide, please see [this wiki entry](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Automatically-Loading-a-Driver-Controlled-Op-Mode)
 * Shows icon next to OpMode name in the OpMode list dropdown on the Driver Station to indicate the source of the OpMode (i.e. the programming tool used to create it)
 * Fixes issue where the Driver Station app would exit after displaying the Configuring Wi-Fi Direct screen
@@ -674,7 +721,7 @@ Changes include:
     - Added an external sample Op Mode that demonstrates localization using 2018-2019 (Rover Ruckus presented by QualComm) Vuforia targets.
     - Added an external sample Op Mode that demonstrates how to use the REV Robotics 2m Laser Distance Sensor.
     - Added an external sample Op Mode that demonstrates how to use the REV Robotics Blinkin LED Controller.
-    - Re-categorized external Java sample Op Modes to "org.firstinspires.ftc.teamcode.TeleOp" instead of "org.firstinspires.ftc.teamcode.Autonomous".
+    - Re-categorized external Java sample Op Modes to "TeleOp" instead of "Autonomous".
 
 Known issues:
  * Initial support for UVC compatible cameras
@@ -700,7 +747,7 @@ Changes include:
  * Blocks Changes
      - Uses updated Google Blockly software to allow users to edit their op modes on Apple iOS devices (including iPad and iPhone).
      - Improvement in Blocks tool to handle corrupt op mode files.
-     - org.firstinspires.ftc.teamcode.Autonomous op modes should no longer get switched back to tele-op after re-opening them to be edited.
+     - Autonomous op modes should no longer get switched back to tele-op after re-opening them to be edited.
      - The system can now detect type mismatches during runtime and alert the user with a message on the Driver Station.
  * Updated javadoc documentation for setPower() method to reflect correct range of values (-1 to +1).
  * Modified VuforiaLocalizerImpl to allow for user rendering of frames
@@ -836,7 +883,7 @@ Please note, however, that version 3.00 is considered "alpha" code.  This code i
 
 Changes include:
  * Major rework of sensor-related infrastructure.  Includes rewriting sensor classes to implement synchronous I2C communication.
- * Fix to reset org.firstinspires.ftc.teamcode.Autonomous timer back to 30 seconds.
+ * Fix to reset Autonomous timer back to 30 seconds.
  * Implementation of specific motor profiles for approved 12V motors (includes Tetrix, AndyMark, Matrix and REV models).
  * Modest improvements to enhance Wi-Fi P2P pairing.
  * Fixes telemetry log addition race.
@@ -945,7 +992,7 @@ Changes include:
      - Added logging when a blocks file is read/written.
      - Fixed bug to properly render blocks even if missing devices from configuration file.
      - Added support for additional characters (not just alphanumeric) for the block file names (for download and upload).
-     - Added support for OpMode flavor (“org.firstinspires.ftc.teamcode.Autonomous” or “org.firstinspires.ftc.teamcode.TeleOp”) and group.
+     - Added support for OpMode flavor (“Autonomous” or “TeleOp”) and group.
   * Changes to Samples to prevent tutorial issues.
   * Incorporated suggested changes from public pull 216 (“Replace .. paths”).
   * Remove Servo Glitches when robot stopped.

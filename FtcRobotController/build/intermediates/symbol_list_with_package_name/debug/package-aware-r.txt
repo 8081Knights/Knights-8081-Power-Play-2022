@@ -23,12 +23,18 @@ anim btn_radio_to_off_mtrl_ring_outer_path_animation
 anim btn_radio_to_on_mtrl_dot_group_animation
 anim btn_radio_to_on_mtrl_ring_outer_animation
 anim btn_radio_to_on_mtrl_ring_outer_path_animation
+anim fragment_fast_out_extra_slow_in
+animator fragment_close_enter
+animator fragment_close_exit
+animator fragment_fade_enter
+animator fragment_fade_exit
+animator fragment_open_enter
+animator fragment_open_exit
 array app_theme_colors
 array app_theme_ids
 array app_theme_names
 array app_theme_tokens
 array choice_array_legacy_module
-array device_interface_module_options_array
 array lynx_module_options_array
 array networkTypes
 array wifi_direct_channels
@@ -181,6 +187,7 @@ attr fontProviderFetchStrategy
 attr fontProviderFetchTimeout
 attr fontProviderPackage
 attr fontProviderQuery
+attr fontProviderSystemFontFamily
 attr fontStyle
 attr fontVariationSettings
 attr fontWeight
@@ -228,6 +235,7 @@ attr multiChoiceItemLayout
 attr navigationContentDescription
 attr navigationIcon
 attr navigationMode
+attr nestedScrollViewStyle
 attr numericModifiers
 attr overlapAnchor
 attr paddingBottomNoButtons
@@ -245,6 +253,7 @@ attr progressBarPadding
 attr progressBarStyle
 attr queryBackground
 attr queryHint
+attr queryPatterns
 attr radioButtonStyle
 attr ratingBarStyle
 attr ratingBarStyleIndicator
@@ -255,6 +264,7 @@ attr searchViewStyle
 attr seekBarStyle
 attr selectableItemBackground
 attr selectableItemBackgroundBorderless
+attr shortcutMatchRequired
 attr showAsAction
 attr showDividers
 attr showText
@@ -340,6 +350,16 @@ attr windowFixedWidthMinor
 attr windowMinWidthMajor
 attr windowMinWidthMinor
 attr windowNoTitle
+attr zxing_framing_rect_height
+attr zxing_framing_rect_width
+attr zxing_possible_result_points
+attr zxing_preview_scaling_strategy
+attr zxing_result_view
+attr zxing_scanner_layout
+attr zxing_use_texture_view
+attr zxing_viewfinder_laser
+attr zxing_viewfinder_laser_visibility
+attr zxing_viewfinder_mask
 bool abc_action_bar_embed_tabs
 bool abc_allow_stacked_button_bar
 bool abc_config_actionMenuItemAllCaps
@@ -411,7 +431,6 @@ color dark_orange
 color dark_purple
 color dark_red
 color dark_teal
-color dashboardColor
 color dim_foreground_disabled_material_dark
 color dim_foreground_disabled_material_light
 color dim_foreground_material_dark
@@ -513,6 +532,16 @@ color very_very_dark_orange
 color very_very_dark_purple
 color very_very_dark_red
 color very_very_dark_teal
+color zxing_custom_possible_result_points
+color zxing_custom_result_view
+color zxing_custom_viewfinder_laser
+color zxing_custom_viewfinder_mask
+color zxing_possible_result_points
+color zxing_result_view
+color zxing_status_text
+color zxing_transparent
+color zxing_viewfinder_laser
+color zxing_viewfinder_mask
 dimen abc_action_bar_content_inset_material
 dimen abc_action_bar_content_inset_with_nav
 dimen abc_action_bar_default_height_material
@@ -749,6 +778,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable powerplay_background
 drawable skystone_background
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -827,6 +857,7 @@ id androidVersion_img
 id appsInstalled
 id async
 id attached_title
+id autoInspectQr
 id backButton
 id backbar
 id backgroundDarkGrayHolder
@@ -844,6 +875,7 @@ id bytesPerSecondLabel
 id cameraMonitorViewId
 id cameraName
 id cancelButton
+id centerCrop
 id channelPickList
 id checkbox
 id checkbox_port
@@ -869,7 +901,6 @@ id customPanel
 id darker_gray_line
 id decor_content_parent
 id default_activity_button
-id device_interface_module_name
 id devices_holder
 id devices_info_btn
 id dialog_button
@@ -898,10 +929,15 @@ id file_edit_button
 id file_info_layout
 id filename_editText
 id files_holder
+id fitCenter
+id fitXY
 id fixButton
 id forever
+id fragment_container_view_tag
 id groupList
 id group_divider
+id header
+id header_error_message
 id holds_buttons
 id home
 id horizontalButtons
@@ -923,6 +959,7 @@ id info
 id infoButton
 id info_btn
 id inspectionRootLayout
+id invalidQr
 id isDSInstalled
 id isDefaultPassword
 id isDefaultPassword_img
@@ -935,22 +972,7 @@ id labelWifiName
 id line1
 id line3
 id linearLayout
-id linearLayout0
-id linearLayout1
-id linearLayout2
-id linearLayout3
-id linearLayout4
-id linearLayout5
-id linearLayout_matrix1
-id linearLayout_matrix2
-id linearLayout_matrix3
-id linearLayout_matrix4
-id linearLayout_matrix5
-id linearLayout_matrix6
-id linearLayout_matrix7
-id linearLayout_matrix8
 id listMode
-id listView_devices
 id list_item
 id load_bottom
 id loadingIndicator
@@ -973,14 +995,12 @@ id lynx_module_name
 id matchesDSVersionLabel
 id matchesDSVersion_img
 id matchesDSVersion_txt
-id matrixcontroller_name
 id menu_buttons
 id message
 id moduleAddressText
 id moduleList
 id moduleSerialText
 id monitorContainer
-id motors_title
 id multiply
 id new_button
 id none
@@ -989,6 +1009,7 @@ id notification_background
 id notification_main_column
 id notification_main_column_container
 id off
+id okButton
 id on
 id orange_end_of_list_anchor
 id osVersion
@@ -997,12 +1018,6 @@ id osVersionLayout
 id osVersion_img
 id parentPanel
 id permDeniedText
-id port0
-id port1
-id port2
-id port3
-id port4
-id port5
 id portNumber
 id port_number
 id port_title
@@ -1015,12 +1030,6 @@ id right_icon
 id right_side
 id robotIcon
 id row_port
-id row_port0
-id row_port1
-id row_port2
-id row_port3
-id row_port4
-id row_port5
 id row_port_digital_device
 id row_port_i2c
 id scanButton
@@ -1040,9 +1049,9 @@ id search_src_text
 id search_voice_btn
 id select_dialog_listview
 id serialNumber
-id servos_title
 id shortcut
 id spacer
+id special_effects_controller_view_tag
 id spinnerChooseAddress
 id split_action_bar
 id src_atop
@@ -1054,17 +1063,21 @@ id swapButton
 id swapCaption
 id tabMode
 id tableLayout
-id tableLayout_analogOutput_devices
 id tableLayout_analog_input_devices
 id table_header
 id tag_accessibility_actions
 id tag_accessibility_clickable_spans
 id tag_accessibility_heading
 id tag_accessibility_pane_title
+id tag_on_apply_window_listener
+id tag_on_receive_content_listener
+id tag_on_receive_content_mime_types
 id tag_screen_reader_focusable
+id tag_state_description
 id tag_transition_group
 id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
+id tag_window_insets_animation_callback
 id templateList
 id templateListCaption
 id templateNameText
@@ -1110,6 +1123,10 @@ id txtModel
 id unchecked
 id uniform
 id up
+id view_tree_lifecycle_owner
+id view_tree_saved_state_registry_owner
+id view_tree_view_model_store_owner
+id visible_removing_fragment_view_tag
 id webView
 id webViewBlocksRuntime
 id wifiConnected
@@ -1120,6 +1137,21 @@ id wifiEnabled_img
 id wifiName
 id wifiName_img
 id wrap_content
+id zoomInButton
+id zoomOutButton
+id zxing_back_button
+id zxing_barcode_scanner
+id zxing_barcode_surface
+id zxing_camera_closed
+id zxing_camera_error
+id zxing_decode
+id zxing_decode_failed
+id zxing_decode_succeeded
+id zxing_possible_result_points
+id zxing_preview_failed
+id zxing_prewiew_size_ready
+id zxing_status_view
+id zxing_viewfinder_view
 integer abc_config_activityDefaultDur
 integer abc_config_activityShortDur
 integer cancel_button_image_alpha
@@ -1172,18 +1204,16 @@ layout activity_inspection
 layout activity_load
 layout activity_permissions_validator
 layout activity_program_and_manage
+layout activity_stacktrace
 layout activity_swap_usb_devices
 layout activity_view_logs
 layout analog_input_device
 layout analog_inputs
-layout analog_output_device
-layout analog_outputs
 layout backbar_layout
 layout banner_parent
 layout button_list
 layout color_list_preference_line_item
 layout custom_dialog
-layout device_interface_module
 layout digital_device
 layout digital_device_lynx
 layout digital_devices
@@ -1196,14 +1226,11 @@ layout i2c_device
 layout i2cs
 layout info_button
 layout item_list_parent
-layout legacy
 layout loading_indicator_overlay
 layout lynx_module
 layout lynx_module_configure_address
 layout lynx_module_configure_address_spin_item
 layout lynx_usb_device
-layout matrices
-layout matrix_devices
 layout motor
 layout motor_controller_banner
 layout motor_list
@@ -1221,18 +1248,17 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout servo
-layout servo_controller_banner
 layout servo_list
 layout simple_device
 layout support_simple_spinner_dropdown_item
 layout template_info
 layout webcam_device
+layout zxing_barcode_scanner
+layout zxing_capture
 menu ftc_robot_controller
 menu inspection_menu_rc_remote
 menu inspection_menu_rcds_local
-menu main_menu
 menu menu_server
-raw bhi260_ap_fw_15
 raw chimeconnect
 raw chimedisconnect
 raw color_fragment_shader
@@ -1241,6 +1267,7 @@ raw cube_mesh_vertex_shader
 raw errormessage
 raw gold
 raw nxtstartupsound
+raw rev_bhi260_ap_fw_20
 raw silver
 raw simple_vertex_shader
 raw ss_alarm
@@ -1264,6 +1291,7 @@ raw ss_wookie
 raw texture_fragment_shader
 raw texture_vertex_shader
 raw warningmessage
+raw zxing_beep
 string VUFORIA_INIT_ERROR_DEVICE_NOT_SUPPORTED
 string VUFORIA_INIT_ERROR_NO_CAMERA_ACCESS
 string VUFORIA_INIT_LICENSE_ERROR_CANCELED_KEY
@@ -1331,8 +1359,6 @@ string activeConfigCaption
 string active_connections_label
 string adafruit_imu_description
 string adafruit_imu_name
-string add_motor_controller_menu_item
-string add_servo_controller_menu_item
 string airplaneModeLabel
 string alertLynxFirmwareUpdateFailed
 string alertLynxFirmwareUpdateFailedTitle
@@ -1372,6 +1398,7 @@ string app_result_type_uninstall_required_backup_possible
 string app_result_type_uninstalled_wrong_app_variant
 string app_result_type_uninstalling_existing_app
 string app_result_type_unknown_install_status
+string app_version
 string appsInstalledLabel
 string attached
 string availableConfigListCaption
@@ -1430,45 +1457,26 @@ string configTemplateInstructions
 string configToDeleteDoesNotExist
 string configTypeAdafruitColorSensor
 string configTypeAnalogInput
-string configTypeAnalogOutput
 string configTypeColorSensor
 string configTypeContinuousRotationServo
-string configTypeDeviceInterfaceModule
 string configTypeDigitalDevice
-string configTypeDigitalDevices
 string configTypeGyro
-string configTypeHTAccelerometer
-string configTypeHTColorSensor
-string configTypeHTCompass
 string configTypeHTGyro
-string configTypeHTIrSeeker
-string configTypeHTLightSensor
-string configTypeHTTouchSensorMultiplexer
-string configTypeI2cDevice
-string configTypeI2cDeviceSynch
-string configTypeI2cDevices
 string configTypeIrSeekerV3
 string configTypeLED
-string configTypeLegacyModuleController
 string configTypeLynxColorSensor
 string configTypeLynxModule
 string configTypeLynxUSBDevice
 string configTypeMRColorSensor
 string configTypeMRGyro
 string configTypeMRTouchSensor
-string configTypeMatrixController
 string configTypeMotor
-string configTypeMotorController
 string configTypeMotors
-string configTypeNXTTouchSensor
-string configTypeNXTUltrasonicSensor
 string configTypeNothing
 string configTypeOpticalDistanceSensor
 string configTypePulseWidthDevice
-string configTypePulseWidthDevices
 string configTypeRevTouchSensor
 string configTypeServo
-string configTypeServoController
 string configTypeServos
 string configTypeUnknown
 string configTypeWebcam
@@ -1492,16 +1500,13 @@ string control_hub_module_name
 string control_hub_usb_device_name
 string controllerPortConnectionInfoFormat
 string counted_camera_name
-string counted_device_interface_module_name
 string counted_imu_name
-string counted_legacy_module_name
 string counted_lynx_module_name
 string counted_lynx_usb_device_name
-string counted_motor_controller_name
-string counted_servo_controller_name
 string currentApLabel
 string defaultOpModeName
 string default_port
+string define_zxingandroidembedded
 string descriptionLynxEmbeddedModule
 string deviceDisplayNameUnknownUSBDevice
 string deviceInterfaceModuleName
@@ -1512,8 +1517,6 @@ string device_type
 string dialogEnableModifyingSettingsMessage
 string dialogEnableModifyingSettingsTitle
 string dialogMessagePleaseWait
-string displayNameMatrixMotorController
-string displayNameMatrixServoController
 string display_server_log_button
 string driverHubOsVersionLabel
 string driverStationLabel
@@ -1522,18 +1525,13 @@ string duplicateWebcam
 string duplicateWebcamWithName
 string edit_analog_input_devices_activity
 string edit_analog_input_devices_activity_lynx
-string edit_analog_output_devices_activity
 string edit_controller
-string edit_core_device_interface_module_controller_activity
 string edit_digital_devices_activity
 string edit_digital_devices_activity_lynx
 string edit_i2c_devices_activity
-string edit_legacy_module_controller_activity
 string edit_lynx_module_controller_activity
 string edit_lynx_usb_device_activity
-string edit_matrix_controller_activity
 string edit_motor_controller_activity
-string edit_motor_controller_menu_item
 string edit_pwm_devices_activity
 string edit_servo_controller_activity
 string edit_swap_devices_activity
@@ -1575,7 +1573,15 @@ string inspection_activity
 string inspection_mode_menu_item
 string launch_wifi_settings
 string led_description
-string legacy_controller_name
+string library_zxingandroidembedded_author
+string library_zxingandroidembedded_authorWebsite
+string library_zxingandroidembedded_isOpenSource
+string library_zxingandroidembedded_libraryDescription
+string library_zxingandroidembedded_libraryName
+string library_zxingandroidembedded_libraryVersion
+string library_zxingandroidembedded_libraryWebsite
+string library_zxingandroidembedded_licenseId
+string library_zxingandroidembedded_repositoryLink
 string load_menu_item
 string locationLabel
 string locationServices
@@ -1607,7 +1613,6 @@ string lynx_address_instructions_update
 string lynx_embedded_bhi260ap_imu_name
 string lynx_embedded_bno055_imu_name
 string lynx_embedded_imu_description
-string lynx_embedded_imu_name
 string lynx_fw_available_files
 string lynx_fw_instructions_controlhub_item_title
 string lynx_fw_instructions_exhub_item_title
@@ -1621,24 +1626,8 @@ string lynx_fw_instructions_update
 string lynx_fw_instructions_update_post
 string manage_page_no_network
 string matchesDSVersionLabel
-string matrix_controller_name_prompt
-string matrix_motor_title
-string matrix_name_prompt
-string matrix_port0
-string matrix_port1
-string matrix_port2
-string matrix_port3
-string matrix_port4
-string matrix_port5
-string matrix_port6
-string matrix_port7
-string matrix_servo_title
 string menuButtonContentDescription
-string moduleDisplayNameCDIM
-string moduleDisplayNameLegacyModule
 string moduleDisplayNameLynxUsbDevice
-string moduleDisplayNameMotorController
-string moduleDisplayNameServoController
 string moduleDisplayNameWebcam
 string motor
 string motor_controller_name_prompt
@@ -1689,8 +1678,6 @@ string noVoltageSensor
 string notAllDevicesFoundMessage
 string notAllDevicesFoundTitle
 string not_available
-string nxtDcMotorControllerName
-string nxtServoControllerName
 string optical_distance_sensor_description
 string ota_result_type_device_not_supported
 string ota_result_type_downgrade_not_authorized
@@ -1836,6 +1823,8 @@ string program_and_manage_activity
 string program_and_manage_menu_item
 string progressPleaseWait
 string progressUpdatingDeviceFirmware
+string qrInvalid
+string qrNoGamepad
 string quotes
 string readOnlyConfigFeedback
 string readOnlyExplanation
@@ -1895,7 +1884,6 @@ string server_not_ok
 string server_ok
 string server_status_label
 string server_url_label
-string servo_controller_name_prompt
 string servo_name
 string servo_name_prompt
 string servo_port
@@ -2026,6 +2014,10 @@ string wifiNameLabel
 string wirelessApStatusLabel
 string writeXML_prompt
 string writeXML_text
+string zxing_app_name
+string zxing_button_ok
+string zxing_msg_camera_framework_bug
+string zxing_msg_default_status
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog
@@ -2397,6 +2389,7 @@ style Widget_AppCompat_Toolbar
 style Widget_AppCompat_Toolbar_Button_Navigation
 style Widget_Compat_NotificationActionContainer
 style Widget_Compat_NotificationActionText
+style zxing_CaptureTheme
 styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 styleable ActionBarLayout android_layout_gravity
 styleable ActionMenuItemView android_minWidth
@@ -2413,12 +2406,15 @@ styleable AppCompatTextHelper android_drawableBottom android_drawableEnd android
 styleable AppCompatTextView android_textAppearance autoSizeMaxTextSize autoSizeMinTextSize autoSizePresetSizes autoSizeStepGranularity autoSizeTextType drawableBottomCompat drawableEndCompat drawableLeftCompat drawableRightCompat drawableStartCompat drawableTint drawableTintMode drawableTopCompat firstBaselineToTopHeight fontFamily fontVariationSettings lastBaselineToBottomHeight lineHeight textAllCaps textLocale
 styleable AppCompatTheme actionBarDivider actionBarItemBackground actionBarPopupTheme actionBarSize actionBarSplitStyle actionBarStyle actionBarTabBarStyle actionBarTabStyle actionBarTabTextStyle actionBarTheme actionBarWidgetTheme actionButtonStyle actionDropDownStyle actionMenuTextAppearance actionMenuTextColor actionModeBackground actionModeCloseButtonStyle actionModeCloseDrawable actionModeCopyDrawable actionModeCutDrawable actionModeFindDrawable actionModePasteDrawable actionModePopupWindowStyle actionModeSelectAllDrawable actionModeShareDrawable actionModeSplitBackground actionModeStyle actionModeWebSearchDrawable actionOverflowButtonStyle actionOverflowMenuStyle activityChooserViewStyle alertDialogButtonGroupStyle alertDialogCenterButtons alertDialogStyle alertDialogTheme android_windowAnimationStyle android_windowIsFloating autoCompleteTextViewStyle borderlessButtonStyle buttonBarButtonStyle buttonBarNegativeButtonStyle buttonBarNeutralButtonStyle buttonBarPositiveButtonStyle buttonBarStyle buttonStyle buttonStyleSmall checkboxStyle checkedTextViewStyle colorAccent colorBackgroundFloating colorButtonNormal colorControlActivated colorControlHighlight colorControlNormal colorError colorPrimary colorPrimaryDark colorSwitchThumbNormal controlBackground dialogCornerRadius dialogPreferredPadding dialogTheme dividerHorizontal dividerVertical dropDownListViewStyle dropdownListPreferredItemHeight editTextBackground editTextColor editTextStyle homeAsUpIndicator imageButtonStyle listChoiceBackgroundIndicator listChoiceIndicatorMultipleAnimated listChoiceIndicatorSingleAnimated listDividerAlertDialog listMenuViewStyle listPopupWindowStyle listPreferredItemHeight listPreferredItemHeightLarge listPreferredItemHeightSmall listPreferredItemPaddingEnd listPreferredItemPaddingLeft listPreferredItemPaddingRight listPreferredItemPaddingStart panelBackground panelMenuListTheme panelMenuListWidth popupMenuStyle popupWindowStyle radioButtonStyle ratingBarStyle ratingBarStyleIndicator ratingBarStyleSmall searchViewStyle seekBarStyle selectableItemBackground selectableItemBackgroundBorderless spinnerDropDownItemStyle spinnerStyle switchStyle textAppearanceLargePopupMenu textAppearanceListItem textAppearanceListItemSecondary textAppearanceListItemSmall textAppearancePopupMenuHeader textAppearanceSearchResultSubtitle textAppearanceSearchResultTitle textAppearanceSmallPopupMenu textColorAlertDialogListItem textColorSearchUrl toolbarNavigationButtonStyle toolbarStyle tooltipForegroundColor tooltipFrameBackground viewInflaterClass windowActionBar windowActionBarOverlay windowActionModeOverlay windowFixedHeightMajor windowFixedHeightMinor windowFixedWidthMajor windowFixedWidthMinor windowMinWidthMajor windowMinWidthMinor windowNoTitle
 styleable ButtonBarLayout allowStacking
+styleable Capability queryPatterns shortcutMatchRequired
 styleable ColorListPreference colors
 styleable ColorStateListItem alpha android_alpha android_color
 styleable CompoundButton android_button buttonCompat buttonTint buttonTintMode
 styleable DrawerArrowToggle arrowHeadLength arrowShaftLength barLength color drawableSize gapBetweenBars spinBars thickness
-styleable FontFamily fontProviderAuthority fontProviderCerts fontProviderFetchStrategy fontProviderFetchTimeout fontProviderPackage fontProviderQuery
+styleable FontFamily fontProviderAuthority fontProviderCerts fontProviderFetchStrategy fontProviderFetchTimeout fontProviderPackage fontProviderQuery fontProviderSystemFontFamily
 styleable FontFamilyFont android_font android_fontStyle android_fontVariationSettings android_fontWeight android_ttcIndex font fontStyle fontVariationSettings fontWeight ttcIndex
+styleable Fragment android_id android_name android_tag
+styleable FragmentContainerView android_name android_tag
 styleable GradientColor android_centerColor android_centerX android_centerY android_endColor android_endX android_endY android_gradientRadius android_startColor android_startX android_startY android_tileMode android_type
 styleable GradientColorItem android_color android_offset
 styleable LinearLayoutCompat android_baselineAligned android_baselineAlignedChildIndex android_gravity android_orientation android_weightSum divider dividerPadding measureWithLargestChild showDividers
@@ -2440,6 +2436,9 @@ styleable Toolbar android_gravity android_minHeight buttonGravity collapseConten
 styleable View android_focusable android_theme paddingEnd paddingStart theme
 styleable ViewBackgroundHelper android_background backgroundTint backgroundTintMode
 styleable ViewStubCompat android_id android_inflatedId android_layout
+styleable zxing_camera_preview zxing_framing_rect_height zxing_framing_rect_width zxing_preview_scaling_strategy zxing_use_texture_view
+styleable zxing_finder zxing_possible_result_points zxing_result_view zxing_viewfinder_laser zxing_viewfinder_laser_visibility zxing_viewfinder_mask
+styleable zxing_view zxing_scanner_layout
 xml advanced_rc_settings
 xml app_settings
 xml builtinwebcamcalibrations
