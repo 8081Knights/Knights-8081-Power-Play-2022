@@ -246,6 +246,15 @@ public class odometry {
 
     }
 
+    public int odoDistanceStrafe() {
+
+        int distanceStrafed = (int)(robot.strafeEncoder().getCurrentPosition() / 522);
+
+
+        return distanceStrafed;
+
+    }
+
     public int odoDistanceTurned() {
 
         int distanceTravelledCm = (int)(robot.turnEncoder().getCurrentPosition() / 522);
