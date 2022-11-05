@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static android.os.SystemClock.sleep;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,12 +24,19 @@ public class HardwareSoftware {
 
     DcMotorEx armDrive = null;
 
-    Servo clawRotate = null;
+    DcMotorEx leftSlide = null;
+    DcMotorEx rightSlide = null;
+
+    //Servo clawRotate = null;
     Servo claw = null;
 
     int tickPerIn = 1000;
     int armMax = 1000;
     int armMin = 10;
+
+    int low = 500;
+    int mid = 1000;
+    int high = 1500;
 
 
 
@@ -44,7 +53,13 @@ public class HardwareSoftware {
 
         armDrive = hw.get(DcMotorEx.class, "armDrive");
 
-        clawRotate = hw.get(Servo.class, "clawRotate");
+        leftSlide = hw.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hw.get(DcMotorEx.class, "rightSlide");
+
+        leftSlide.setDirection(DcMotorEx.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
+
+        //clawRotate = hw.get(Servo.class, "clawRotate");
         claw = hw.get(Servo.class, "claw");
 
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -55,7 +70,18 @@ public class HardwareSoftware {
         strafeEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+//        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+//        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+//        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+
+
+
         armDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        leftSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+
 
         frontRight.setPower(0);
         backRight.setPower(0);
@@ -67,6 +93,13 @@ public class HardwareSoftware {
 
 
         armDrive.setPower(0);
+
+        armDrive.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
 
 
 
@@ -123,14 +156,51 @@ public class HardwareSoftware {
 
     }
 
-    public void clawFlip(){
-        if(clawRotate().getPosition() == 0){
-            clawRotate().setPosition(1);
-        }
-        else if(clawRotate().getPosition() == 1){
-            clawRotate().setPosition(0);
-        }
+    public void lowGoal(int speed){
+        leftSlide().setTargetPosition(low);
+        rightSlide().setTargetPosition(low);
+
+        sleep(300);
+
+        leftSlide().setVelocity(speed);
+        rightSlide().setVelocity(speed);
+
+        sleep(1000);
+
     }
+    public void midGoal(int speed){
+        leftSlide().setTargetPosition(mid);
+        rightSlide().setTargetPosition(mid);
+
+        sleep(300);
+
+        leftSlide().setVelocity(speed);
+        rightSlide().setVelocity(speed);
+
+        sleep(1000);
+
+    }
+    public void highGoal(int speed){
+        leftSlide().setTargetPosition(high);
+        rightSlide().setTargetPosition(high);
+
+        sleep(300);
+
+        leftSlide().setVelocity(speed);
+        rightSlide().setVelocity(speed);
+
+        sleep(1000);
+
+    }
+//
+//    public void clawFlip(){
+//        if(clawRotate().getPosition() == 0){
+//            clawRotate().setPosition(1);
+//        }
+//        else if(clawRotate().getPosition() == 1){
+//            clawRotate().setPosition(0);
+//        }
+//    }
 
     public void clawChange(){
         if(claw().getPosition() == 0){
@@ -166,7 +236,11 @@ public class HardwareSoftware {
 
     public DcMotorEx armDrive(){ return armDrive;}
 
-    public Servo clawRotate(){return clawRotate;}
+    public DcMotorEx leftSlide(){ return leftSlide;}
+
+    public DcMotorEx rightSlide(){return rightSlide;}
+
+    //public Servo clawRotate(){return clawRotate;}
 
     public Servo claw(){return claw;}
 

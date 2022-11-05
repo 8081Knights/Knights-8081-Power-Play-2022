@@ -21,23 +21,9 @@ public class MotorFunctionTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.frontRight().setPower(0.8);
-        sleep(2000);
-        robot.frontRight().setPower(0);
+        robot.leftSlide().setPower(0.1);
+        robot.rightSlide().setPower(0.1);
 
-
-        robot.frontLeft().setPower(0.8);
-        sleep(2000);
-        robot.frontLeft().setPower(0);
-
-
-        robot.backRight().setPower(0.8);
-        sleep(2000);
-        robot.backRight().setPower(0);
-
-
-        robot.backLeft().setPower(0.8);
-        sleep(2000);
-        robot.backLeft().setPower(0);
+        sleep(10000);
     }
 }
