@@ -18,9 +18,9 @@ public class HardwareSoftware {
     DcMotorEx backRight     = null;
     DcMotorEx backLeft      = null;
     DcMotorEx frontLeft     = null;
-    DcMotorEx encoder       = null;
-    DcMotorEx strafeEncoder = null;
-    DcMotorEx turnEncoder   = null;
+//    DcMotorEx encoder       = null;
+//    DcMotorEx strafeEncoder = null;
+//    DcMotorEx turnEncoder   = null;
 
     DcMotorEx armDrive = null;
 
@@ -47,9 +47,9 @@ public class HardwareSoftware {
         backRight = hw.get(DcMotorEx.class, "backRight");
         backLeft = hw.get(DcMotorEx.class, "backLeft");
         frontLeft = hw.get(DcMotorEx.class, "frontLeft");
-        encoder = hw.get(DcMotorEx.class, "encoder");
-        strafeEncoder = hw.get(DcMotorEx.class, "strafeEncoder");
-        turnEncoder = hw.get(DcMotorEx.class, "turnEncoder");
+//        encoder = hw.get(DcMotorEx.class, "encoder");
+//        strafeEncoder = hw.get(DcMotorEx.class, "strafeEncoder");
+//        turnEncoder = hw.get(DcMotorEx.class, "turnEncoder");
 
         armDrive = hw.get(DcMotorEx.class, "armDrive");
 
@@ -66,13 +66,14 @@ public class HardwareSoftware {
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        encoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        strafeEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        encoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        strafeEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-//        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-//        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
 
 
 
@@ -87,9 +88,9 @@ public class HardwareSoftware {
         backRight.setPower(0);
         frontLeft.setPower(0);
         backLeft.setPower(0);
-        encoder.setPower(0);
-        strafeEncoder.setPower(0);
-        turnEncoder.setPower(0);
+//        encoder.setPower(0);
+//        strafeEncoder.setPower(0);
+//        turnEncoder.setPower(0);
 
 
         armDrive.setPower(0);
@@ -227,12 +228,12 @@ public class HardwareSoftware {
     public DcMotorEx backLeft(){
         return backLeft;
     }
-
-    public DcMotorEx encoder() {return encoder;}
-
-    public DcMotorEx strafeEncoder() {return strafeEncoder;}
-
-    public DcMotorEx turnEncoder() {return turnEncoder;}
+//
+//    public DcMotorEx encoder() {return encoder;}
+//
+//    public DcMotorEx strafeEncoder() {return strafeEncoder;}
+//
+//    public DcMotorEx turnEncoder() {return turnEncoder;}
 
     public DcMotorEx armDrive(){ return armDrive;}
 

@@ -68,9 +68,9 @@ public class scrimmageTeleop extends OpMode {
 
         double[] speeds = {
                 (-twist - strafe - drive),
-                (+twist - strafe + drive),
-                (+twist + strafe - drive),
-                (+twist + strafe + drive)
+                (-twist - strafe + drive),
+                (-twist + strafe - drive),
+                (-twist + strafe + drive)
         };
 
         robot.frontRight().setPower(speeds[0] * 0.8);
@@ -111,81 +111,81 @@ public class scrimmageTeleop extends OpMode {
             armUp = false;
         }
 
-//
-//        if(gamepad2.dpad_down){
-//            l =true;
-//
-//            h = false;
-//            m = false;
-//            min = false;
-//        }
-//        if(gamepad2.dpad_up){
-//            h = true;
-//
-//            l = false;
-//            m = false;
-//            min = false;
-//        }
-//        if(gamepad2.dpad_left){
-//            m = true;
-//
-//            h = false;
-//            l = false;
-//            min = false;
-//        }
-//        if(gamepad2.dpad_right){
-//            min = true;
-//
-//            h = false;
-//            l = false;
-//            m = false;
-//        }
-//
-//
-//
-//        if(l){
-//            robot.leftSlide().setTargetPosition(low);
-//            robot.rightSlide().setTargetPosition(low);
-//
-//            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//            robot.leftSlide().setVelocity(linearSpeed);
-//            robot.rightSlide().setVelocity(linearSpeed);
-//
-//        }
-//        if(m){
-//            robot.leftSlide().setTargetPosition(mid);
-//            robot.rightSlide().setTargetPosition(mid);
-//
-//            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//            robot.leftSlide().setVelocity(linearSpeed);
-//            robot.rightSlide().setVelocity(linearSpeed);
-//
-//        }
-//        if(h){
-//            robot.leftSlide().setTargetPosition(high);
-//            robot.rightSlide().setTargetPosition(high);
-//
-//            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//            robot.leftSlide().setVelocity(linearSpeed);
-//            robot.rightSlide().setVelocity(linearSpeed);
-//
-//        }
-//        if(min){
-//            robot.leftSlide().setTargetPosition(0);
-//            robot.rightSlide().setTargetPosition(0);
-//
-//            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//            robot.leftSlide().setVelocity(linearSpeed);
-//            robot.rightSlide().setVelocity(linearSpeed);
-//        }
+
+        if(gamepad2.dpad_down){
+            l =true;
+
+            h = false;
+            m = false;
+            min = false;
+        }
+        if(gamepad2.dpad_up){
+            h = true;
+
+            l = false;
+            m = false;
+            min = false;
+        }
+        if(gamepad2.dpad_left){
+            m = true;
+
+            h = false;
+            l = false;
+            min = false;
+        }
+        if(gamepad2.dpad_right){
+            min = true;
+
+            h = false;
+            l = false;
+            m = false;
+        }
+
+
+
+        if(l){
+            robot.leftSlide().setTargetPosition(low);
+            robot.rightSlide().setTargetPosition(low);
+
+            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            robot.leftSlide().setVelocity(linearSpeed);
+            robot.rightSlide().setVelocity(linearSpeed);
+
+        }
+        if(m){
+            robot.leftSlide().setTargetPosition(mid);
+            robot.rightSlide().setTargetPosition(mid);
+
+            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            robot.leftSlide().setVelocity(linearSpeed);
+            robot.rightSlide().setVelocity(linearSpeed);
+
+        }
+        if(h){
+            robot.leftSlide().setTargetPosition(high);
+            robot.rightSlide().setTargetPosition(high);
+
+            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            robot.leftSlide().setVelocity(linearSpeed);
+            robot.rightSlide().setVelocity(linearSpeed);
+
+        }
+        if(min){
+            robot.leftSlide().setTargetPosition(0);
+            robot.rightSlide().setTargetPosition(0);
+
+            robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            robot.leftSlide().setVelocity(linearSpeed);
+            robot.rightSlide().setVelocity(linearSpeed);
+        }
 
 
 
@@ -204,10 +204,6 @@ public class scrimmageTeleop extends OpMode {
 
             robot.armDrive().setVelocity(1000);
 
-//            v1 = 0;
-//            v2 = 0;
-//            v3 = 0;
-//            v4 = 0;
 
         }
 
