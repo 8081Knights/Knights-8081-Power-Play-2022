@@ -25,7 +25,7 @@ public class scrimmageTeleop extends OpMode {
     double strafe;
     double twist;
 
-    int linearSpeed = 500;
+    int linearSpeed = 1500;
 
     int maxArmHeight = 800;
 
@@ -62,21 +62,31 @@ public class scrimmageTeleop extends OpMode {
 //        final double v3 = r * Math.sin(robotAngle) + rightX;
 //        final double v4 = r * Math.cos(robotAngle) - rightX;
 
-        drive = gamepad1.left_stick_x;
-        strafe = gamepad1.left_stick_y;
-        twist = gamepad1.right_stick_x;
+        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = gamepad1.left_stick_x;
+        double rx = gamepad1.right_stick_x;
 
-        double[] speeds = {
-                (-twist - strafe - drive),
-                (-twist - strafe + drive),
-                (-twist + strafe - drive),
-                (-twist + strafe + drive)
+
+
+        double speeds[] = {
+                (y + x + rx),
+                (y - x + rx),
+                (y - x - rx),
+                (y + x - rx)
         };
 
-        robot.frontRight().setPower(speeds[0] * 0.8);
-        robot.frontLeft().setPower(speeds[1] * 0.8);
-        robot.backRight().setPower(speeds[2] * 0.8);
-        robot.backLeft().setPower(speeds[3]*0.8);
+        if(speeds[0] + speeds[1] + speeds[2] + speeds[3] >= 0.2) {
+            robot.frontRight().setPower(speeds[0] * 0.8);
+            robot.frontLeft().setPower(speeds[1] * 0.8);
+            robot.backRight().setPower(speeds[2] * 0.8);
+            robot.backLeft().setPower(speeds[3] * 0.8);
+        }
+        else if(speeds[0] + speeds[1] + speeds[2] + speeds[3] < 0.2){
+            robot.frontRight().setPower(0);
+            robot.frontLeft().setPower(0);
+            robot.backRight().setPower(0);
+            robot.backLeft().setPower(0);
+        }
 
 
 //        if(gamepad1.right_stick_y > 0.1 || gamepad1.right_stick_y < -0.1) {
@@ -112,6 +122,7 @@ public class scrimmageTeleop extends OpMode {
         }
 
 
+        //Linear Slide Logic
         if(gamepad2.dpad_down){
             l =true;
 
