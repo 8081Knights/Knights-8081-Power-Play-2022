@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
@@ -12,6 +14,25 @@ public class RobotCommands {
     public boolean back = false;
 
 
+    DcMotorEx frontRight    = null;
+    DcMotorEx backRight     = null;
+    DcMotorEx backLeft      = null;
+    DcMotorEx frontLeft     = null;
+//    DcMotorEx encoder       = null;
+//    DcMotorEx strafeEncoder = null;
+//    DcMotorEx turnEncoder   = null;
+
+    DcMotorEx armDrive = null;
+
+    DcMotorEx leftSlide = null;
+    DcMotorEx rightSlide = null;
+
+    //Servo clawRotate = null;
+    Servo claw = null;
+    Servo clawElbow = null;
+    Servo clawWrist = null;
+
+
     //Drive Constants
     int tickPerIn = 1000;
 
@@ -19,44 +40,74 @@ public class RobotCommands {
     int armBack = 1500;
 
 
+    public void init(HardwareSoftware robot){
+        frontRight    = robot.frontRight();
+        backRight     = robot.backRight();
+        backLeft      = robot.backLeft();
+        frontLeft     = robot.frontLeft();
+//    Dcx encoder       = null;
+//    Dcx strafeEncoder = null;
+//    Dcx turnEncoder   = null;
+
+        armDrive = robot.armDrive();
+
+        leftSlide = leftSlide;
+        rightSlide = rightSlide;
+
+        claw = robot.claw();
+        clawElbow = robot.clawElbow();
+        clawWrist = robot.clawElbow();
+
+    }
     public void Drive(int speed, int distance){
-        robot.frontLeft().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.frontRight().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backLeft().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backRight().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft().setTargetPosition(distance*tickPerIn);
-        robot.frontRight().setTargetPosition(distance*tickPerIn);
-        robot.backLeft().setTargetPosition(distance*tickPerIn);
-        robot.backRight().setTargetPosition(distance*tickPerIn);
+        frontLeft.setTargetPosition(distance*tickPerIn);
+        frontRight.setTargetPosition(distance*tickPerIn);
+        backLeft.setTargetPosition(distance*tickPerIn);
+        backRight.setTargetPosition(distance*tickPerIn);
 
-        robot.frontLeft().setVelocity(speed);
-        robot.frontRight().setVelocity(speed);
-        robot.backLeft().setVelocity(speed);
-        robot.backRight().setVelocity(speed);
+        frontLeft.setVelocity(speed);
+        frontRight.setVelocity(speed);
+        backLeft.setVelocity(speed);
+        backRight.setVelocity(speed);
 
 
     }
 
     public void armOut(){
-        robot.armDrive().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armDrive().setTargetPosition(armOut);
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setTargetPosition(armOut);
         out = true;
 
-        robot.armDrive().setVelocity(2000);
+        armDrive.setVelocity(2000);
     }
     public void armBack(){
-        robot.armDrive().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armDrive().setTargetPosition(armBack);
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setTargetPosition(armBack);
 
 
-        robot.armDrive().setVelocity(2000);
+        armDrive.setVelocity(2000);
     }
 
 
     public void armHome(){
-        robot.armDrive().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.armDrive().setTargetPosition(10);
-        home = true;
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setTargetPosition(10);
+
+    }
+
+    public void slideChange(int height){
+        leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        leftSlide.setTargetPosition(height);
+        rightSlide.setTargetPosition(height);
+
+        leftSlide.setVelocity(2000);
+        rightSlide.setVelocity(2000);
     }
 }
