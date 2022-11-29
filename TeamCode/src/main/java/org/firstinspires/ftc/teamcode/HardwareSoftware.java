@@ -58,6 +58,7 @@ public class HardwareSoftware {
 
         leftSlide.setDirection(DcMotorEx.Direction.REVERSE);
         rightSlide.setDirection(DcMotorEx.Direction.REVERSE);
+        armDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         claw = hw.get(Servo.class, "claw");

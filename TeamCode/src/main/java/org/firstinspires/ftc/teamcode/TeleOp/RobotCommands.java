@@ -14,30 +14,30 @@ public class RobotCommands {
     public boolean back = false;
 
 
-    DcMotorEx frontRight    = null;
-    DcMotorEx backRight     = null;
-    DcMotorEx backLeft      = null;
-    DcMotorEx frontLeft     = null;
+    DcMotorEx frontRight   ;
+    DcMotorEx backRight    ;
+    DcMotorEx backLeft     ;
+    DcMotorEx frontLeft    ;
 //    DcMotorEx encoder       = null;
 //    DcMotorEx strafeEncoder = null;
 //    DcMotorEx turnEncoder   = null;
 
-    DcMotorEx armDrive = null;
+    DcMotorEx armDrive ;
 
-    DcMotorEx leftSlide = null;
-    DcMotorEx rightSlide = null;
+    DcMotorEx leftSlide;
+    DcMotorEx rightSlide;
 
     //Servo clawRotate = null;
-    Servo claw = null;
-    Servo clawElbow = null;
-    Servo clawWrist = null;
+    Servo claw;
+    Servo clawElbow;
+    Servo clawWrist;
 
 
     //Drive Constants
     int tickPerIn = 1000;
 
-    int armOut = 1000;
-    int armBack = 1500;
+    int armOut = 500;
+    int armBack = 750;
 
 
     public void init(HardwareSoftware robot){
@@ -45,6 +45,9 @@ public class RobotCommands {
         backRight     = robot.backRight();
         backLeft      = robot.backLeft();
         frontLeft     = robot.frontLeft();
+
+        leftSlide = robot.leftSlide();
+        rightSlide = robot.rightSlide();
 //    Dcx encoder       = null;
 //    Dcx strafeEncoder = null;
 //    Dcx turnEncoder   = null;
@@ -60,15 +63,17 @@ public class RobotCommands {
 
     }
     public void Drive(int speed, int distance){
+        frontLeft.setTargetPosition(distance*tickPerIn);
+        frontRight.setTargetPosition(distance*tickPerIn);
+        backLeft.setTargetPosition(distance*tickPerIn);
+        backRight.setTargetPosition(distance*tickPerIn);
+
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setTargetPosition(distance*tickPerIn);
-        frontRight.setTargetPosition(distance*tickPerIn);
-        backLeft.setTargetPosition(distance*tickPerIn);
-        backRight.setTargetPosition(distance*tickPerIn);
+
 
         frontLeft.setVelocity(speed);
         frontRight.setVelocity(speed);
@@ -79,15 +84,18 @@ public class RobotCommands {
     }
 
     public void armOut(){
-        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armDrive.setTargetPosition(armOut);
-        out = true;
+
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
 
         armDrive.setVelocity(2000);
     }
     public void armBack(){
-        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armDrive.setTargetPosition(armBack);
+
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
 
 
         armDrive.setVelocity(2000);
@@ -95,19 +103,23 @@ public class RobotCommands {
 
 
     public void armHome(){
-        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armDrive.setTargetPosition(10);
+
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        armDrive.setVelocity(2000);
 
     }
 
     public void slideChange(int height){
-        leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         leftSlide.setTargetPosition(height);
         rightSlide.setTargetPosition(height);
 
-        leftSlide.setVelocity(2000);
-        rightSlide.setVelocity(2000);
+
+        leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+
     }
 }

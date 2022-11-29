@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
+
+
 
 @TeleOp(name = "Comp Tele")
 public class compTeleop extends OpMode {
@@ -16,7 +20,8 @@ public class compTeleop extends OpMode {
     enum ArmPos{
         HOME,
         BACK,
-        OUT
+        OUT,
+        Nothing
     }
 
     enum ArmMove{
@@ -32,11 +37,12 @@ public class compTeleop extends OpMode {
         Low,
         Middle,
         High,
-        HighB
+        HighB,
+        Nothing
     }
 
-    slideHeight slide = slideHeight.Ground;
-    ArmPos pos = ArmPos.HOME;
+    slideHeight slide = slideHeight.Nothing;
+    ArmPos pos = ArmPos.Nothing;
     ArmPos prevPos = pos;
 
     int low = 500;
@@ -45,12 +51,13 @@ public class compTeleop extends OpMode {
 
     @Override
     public void init() {
+
         robot.init(hardwareMap);
     }
 
     @Override
     public void loop() {
-
+        commands.init(robot);
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = gamepad1.left_stick_y;
@@ -111,7 +118,7 @@ public class compTeleop extends OpMode {
         robot.backLeft().setPower(speeds[2]);
         robot.backRight().setPower(speeds[3]);
 
-        
+
 
         if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
@@ -134,26 +141,69 @@ public class compTeleop extends OpMode {
 
         switch(slide){
             case Ground:
-                commands.slideChange(10);
+                robot.leftSlide().setTargetPosition(10);
+                robot.rightSlide().setTargetPosition(10);
+
+
+                robot.leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
 
+
+
+
+
             case Low:
-                commands.slideChange(low);
+                leftSlide.setTargetPosition(height);
+                rightSlide.setTargetPosition(height);
+
+
+                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
 
             case Middle:
-                commands.slideChange(mid);
+                leftSlide.setTargetPosition(height);
+                rightSlide.setTargetPosition(height);
+
+
+                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
 
             case High:
-                commands.slideChange(high);
+                leftSlide.setTargetPosition(height);
+                rightSlide.setTargetPosition(height);
+
+
+                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
 
             case HighB:
-                commands.slideChange(high);
+                leftSlide.setTargetPosition(height);
+                rightSlide.setTargetPosition(height);
+
+
+                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armBack();
 
+            case Nothing:
+                robot.leftSlide().setTargetPosition(robot.leftSlide().getCurrentPosition());
+                robot.rightSlide().setTargetPosition(robot.rightSlide().getCurrentPosition());
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                break;
+
         }
+
+        robot.leftSlide().setVelocity(2000);
+        robot.rightSlide().setVelocity(2000);
+
+        telemetry.addData("Left Slide: ", robot.leftSlide().getCurrentPosition());
+        telemetry.addData("Right Slide: ", robot.rightSlide().getCurrentPosition());
+        telemetry.addData("arm: ", robot.armDrive().getCurrentPosition());
 
 
     }
