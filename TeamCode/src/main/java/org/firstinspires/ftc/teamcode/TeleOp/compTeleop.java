@@ -136,6 +136,13 @@ public class compTeleop extends OpMode {
             slide = slideHeight.High;
         }
 
+        if(gamepad1.left_bumper){
+            robot.claw().setPosition(1);
+        }
+        if(gamepad1.left_bumper){
+            robot.claw().setPosition(0);
+        }
+
 
 
 
@@ -145,49 +152,50 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setTargetPosition(10);
 
 
-                robot.leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
-
-
-
-
+                break;
 
             case Low:
-                leftSlide.setTargetPosition(height);
-                rightSlide.setTargetPosition(height);
+                robot.leftSlide().setTargetPosition(low);
+                robot.rightSlide().setTargetPosition(low);
 
 
-                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                break;
 
             case Middle:
-                leftSlide.setTargetPosition(height);
-                rightSlide.setTargetPosition(height);
+                robot.leftSlide().setTargetPosition(mid);
+                robot.rightSlide().setTargetPosition(mid);
 
 
-                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                break;
 
             case High:
-                leftSlide.setTargetPosition(height);
-                rightSlide.setTargetPosition(height);
+                robot.leftSlide().setTargetPosition(high);
+                robot.rightSlide().setTargetPosition(high);
 
 
-                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                break;
 
             case HighB:
-                leftSlide.setTargetPosition(height);
-                rightSlide.setTargetPosition(height);
+                robot.leftSlide().setTargetPosition(high);
+                robot.rightSlide().setTargetPosition(high);
 
 
-                leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armBack();
+                break;
 
             case Nothing:
                 robot.leftSlide().setTargetPosition(robot.leftSlide().getCurrentPosition());
@@ -201,9 +209,14 @@ public class compTeleop extends OpMode {
         robot.leftSlide().setVelocity(2000);
         robot.rightSlide().setVelocity(2000);
 
-        telemetry.addData("Left Slide: ", robot.leftSlide().getCurrentPosition());
-        telemetry.addData("Right Slide: ", robot.rightSlide().getCurrentPosition());
-        telemetry.addData("arm: ", robot.armDrive().getCurrentPosition());
+        telemetry.addData("Left Slide pos: ", robot.leftSlide().getCurrentPosition());
+        telemetry.addData("Right Slide pos: ", robot.rightSlide().getCurrentPosition());
+        telemetry.addData("arm pos: ", robot.armDrive().getCurrentPosition());
+
+        telemetry.addData("Front Right Motor: ", speeds[0]);
+        telemetry.addData("Front Left Motor: ", speeds[1]);
+        telemetry.addData("Back Right Motor: ", speeds[2]);
+        telemetry.addData("Back Left Motor: ", speeds[3]);
 
 
     }

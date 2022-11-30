@@ -89,7 +89,13 @@ public class RobotCommands {
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 
+
+
         armDrive.setVelocity(2000);
+
+        clawWrist.setPosition(1);
+        clawElbow.setPosition(0);
+
     }
     public void armBack(){
         armDrive.setTargetPosition(armBack);
@@ -99,6 +105,9 @@ public class RobotCommands {
 
 
         armDrive.setVelocity(2000);
+
+        clawWrist.setPosition(0);
+        clawElbow.setPosition(1);
     }
 
 
@@ -107,7 +116,12 @@ public class RobotCommands {
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
+        clawWrist.setPosition(0.5);
+        clawElbow.setPosition(0);
+
         armDrive.setVelocity(2000);
+
+
 
     }
 
