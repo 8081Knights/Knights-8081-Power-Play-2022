@@ -93,7 +93,7 @@ public class RobotCommands {
 
         armDrive.setVelocity(2000);
 
-        clawWrist.setPosition(1);
+        clawWrist.setPosition(0);
         clawElbow.setPosition(0);
 
     }
@@ -106,8 +106,8 @@ public class RobotCommands {
 
         armDrive.setVelocity(2000);
 
-        clawWrist.setPosition(0);
-        clawElbow.setPosition(1);
+        clawWrist.setPosition(1);
+        clawElbow.setPosition(0);
     }
 
 
@@ -116,10 +116,10 @@ public class RobotCommands {
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        clawWrist.setPosition(0.5);
-        clawElbow.setPosition(0);
+        clawWrist.setPosition(0);
+        clawElbow.setPosition(0.5);
 
-        armDrive.setVelocity(2000);
+        armDrive.setVelocity(1000);
 
 
 
@@ -136,4 +136,5 @@ public class RobotCommands {
 
 
     }
+
 }

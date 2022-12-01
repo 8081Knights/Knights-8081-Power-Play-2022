@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-public class AprilTagDetectionPipeline {
     /*
      * Copyright (c) 2021 OpenFTC Team
      *
@@ -21,8 +20,6 @@ public class AprilTagDetectionPipeline {
      * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
      * SOFTWARE.
      */
-
-package org.firstinspires.ftc.teamcode;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -313,4 +310,3 @@ import java.util.ArrayList;
             }
         }
     }
-}

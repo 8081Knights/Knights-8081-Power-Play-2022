@@ -38,12 +38,14 @@ public class compTeleop extends OpMode {
         Middle,
         High,
         HighB,
-        Nothing
+        Nothing,
+        Home,
+        score
     }
 
     slideHeight slide = slideHeight.Nothing;
     ArmPos pos = ArmPos.Nothing;
-    ArmPos prevPos = pos;
+    slideHeight prevPos = slide;
 
     int low = 500;
     int mid = 1000;
@@ -120,27 +122,36 @@ public class compTeleop extends OpMode {
 
 
 
-        if(gamepad1.dpad_right){
+        if (gamepad1.a){
+            slide = slideHeight.Home;
+        }
+        else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
         }
-        if(gamepad2.dpad_right){
+        else if(gamepad2.dpad_right){
             slide = slideHeight.HighB;
         }
-        if(gamepad1.dpad_down || gamepad2.dpad_down){
+        else if(gamepad1.dpad_down || gamepad2.dpad_down){
             slide = slideHeight.Low;
         }
-        if(gamepad1.dpad_left || gamepad2.dpad_left){
+        else if(gamepad1.dpad_left || gamepad2.dpad_left){
             slide = slideHeight.Middle;
         }
-        if(gamepad1.dpad_up || gamepad2.dpad_up){
+        else if(gamepad1.dpad_up || gamepad2.dpad_up){
             slide = slideHeight.High;
         }
 
-        if(gamepad1.left_bumper){
+
+
+        else if(gamepad1.left_bumper){
             robot.claw().setPosition(1);
         }
-        if(gamepad1.left_bumper){
+        else if(gamepad1.right_bumper){
             robot.claw().setPosition(0);
+        }
+
+        else if(gamepad1.right_trigger > .1){
+            slide = slideHeight.score;
         }
 
 
@@ -155,6 +166,8 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                prevPos = slide;
+
                 break;
 
             case Low:
@@ -165,6 +178,8 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                prevPos = slide;
+
                 break;
 
             case Middle:
@@ -175,6 +190,8 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                prevPos = slide;
+
                 break;
 
             case High:
@@ -185,6 +202,8 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
+                prevPos = slide;
+
                 break;
 
             case HighB:
@@ -195,6 +214,8 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armBack();
+                prevPos = slide;
+
                 break;
 
             case Nothing:
@@ -202,21 +223,86 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setTargetPosition(robot.rightSlide().getCurrentPosition());
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+                prevPos = slide;
+
                 break;
+
+            case Home:
+                robot.leftSlide().setTargetPosition(10);
+                robot.rightSlide().setTargetPosition(10);
+
+
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                commands.armHome();
+
+                prevPos = slide;
+                break;
+
+            case score:
+                switch(prevPos){
+                    case High:
+                        robot.leftSlide().setTargetPosition(high - 50);
+                        robot.rightSlide().setTargetPosition(high - 50);
+
+
+                        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.leftSlide().setVelocity(2000);
+                        robot.rightSlide().setVelocity(2000);
+
+                        commands.armOut();
+
+                        robot.claw().setPosition(0);
+
+                    case Middle:
+                        robot.leftSlide().setTargetPosition(mid - 50);
+                        robot.rightSlide().setTargetPosition(mid - 50);
+
+
+                        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.leftSlide().setVelocity(2000);
+                        robot.rightSlide().setVelocity(2000);
+
+                        commands.armOut();
+
+                        robot.claw().setPosition(0);
+
+                    case Low:
+                        robot.leftSlide().setTargetPosition(low - 50);
+                        robot.rightSlide().setTargetPosition(low - 50);
+
+
+                        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.leftSlide().setVelocity(2000);
+                        robot.rightSlide().setVelocity(2000);
+
+                        commands.armOut();
+
+                        robot.claw().setPosition(0);
+
+                    default:
+                        break;
+
+                }
+
 
         }
 
         robot.leftSlide().setVelocity(2000);
         robot.rightSlide().setVelocity(2000);
 
-        telemetry.addData("Left Slide pos: ", robot.leftSlide().getCurrentPosition());
-        telemetry.addData("Right Slide pos: ", robot.rightSlide().getCurrentPosition());
-        telemetry.addData("arm pos: ", robot.armDrive().getCurrentPosition());
-
         telemetry.addData("Front Right Motor: ", speeds[0]);
         telemetry.addData("Front Left Motor: ", speeds[1]);
         telemetry.addData("Back Right Motor: ", speeds[2]);
         telemetry.addData("Back Left Motor: ", speeds[3]);
+
+        telemetry.addData("Claw Position: ", robot.claw().getPosition());
+        telemetry.addData("Claw Wrist: ", robot.clawWrist().getPosition());
+        telemetry.addData("Claw Elbow: ", robot.clawElbow().getPosition());
 
 
     }

@@ -81,6 +81,7 @@ public class HardwareSoftware {
 
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armDrive.setTargetPositionTolerance(5);
 
         leftSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -95,6 +96,8 @@ public class HardwareSoftware {
 //        strafeEncoder.setPower(0);
 //        turnEncoder.setPower(0);
 
+        armDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         armDrive.setPower(0);
 
@@ -102,6 +105,8 @@ public class HardwareSoftware {
 
         leftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
 
 
 
