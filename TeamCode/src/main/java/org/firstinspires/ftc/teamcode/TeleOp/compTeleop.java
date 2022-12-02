@@ -114,11 +114,14 @@ public class compTeleop extends OpMode {
         if (gamepad1.a){
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(1);
+            robot.clawGrab().setPosition(0);
 
         }
         else if(gamepad1.b){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.5);
+            robot.clawElbow().setPosition(0.4);
+            robot.clawGrab().setPosition(0);
+
         }
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
@@ -149,7 +152,7 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.clawGrab().setPosition(0.6);
+            robot.clawGrab().setPosition(0.5);
         }
         else if(gamepad1.right_bumper){
             robot.clawGrab().setPosition(0);
@@ -163,6 +166,10 @@ public class compTeleop extends OpMode {
 //        else if(gamepad1.b){
 //            slide = slideHeight.Pickup;
 //        }
+
+        else if(gamepad2.x){
+            slide = slideHeight.Pickup;
+        }
 
         else if(gamepad1.right_trigger > .1){
             slide = slideHeight.score;
@@ -332,14 +339,49 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                        robot.leftSlide().setVelocity(2000);
-                        robot.rightSlide().setVelocity(2000);
+
 
                         commands.armOut();
 
-                        robot.clawGrab().setPosition(1);
 
-                        break;
+                        if(robot.leftSlide().getCurrentPosition() == high - 50 && robot.rightSlide().getCurrentPosition() == high - 50){
+                            robot.clawGrab().setPosition(1);
+                            break;
+
+                        }
+                        else{
+                            robot.leftSlide().setVelocity(2000);
+                            robot.rightSlide().setVelocity(2000);
+                            break;
+                        }
+
+
+
+                    case HighB:
+
+
+                        robot.leftSlide().setTargetPosition(high - 50);
+                        robot.rightSlide().setTargetPosition(high - 50);
+
+
+                        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+
+                        commands.armBack();
+
+
+                        if(robot.leftSlide().getCurrentPosition() == high - 50 && robot.rightSlide().getCurrentPosition() == high - 50){
+                            robot.clawGrab().setPosition(1);
+                            break;
+
+                        }
+                        else{
+                            robot.leftSlide().setVelocity(2000);
+                            robot.rightSlide().setVelocity(2000);
+                            break;
+                        }
+
 
                     case Middle:
                         robot.leftSlide().setTargetPosition(mid - 50);
@@ -348,14 +390,22 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                        robot.leftSlide().setVelocity(2000);
-                        robot.rightSlide().setVelocity(2000);
+
 
                         commands.armOut();
 
-                        robot.clawGrab().setPosition(1);
 
-                        break;
+
+                        if(robot.leftSlide().getCurrentPosition() == mid - 50 && robot.rightSlide().getCurrentPosition() == mid - 50){
+                            robot.clawGrab().setPosition(1);
+                            break;
+
+                        }
+                        else{
+                            robot.leftSlide().setVelocity(2000);
+                            robot.rightSlide().setVelocity(2000);
+                            break;
+                        }
 
 
                     case Low:
