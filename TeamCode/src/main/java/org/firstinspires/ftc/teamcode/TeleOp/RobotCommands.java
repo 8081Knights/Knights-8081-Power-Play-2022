@@ -37,7 +37,8 @@ public class RobotCommands {
     int tickPerIn = 1000;
 
     int armOut = 500;
-    int armBack = 750;
+    int armHigh = 1000;
+    int armBack = 2000;
 
 
     public void init(HardwareSoftware robot){
@@ -93,8 +94,22 @@ public class RobotCommands {
 
         armDrive.setVelocity(2000);
 
-        clawWrist.setPosition(0);
-        clawElbow.setPosition(0);
+//        clawWrist.setPosition(0);
+//        clawElbow.setPosition(0);
+
+    }
+    public void armHigh(){
+        armDrive.setTargetPosition(armHigh);
+
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+
+
+
+        armDrive.setVelocity(2000);
+//
+//        clawWrist.setPosition(0);
+//        clawElbow.setPosition(0);
 
     }
     public void armBack(){
@@ -106,8 +121,8 @@ public class RobotCommands {
 
         armDrive.setVelocity(2000);
 
-        clawWrist.setPosition(1);
-        clawElbow.setPosition(0);
+//        clawWrist.setPosition(1);
+//        clawElbow.setPosition(0);
     }
 
 
@@ -117,7 +132,7 @@ public class RobotCommands {
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
 //        clawWrist.setPosition(0);
-        clawElbow.setPosition(0.5);
+//        clawElbow.setPosition(0.5);
 
         if(armDrive.getCurrentPosition() == 0){
             return;

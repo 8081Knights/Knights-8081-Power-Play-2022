@@ -111,21 +111,33 @@ public class compTeleop extends OpMode {
 
         if (gamepad1.a){
             slide = slideHeight.Home;
+            robot.clawElbow().setPosition(0.5);
+
         }
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
+            robot.clawWrist().setPosition(0);
+            robot.clawElbow().setPosition(0);
         }
         else if(gamepad2.dpad_right){
             slide = slideHeight.HighB;
+            robot.clawWrist().setPosition(1);
+            robot.clawElbow().setPosition(0);
         }
         else if(gamepad1.dpad_down || gamepad2.dpad_down){
             slide = slideHeight.Low;
+            robot.clawWrist().setPosition(0);
+            robot.clawElbow().setPosition(0);
         }
         else if(gamepad1.dpad_left || gamepad2.dpad_left){
             slide = slideHeight.Middle;
+            robot.clawWrist().setPosition(0);
+            robot.clawElbow().setPosition(0);
         }
         else if(gamepad1.dpad_up || gamepad2.dpad_up){
             slide = slideHeight.High;
+            robot.clawWrist().setPosition(0);
+            robot.clawElbow().setPosition(0);
         }
 
 
@@ -139,9 +151,9 @@ public class compTeleop extends OpMode {
         else if(gamepad1.y){
             robot.clawElbow().setPosition(0.5);
         }
-        else if(gamepad1.b){
-            slide = slideHeight.Pickup;
-        }
+//        else if(gamepad1.b){
+//            slide = slideHeight.Pickup;
+//        }
 
 //        else if(gamepad1.right_trigger > .1){
 //            slide = slideHeight.score;
@@ -220,7 +232,7 @@ public class compTeleop extends OpMode {
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armOut();
+                commands.armHigh();
                 prevPos = slide;
 
                 if(robot.leftSlide().getCurrentPosition() == high && robot.rightSlide().getCurrentPosition() == high){
@@ -278,15 +290,18 @@ public class compTeleop extends OpMode {
                     break;
                 }
             case Pickup:
-                robot.leftSlide().setTargetPosition(robot.leftSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10);
-                robot.rightSlide().setTargetPosition(robot.rightSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10);
+                int targetLeft = robot.leftSlide().getCurrentPosition() + (int)gamepad2.right_trigger*100;
+                int targetRight = robot.rightSlide().getCurrentPosition() + (int)gamepad2.right_trigger*100;
+
+                robot.leftSlide().setTargetPosition(targetLeft);
+                robot.rightSlide().setTargetPosition(targetRight);
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
                 commands.armHome();
                 prevPos = slide;
 
-                if(robot.leftSlide().getCurrentPosition() == robot.leftSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10 && robot.rightSlide().getCurrentPosition() == (robot.rightSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10)){
+                if(robot.leftSlide().getCurrentPosition() == targetLeft && robot.rightSlide().getCurrentPosition() == targetRight){
                     break;
                 }
                 else{
