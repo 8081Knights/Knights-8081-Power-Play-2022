@@ -17,6 +17,8 @@ public class compTeleop extends OpMode {
 
     boolean aPress = false;
 
+    double speedMult = 0.85;
+
 
 
     enum slideHeight{
@@ -34,8 +36,8 @@ public class compTeleop extends OpMode {
     slideHeight slide = slideHeight.Nothing;
     slideHeight prevPos = slide;
 
-    int low = 500;
-    int mid = 1000;
+    int low = 300;
+    int mid = 1100;
     int high = 1500;
 
     @Override
@@ -102,17 +104,21 @@ public class compTeleop extends OpMode {
         }
 
         // apply the calculated values to the motors.
-        robot.frontLeft().setPower(speeds[0]);
-        robot.frontRight().setPower(speeds[1]);
-        robot.backLeft().setPower(speeds[2]);
-        robot.backRight().setPower(speeds[3]);
+        robot.frontLeft().setPower(speeds[0]*speedMult);
+        robot.frontRight().setPower(speeds[1]*speedMult);
+        robot.backLeft().setPower(speeds[2]*speedMult);
+        robot.backRight().setPower(speeds[3]*speedMult);
 
 
 
         if (gamepad1.a){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.5);
+            robot.clawElbow().setPosition(1);
 
+        }
+        else if(gamepad1.b){
+            slide = slideHeight.Home;
+            robot.clawElbow().setPosition(0.5);
         }
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
@@ -122,7 +128,7 @@ public class compTeleop extends OpMode {
         else if(gamepad2.dpad_right){
             slide = slideHeight.HighB;
             robot.clawWrist().setPosition(1);
-            robot.clawElbow().setPosition(0);
+            robot.clawElbow().setPosition(1);
         }
         else if(gamepad1.dpad_down || gamepad2.dpad_down){
             slide = slideHeight.Low;
@@ -149,15 +155,18 @@ public class compTeleop extends OpMode {
             robot.clawGrab().setPosition(0);
         }
         else if(gamepad1.y){
-            robot.clawElbow().setPosition(0.5);
+            speedMult = .2;
+        }
+        else if(gamepad1.x){
+            speedMult = 0.85;
         }
 //        else if(gamepad1.b){
 //            slide = slideHeight.Pickup;
 //        }
 
-//        else if(gamepad1.right_trigger > .1){
-//            slide = slideHeight.score;
-//        }
+        else if(gamepad1.right_trigger > .1){
+            slide = slideHeight.score;
+        }
 
 
 
@@ -328,7 +337,7 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.clawGrab().setPosition(0);
+                        robot.clawGrab().setPosition(1);
 
                         break;
 
@@ -344,7 +353,7 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.clawGrab().setPosition(0);
+                        robot.clawGrab().setPosition(1);
 
                         break;
 
@@ -361,7 +370,7 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.clawGrab().setPosition(0);
+                        robot.clawGrab().setPosition(1);
 
                         break;
 

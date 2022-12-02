@@ -37,8 +37,8 @@ public class RobotCommands {
     int tickPerIn = 1000;
 
     int armOut = 500;
-    int armHigh = 1000;
-    int armBack = 2000;
+    int armHigh = 700;
+    int armBack = 1250;
 
 
     public void init(HardwareSoftware robot){
@@ -119,7 +119,7 @@ public class RobotCommands {
 
 
 
-        armDrive.setVelocity(2000);
+        armDrive.setVelocity(500);
 
 //        clawWrist.setPosition(1);
 //        clawElbow.setPosition(0);
@@ -139,8 +139,7 @@ public class RobotCommands {
 
         }
         else{
-            leftSlide.setVelocity(2000);
-            rightSlide.setVelocity(2000);
+            armDrive.setVelocity(2000);
             return;
         }
 
