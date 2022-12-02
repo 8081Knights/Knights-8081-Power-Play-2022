@@ -248,7 +248,7 @@ public class DriveTrainIntf {
         // Use special methods to determine whether the encoder count
         // must be added or subtracted from the encoder start value
         long  left_count  = addCountToEncoder(vel_LR, left, count);
-        long  right_count = addCountToEncoder(vel_RR, left, count);
+        long  right_count = addCountToEncoder(vel_RR, right, count);
 
         // set timer for maximum loop running
         ElapsedTime eTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
