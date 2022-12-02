@@ -9,6 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+
 public class HardwareSoftware {
 
     HardwareMap hw = null;
@@ -29,6 +33,8 @@ public class HardwareSoftware {
     Servo clawGrab = null;
     Servo clawElbow = null;
     Servo clawWrist = null;
+
+    OpenCvCamera frontWebCam;
 
     int tickPerIn = 1000;
     int armMax = 1000;
@@ -108,7 +114,8 @@ public class HardwareSoftware {
         leftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-
+        int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
+        frontWebCam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
 
 
 
@@ -135,6 +142,8 @@ public class HardwareSoftware {
     public DcMotorEx backLeft(){
         return backLeft;
     }
+
+    public OpenCvCamera getFrontWebCam() { return frontWebCam; }
 //
 //    public DcMotorEx encoder() {return encoder;}
 //
