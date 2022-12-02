@@ -116,7 +116,7 @@ public class RobotCommands {
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        clawWrist.setPosition(0);
+//        clawWrist.setPosition(0);
         clawElbow.setPosition(0.5);
 
         if(armDrive.getCurrentPosition() == 0){
@@ -124,8 +124,8 @@ public class RobotCommands {
 
         }
         else{
-            robot.leftSlide().setVelocity(2000);
-            robot.rightSlide().setVelocity(2000);
+            leftSlide.setVelocity(2000);
+            rightSlide.setVelocity(2000);
             return;
         }
 

@@ -17,20 +17,7 @@ public class compTeleop extends OpMode {
 
     boolean aPress = false;
 
-    enum ArmPos{
-        HOME,
-        BACK,
-        OUT,
-        Nothing
-    }
 
-    enum ArmMove{
-        H2O,
-        H2B,
-        O2H,
-        B2H,
-        O2B
-    }
 
     enum slideHeight{
         Ground,
@@ -40,11 +27,11 @@ public class compTeleop extends OpMode {
         HighB,
         Nothing,
         Home,
-        score
+        score,
+        Pickup
     }
 
     slideHeight slide = slideHeight.Nothing;
-    ArmPos pos = ArmPos.Nothing;
     slideHeight prevPos = slide;
 
     int low = 500;
@@ -144,18 +131,21 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.clawGrab().setPosition(0.8);
+            robot.clawGrab().setPosition(0.6);
         }
         else if(gamepad1.right_bumper){
             robot.clawGrab().setPosition(0);
         }
+        else if(gamepad1.y){
+            robot.clawElbow().setPosition(0.5);
+        }
         else if(gamepad1.b){
-            robot.clawGrab().setPosition(1);
+            slide = slideHeight.Pickup;
         }
 
-        else if(gamepad1.right_trigger > .1){
-            slide = slideHeight.score;
-        }
+//        else if(gamepad1.right_trigger > .1){
+//            slide = slideHeight.score;
+//        }
 
 
 
@@ -287,6 +277,24 @@ public class compTeleop extends OpMode {
                     robot.rightSlide().setVelocity(2000);
                     break;
                 }
+            case Pickup:
+                robot.leftSlide().setTargetPosition(robot.leftSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10);
+                robot.rightSlide().setTargetPosition(robot.rightSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10);
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+                commands.armHome();
+                prevPos = slide;
+
+                if(robot.leftSlide().getCurrentPosition() == robot.leftSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10 && robot.rightSlide().getCurrentPosition() == (robot.rightSlide().getCurrentPosition() + (int)gamepad2.right_trigger*10)){
+                    break;
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+
 
 
             case score:
