@@ -28,7 +28,7 @@ public class RobotCommands {
     DcMotorEx rightSlide;
 
     //Servo clawRotate = null;
-    Servo claw;
+    Servo clawGrab;
     Servo clawElbow;
     Servo clawWrist;
 
@@ -57,7 +57,7 @@ public class RobotCommands {
         leftSlide = leftSlide;
         rightSlide = rightSlide;
 
-        claw = robot.claw();
+        clawGrab = robot.clawGrab();
         clawElbow = robot.clawElbow();
         clawWrist = robot.clawElbow();
 
@@ -112,14 +112,22 @@ public class RobotCommands {
 
 
     public void armHome(){
-        armDrive.setTargetPosition(10);
+        armDrive.setTargetPosition(0);
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         clawWrist.setPosition(0);
         clawElbow.setPosition(0.5);
 
-        armDrive.setVelocity(1000);
+        if(armDrive.getCurrentPosition() == 0){
+            return;
+
+        }
+        else{
+            robot.leftSlide().setVelocity(2000);
+            robot.rightSlide().setVelocity(2000);
+            return;
+        }
 
 
 

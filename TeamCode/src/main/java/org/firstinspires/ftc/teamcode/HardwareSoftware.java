@@ -26,7 +26,7 @@ public class HardwareSoftware {
     DcMotorEx rightSlide = null;
 
     //Servo clawRotate = null;
-    Servo claw = null;
+    Servo clawGrab = null;
     Servo clawElbow = null;
     Servo clawWrist = null;
 
@@ -61,7 +61,7 @@ public class HardwareSoftware {
         armDrive.setDirection(DcMotorEx.Direction.REVERSE);
 
 
-        claw = hw.get(Servo.class, "claw");
+        clawGrab = hw.get(Servo.class, "claw");
         clawWrist = hw.get(Servo.class, "clawWrist");
         clawElbow = hw.get(Servo.class, "clawElbow");
 
@@ -85,6 +85,8 @@ public class HardwareSoftware {
 
         leftSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftSlide.setTargetPositionTolerance(5);
+        rightSlide.setTargetPositionTolerance(5);
 
 
 
@@ -148,7 +150,7 @@ public class HardwareSoftware {
 
     //public Servo clawRotate(){return clawRotate;}
 
-    public Servo claw(){return claw;}
+    public Servo clawGrab(){return clawGrab;}
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
 

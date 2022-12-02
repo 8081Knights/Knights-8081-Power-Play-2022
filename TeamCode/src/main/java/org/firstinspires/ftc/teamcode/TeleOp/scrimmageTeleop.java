@@ -105,10 +105,10 @@ public class scrimmageTeleop extends OpMode {
 //        robot.backLeft(  ).setPower(v4);
 
         if(gamepad2.a){
-            robot.claw().setPosition(1);
+            robot.clawGrab().setPosition(1);
         }
         if(gamepad2.b){
-            robot.claw().setPosition(0.4);
+            robot.clawGrab().setPosition(0.4);
         }
 
 
@@ -155,6 +155,8 @@ public class scrimmageTeleop extends OpMode {
 
 
         if(l){
+
+
             robot.leftSlide().setTargetPosition(low);
             robot.rightSlide().setTargetPosition(low);
 

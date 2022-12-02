@@ -144,10 +144,13 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.claw().setPosition(1);
+            robot.clawGrab().setPosition(0.8);
         }
         else if(gamepad1.right_bumper){
-            robot.claw().setPosition(0);
+            robot.clawGrab().setPosition(0);
+        }
+        else if(gamepad1.b){
+            robot.clawGrab().setPosition(1);
         }
 
         else if(gamepad1.right_trigger > .1){
@@ -159,8 +162,8 @@ public class compTeleop extends OpMode {
 
         switch(slide){
             case Ground:
-                robot.leftSlide().setTargetPosition(10);
-                robot.rightSlide().setTargetPosition(10);
+                robot.leftSlide().setTargetPosition(0);
+                robot.rightSlide().setTargetPosition(0);
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -168,7 +171,16 @@ public class compTeleop extends OpMode {
                 commands.armOut();
                 prevPos = slide;
 
-                break;
+                if(robot.leftSlide().getCurrentPosition() == 0 && robot.rightSlide().getCurrentPosition() == 0){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+
 
             case Low:
                 robot.leftSlide().setTargetPosition(low);
@@ -179,8 +191,17 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
                 prevPos = slide;
+                robot.leftSlide().setVelocity(2000);
+                robot.rightSlide().setVelocity(2000);
+                if(robot.leftSlide().getCurrentPosition() ==  low && robot.rightSlide().getCurrentPosition() == low){
+                    break;
 
-                break;
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
 
             case Middle:
                 robot.leftSlide().setTargetPosition(mid);
@@ -191,10 +212,18 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armOut();
                 prevPos = slide;
+                if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
+                    break;
 
-                break;
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
 
             case High:
+
                 robot.leftSlide().setTargetPosition(high);
                 robot.rightSlide().setTargetPosition(high);
 
@@ -204,7 +233,15 @@ public class compTeleop extends OpMode {
                 commands.armOut();
                 prevPos = slide;
 
-                break;
+                if(robot.leftSlide().getCurrentPosition() == high && robot.rightSlide().getCurrentPosition() == high){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
 
             case HighB:
                 robot.leftSlide().setTargetPosition(high);
@@ -215,6 +252,8 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armBack();
                 prevPos = slide;
+                robot.leftSlide().setVelocity(2000);
+                robot.rightSlide().setVelocity(2000);
 
                 break;
 
@@ -229,20 +268,32 @@ public class compTeleop extends OpMode {
                 break;
 
             case Home:
-                robot.leftSlide().setTargetPosition(10);
-                robot.rightSlide().setTargetPosition(10);
+
+                robot.leftSlide().setTargetPosition(0);
+                robot.rightSlide().setTargetPosition(0);
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armHome();
-
                 prevPos = slide;
-                break;
+
+                if(robot.leftSlide().getCurrentPosition() == 0 && robot.rightSlide().getCurrentPosition() == 0){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+
 
             case score:
                 switch(prevPos){
                     case High:
+
+
                         robot.leftSlide().setTargetPosition(high - 50);
                         robot.rightSlide().setTargetPosition(high - 50);
 
@@ -254,7 +305,9 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.claw().setPosition(0);
+                        robot.clawGrab().setPosition(0);
+
+                        break;
 
                     case Middle:
                         robot.leftSlide().setTargetPosition(mid - 50);
@@ -268,7 +321,10 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.claw().setPosition(0);
+                        robot.clawGrab().setPosition(0);
+
+                        break;
+
 
                     case Low:
                         robot.leftSlide().setTargetPosition(low - 50);
@@ -282,9 +338,13 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        robot.claw().setPosition(0);
+                        robot.clawGrab().setPosition(0);
+
+                        break;
+
 
                     default:
+                        slide = prevPos;
                         break;
 
                 }
@@ -292,15 +352,14 @@ public class compTeleop extends OpMode {
 
         }
 
-        robot.leftSlide().setVelocity(2000);
-        robot.rightSlide().setVelocity(2000);
+
 
         telemetry.addData("Front Right Motor: ", speeds[0]);
         telemetry.addData("Front Left Motor: ", speeds[1]);
         telemetry.addData("Back Right Motor: ", speeds[2]);
         telemetry.addData("Back Left Motor: ", speeds[3]);
 
-        telemetry.addData("Claw Position: ", robot.claw().getPosition());
+        telemetry.addData("Claw Position: ", robot.clawGrab().getPosition());
         telemetry.addData("Claw Wrist: ", robot.clawWrist().getPosition());
         telemetry.addData("Claw Elbow: ", robot.clawElbow().getPosition());
 
