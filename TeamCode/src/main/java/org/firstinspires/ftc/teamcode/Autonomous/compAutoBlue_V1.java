@@ -203,28 +203,29 @@ public class compAutoBlue_V1 extends LinearOpMode
                 {
                     // Do autonomous code to move to Location 1
                     // move off the wall
-//                    drivetrain.Drive(0.60);
-//                    check_condition_Time( 725 );
-//                    // rotate about 45 degrees
-//                    drivetrain.RotateLeft(0.90);
-//                    check_condition_Time( 610 );
-//                    // move forward into location 1
-//                    drivetrain.Drive(0.50);
-//                    check_condition_Time( 500 );
-//                    drivetrain.stopAll();
-                    drivetrain.RotateLeft(.90);
-                    check_condition_Time(610);
                     drivetrain.Drive(0.60);
+                    check_condition_Time( 725 );
+                    // rotate about 45 degrees
+                    drivetrain.RotateLeft(0.90);
+                    check_condition_Time( 610 );
+                    // move forward into location 1
+                    drivetrain.Drive(0.50);
+                    check_condition_Time( 500 );
+                    drivetrain.stopAll();
 
 
                 }
                 break;
                 case ID_TAG_POSITION_2:
                 {
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
+                    int[] e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    //drivetrain.DriveByPower( 0.5, 0.5, 0.5, 0.5);
-                    check_condition_Time( 1200 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    //  was working with this => check_condition_Time( 1200 );
                     drivetrain.stopAll();
                 }
                 break;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.FusionFramework;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
+
+import java.util.concurrent.TimeUnit;
 
 public class DriveTrainIntf {
 
@@ -129,18 +132,26 @@ public class DriveTrainIntf {
         m_RRDrive.setPower(vel_RR);
     }
 
-    public boolean check_condition_Time(ElapsedTime eTimer, long time )
+    public boolean check_condition_Time(LinearOpMode caller, long time )
     {
-        while ( eTimer.milliseconds() < 8000 ) {  // maximum wait time is 8 seconds
-            if (eTimer.milliseconds() < time) {
-                long sleep_time = (long)((time - eTimer.milliseconds()) / 2); // sleep half of the wait time left
+        ElapsedTime eTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        eTimer.reset();
+
+        long now = eTimer.time(TimeUnit.MILLISECONDS);
+
+        while (( now < 8000 ) && (!caller.isStopRequested() ) ) {  // maximum wait time is 8 seconds
+
+            if ( now < time) {
 
                 try {
-                    Thread.sleep(sleep_time); // time condition has not yet been met
+                    Thread.sleep(25); // time condition has not yet been met
                 } catch (InterruptedException e) {
                     // ignore interrupt
                 }
+            } else {
+                break;
             }
+            now = eTimer.time(TimeUnit.MILLISECONDS);
         }
         return true;
     }
@@ -229,4 +240,116 @@ public class DriveTrainIntf {
             m_RRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT );
         }
     }
+
+    public boolean check_condition_encoder_distance(
+            LinearOpMode caller, long left, long right, long count) {
+
+        int[] vals = getBackEncoderValues( );
+        // Use special methods to determine whether the encoder count
+        // must be added or subtracted from the encoder start value
+        long  left_count  = addCountToEncoder(vel_LR, left, count);
+        long  right_count = addCountToEncoder(vel_RR, left, count);
+
+        // set timer for maximum loop running
+        ElapsedTime eTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        eTimer.reset();
+
+        do {
+            // We end if the right encoder has hit it's mark
+            if (right < right_count) {
+                // motor is moving forward, so encoder value should be greater than the target count
+                if (vals[RIGHT_ENCODER] >= right_count) {
+                    return true;
+                }
+            } else {
+                // motor is moving backwards, so encoder value should be less than the target count
+                if (vals[RIGHT_ENCODER] <= right_count) {
+                    return true;
+                }
+            }
+
+            // OR We end if the left encoder has hit it's mark
+            if (left < left_count) {
+                // motor is moving forward, so encoder value should be greater than the target count
+                if (vals[LEFT_ENCODER] >= left_count) {
+                    return true;
+                }
+            } else {
+                // motor is moving backwards, so encoder value should be less than the target count
+                if (vals[LEFT_ENCODER] <= left_count) {
+                    return true;
+                }
+            }
+            try {
+                Thread.sleep(20); // time condition has not yet been met
+            } catch (InterruptedException e) {
+                // ignore interrupt
+            }
+        } while ( (eTimer.milliseconds() < 8000 )  && (!caller.isStopRequested() ) );  // maximum wait time is 8 seconds
+        return true;
+    }
+
+
+
+    // This method calculates the correct value the encoder
+    // should be set to after "inc" ticks, taking into account the
+    // current velocity "vel" and whether is currently going forward
+    // or backwards
+    private long addCountToEncoder(double vel, long base, long inc) {
+        // determine if the robot is configured to go backwards
+        if ( currentlyInForwardDirection ) {
+            // Determine Left Drive count addition
+            if (vel > 0) { // we are moving left-rear forwards
+                base = base + inc;
+            } else {
+                base = base - inc; // subtract encoder count because motor is moving backwards
+            }
+
+        } else { // Robot is currently running in backwards-mode
+
+            if (vel > 0) { // we are moving left-rear backwards
+                base = base - inc;
+            } else {
+                base = base + inc; // subtract encoder count because motor is moving backwards
+            }
+        }
+        return base;
+    }
+
+    public static final int   LEFT_ENCODER = 0;
+    public static final int   RIGHT_ENCODER = 1;
+
+    public int[] getBackEncoderValues( ) {
+        int[] retVal = new int[2];
+        retVal[LEFT_ENCODER] = m_LRDrive.getCurrentPosition();
+        retVal[RIGHT_ENCODER] = m_RRDrive.getCurrentPosition();
+
+        return retVal;
+    }
+
+    public int[] getFrontEncoderValues( ) {
+        int[] retVal = new int[2];
+        retVal[LEFT_ENCODER] = m_LFDrive.getCurrentPosition();
+        retVal[RIGHT_ENCODER] = m_RFDrive.getCurrentPosition();
+
+        return retVal;
+    }
+
+    static final double WHEEL_DIAMETER = 9.5; // in centimeters
+    static final long DCMOTOR_TICK_COUNT = 560;
+    /*
+    Provide the difference between the Ending Encoder Value and the Starting Encoder Value
+    and this function calculates the distance travelled based on the wheel diameter
+    CAUTION: Wheel slippage and turning will cause this calculation to be erroneous, but is a fair estimate
+    If this function is used on non-driven or odometry wheels, this calculation will be more accurate
+     */
+    public float calcDistanceFromEncoderValue( int numberEncoderTicks ) {
+        return (float) (WHEEL_DIAMETER * (float)(numberEncoderTicks/DCMOTOR_TICK_COUNT));
+    }
+
+    public long calcEncoderValueFromCentimeters( double centimeters ) {
+        return Math.round(centimeters/WHEEL_DIAMETER) * DCMOTOR_TICK_COUNT;
+    }
+
+
 }

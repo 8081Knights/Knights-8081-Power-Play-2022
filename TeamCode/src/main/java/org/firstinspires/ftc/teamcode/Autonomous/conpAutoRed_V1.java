@@ -206,7 +206,7 @@ public class conpAutoRed_V1 extends LinearOpMode
                     drivetrain.Drive(0.60);
                     check_condition_Time( 725 );
                     // rotate about 45 degrees
-                    drivetrain.RotateRight(0.90);
+                    drivetrain.RotateLeft(0.90);
                     check_condition_Time( 610 );
                     // move forward into location 1
                     drivetrain.Drive(0.50);
@@ -234,7 +234,7 @@ public class conpAutoRed_V1 extends LinearOpMode
                     drivetrain.stopAll();
                     check_condition_Time( 500 );
                     // rotate about 45 degrees
-                    drivetrain.RotateLeft(0.90);
+                    drivetrain.RotateRight(0.90);
                     check_condition_Time( 610 );
                     // move forward into location 3
                     drivetrain.Drive(0.50);
