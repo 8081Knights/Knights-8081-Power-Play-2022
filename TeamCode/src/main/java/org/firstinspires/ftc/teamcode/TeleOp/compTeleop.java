@@ -119,8 +119,8 @@ public class compTeleop extends OpMode {
         }
         else if(gamepad1.b){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.4);
-            robot.clawGrab().setPosition(0);
+            robot.clawElbow().setPosition(0.45);
+//            robot.clawGrab().setPosition(0);
 
         }
         else if(gamepad1.dpad_right){
@@ -152,7 +152,7 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.clawGrab().setPosition(0.5);
+            robot.clawGrab().setPosition(0.45);
         }
         else if(gamepad1.right_bumper){
             robot.clawGrab().setPosition(0);
@@ -161,7 +161,7 @@ public class compTeleop extends OpMode {
             speedMult = .2;
         }
         else if(gamepad1.x){
-            speedMult = 0.85;
+            speedMult = 0.7;
         }
 //        else if(gamepad1.b){
 //            slide = slideHeight.Pickup;
@@ -333,8 +333,8 @@ public class compTeleop extends OpMode {
                     case High:
 
 
-                        robot.leftSlide().setTargetPosition(high - 50);
-                        robot.rightSlide().setTargetPosition(high - 50);
+                        robot.leftSlide().setTargetPosition(high - 100);
+                        robot.rightSlide().setTargetPosition(high - 100);
 
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -344,7 +344,7 @@ public class compTeleop extends OpMode {
                         commands.armOut();
 
 
-                        if(robot.leftSlide().getCurrentPosition() == high - 50 && robot.rightSlide().getCurrentPosition() == high - 50){
+                        if(robot.leftSlide().getCurrentPosition() == high - 100 && robot.rightSlide().getCurrentPosition() == high - 100){
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -360,8 +360,8 @@ public class compTeleop extends OpMode {
                     case HighB:
 
 
-                        robot.leftSlide().setTargetPosition(high - 50);
-                        robot.rightSlide().setTargetPosition(high - 50);
+                        robot.leftSlide().setTargetPosition(high - 100);
+                        robot.rightSlide().setTargetPosition(high - 100);
 
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -371,7 +371,7 @@ public class compTeleop extends OpMode {
                         commands.armBack();
 
 
-                        if(robot.leftSlide().getCurrentPosition() == high - 50 && robot.rightSlide().getCurrentPosition() == high - 50){
+                        if(robot.leftSlide().getCurrentPosition() == high - 100 && robot.rightSlide().getCurrentPosition() == high - 100){
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -384,8 +384,8 @@ public class compTeleop extends OpMode {
 
 
                     case Middle:
-                        robot.leftSlide().setTargetPosition(mid - 50);
-                        robot.rightSlide().setTargetPosition(mid - 50);
+                        robot.leftSlide().setTargetPosition(mid - 100);
+                        robot.rightSlide().setTargetPosition(mid - 100);
 
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -396,7 +396,7 @@ public class compTeleop extends OpMode {
 
 
 
-                        if(robot.leftSlide().getCurrentPosition() == mid - 50 && robot.rightSlide().getCurrentPosition() == mid - 50){
+                        if(robot.leftSlide().getCurrentPosition() == mid - 100 && robot.rightSlide().getCurrentPosition() == mid - 100){
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -409,8 +409,8 @@ public class compTeleop extends OpMode {
 
 
                     case Low:
-                        robot.leftSlide().setTargetPosition(low - 50);
-                        robot.rightSlide().setTargetPosition(low - 50);
+                        robot.leftSlide().setTargetPosition(low - 100);
+                        robot.rightSlide().setTargetPosition(low - 100);
 
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
