@@ -15,9 +15,8 @@ public class compTeleop extends OpMode {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
 
-    boolean aPress = false;
 
-    double speedMult = 0.85;
+    double speedMult = 0.7;
 
 
 
@@ -30,15 +29,22 @@ public class compTeleop extends OpMode {
         Nothing,
         Home,
         score,
-        Pickup
+        Pickup,
+        stack1,
+        stack2,
+        stack3
     }
 
     slideHeight slide = slideHeight.Nothing;
     slideHeight prevPos = slide;
 
-    int low = 300;
-    int mid = 1100;
+    int low = 350;
+    int mid = 1000;
     int high = 1500;
+
+    int stack1 = 30;
+    int stack2 = 60;
+    int stack3 = 90;
 
     @Override
     public void init() {
@@ -114,13 +120,15 @@ public class compTeleop extends OpMode {
         if (gamepad1.a){
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(1);
+            robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0);
 
         }
         else if(gamepad1.b){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.45);
-//            robot.clawGrab().setPosition(0);
+            robot.clawElbow().setPosition(0.48);  //it was 45, but it was slightly too slow
+            robot.clawWrist().setPosition(0);
+            robot.clawGrab().setPosition(0.45);
 
         }
         else if(gamepad1.dpad_right){
@@ -133,20 +141,24 @@ public class compTeleop extends OpMode {
             robot.clawWrist().setPosition(1);
             robot.clawElbow().setPosition(1);
         }
-        else if(gamepad1.dpad_down || gamepad2.dpad_down){
+        else if(gamepad1.dpad_down){
             slide = slideHeight.Low;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
         }
-        else if(gamepad1.dpad_left || gamepad2.dpad_left){
+        else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
         }
-        else if(gamepad1.dpad_up || gamepad2.dpad_up){
+        else if(gamepad1.dpad_up){
             slide = slideHeight.High;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
+        }
+
+        else if(gamepad2.dpad_down){
+            slide = slideHeight.stack1;
         }
 
 
@@ -228,7 +240,7 @@ public class compTeleop extends OpMode {
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armOut();
+                commands.armHigh();
                 prevPos = slide;
                 if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                     break;
@@ -297,6 +309,63 @@ public class compTeleop extends OpMode {
                 prevPos = slide;
 
                 if(robot.leftSlide().getCurrentPosition() == 0 && robot.rightSlide().getCurrentPosition() == 0){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+            case stack1:
+                robot.leftSlide().setTargetPosition(stack1);
+                robot.rightSlide().setTargetPosition(stack1);
+
+
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                commands.armHome();
+                prevPos = slide;
+
+                if(robot.leftSlide().getCurrentPosition() == stack1 && robot.rightSlide().getCurrentPosition() == stack1){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+            case stack2:
+                robot.leftSlide().setTargetPosition(stack2);
+                robot.rightSlide().setTargetPosition(stack2);
+
+
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                commands.armHome();
+                prevPos = slide;
+
+                if(robot.leftSlide().getCurrentPosition() == stack2 && robot.rightSlide().getCurrentPosition() == stack2){
+                    break;
+
+                }
+                else{
+                    robot.leftSlide().setVelocity(2000);
+                    robot.rightSlide().setVelocity(2000);
+                    break;
+                }
+            case stack3:
+                robot.leftSlide().setTargetPosition(stack3);
+                robot.rightSlide().setTargetPosition(stack3);
+
+
+                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                commands.armHome();
+                prevPos = slide;
+
+                if(robot.leftSlide().getCurrentPosition() == stack3 && robot.rightSlide().getCurrentPosition() == stack3){
                     break;
 
                 }

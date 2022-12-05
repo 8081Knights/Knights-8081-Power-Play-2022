@@ -161,7 +161,11 @@ public class compAutoBlue_V1 extends LinearOpMode
                 }
 
             }
-
+            //Display encoder values
+            int[] e = drivetrain.getBackEncoderValues(); // read back encoders
+            telemetry.addLine("\n \\ENCODER BACK WHEELS");
+            telemetry.addLine(String.format("\n Left Encoders=%d", e[DriveTrainIntf.LEFT_ENCODER]));
+            telemetry.addLine(String.format("\nRight Encoders=%d", e[DriveTrainIntf.RIGHT_ENCODER]));
             telemetry.update();
             sleep(20);
         }
@@ -197,24 +201,54 @@ public class compAutoBlue_V1 extends LinearOpMode
             /*
              * Insert your autonomous code here, probably using the tag pose to decide your configuration.
              */
+            drivetrain.setMotorForwardDirection(true);
 
             switch(tagOfInterest.id) {
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
                     // move off the wall
-                    drivetrain.Drive(0.60);
-                    check_condition_Time( 725 );
-                    // rotate about 45 degrees
-                    drivetrain.RotateLeft(0.90);
-                    check_condition_Time( 610 );
-                    // move forward into location 1
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    int[] e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    check_condition_Time( 500 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
 
+                    // rotate about 90 degrees
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateLeft(0.90);
+                    check_condition_Time( 610 );
+                    drivetrain.stopAll();
 
+                    // move forward into location 1
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(0.50);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
                 }
+//                {
+//                    // Do autonomous code to move to Location 1
+//                    // move off the wall
+//                    drivetrain.Drive(0.60);
+//                    check_condition_Time( 725 );
+//                    // rotate about 45 degrees
+//                    drivetrain.RotateLeft(0.90);
+//                    check_condition_Time( 610 );
+//                    // move forward into location 1
+//                    drivetrain.Drive(0.50);
+//                    check_condition_Time( 500 );
+//                    drivetrain.stopAll();
+//
+//
+//                }
                 break;
                 case ID_TAG_POSITION_2:
                 {
@@ -231,25 +265,34 @@ public class compAutoBlue_V1 extends LinearOpMode
                 break;
                 case ID_TAG_POSITION_3:
                 {
-                    // do autonomous code to move to Location 3
-                    // move off the wall
-                    //drivetrain.Drive(0.55);
-                    drivetrain.Drive(0.55, 0.60);
-                    check_condition_Time( 725 );
-                    drivetrain.stopAll();
-                    check_condition_Time( 500 );
-                    // rotate about 45 degrees
-                    drivetrain.RotateRight(0.90);
-                    check_condition_Time( 610 );
-                    // move forward into location 3
+                   // drive forward 60cm
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    int[] e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    check_condition_Time( 830 );
-                    // rotate back 45 degrees
-                    //drivetrain.RotateLeft(0.80);
-                    //check_condition_Time( 1500 );
-                    // move forward a few inches ... maybe
-
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
+
+                    // rotate about 90 degrees
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateRight(0.90);
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
+
+                    // move forward into location 3
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(0.50);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
+
 
                 }
                 break;

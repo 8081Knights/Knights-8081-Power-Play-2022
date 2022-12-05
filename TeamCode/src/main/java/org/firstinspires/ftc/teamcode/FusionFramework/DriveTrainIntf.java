@@ -212,7 +212,7 @@ public class DriveTrainIntf {
     private boolean currentlyInForwardDirection = true;
 
     public void setMotorForwardDirection(boolean mode) {
-        if (mode == true) {  // move robot FORWARD
+        if (mode == false\) {  // move robot FORWARD
             m_LFDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             m_RFDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             m_LRDrive.setDirection(DcMotorSimple.Direction.FORWARD);

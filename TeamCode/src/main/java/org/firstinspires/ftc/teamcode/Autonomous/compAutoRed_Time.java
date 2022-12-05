@@ -39,8 +39,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="compAutoBlue_Back")
-public class compAutoBlueBack_V1 extends LinearOpMode
+@Autonomous(name="compAutoRed_Terminal by Time")
+public class compAutoRed_Time extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
@@ -197,83 +197,53 @@ public class compAutoBlueBack_V1 extends LinearOpMode
             /*
              * Insert your autonomous code here, probably using the tag pose to decide your configuration.
              */
-            drivetrain.setMotorForwardDirection(true);
 
             switch(tagOfInterest.id) {
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
                     // move off the wall
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
-                    int[] e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    drivetrain.stopAll();
-
-                    // rotate about 90 degrees
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
-                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.Drive(0.60);
+                    check_condition_Time( 725 );
+                    // rotate about 45 degrees
                     drivetrain.RotateLeft(0.90);
                     check_condition_Time( 610 );
-                    drivetrain.stopAll();
-
                     // move forward into location 1
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
-                    e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    check_condition_Time( 100 );
                     drivetrain.stopAll();
-
 
                 }
                 break;
                 case ID_TAG_POSITION_2:
                 {
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
-                    int[] e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    //  was working with this => check_condition_Time( 1200 );
+                    //drivetrain.DriveByPower( 0.5, 0.5, 0.5, 0.5);
+                    check_condition_Time( 1200 );
                     drivetrain.stopAll();
                 }
                 break;
                 case ID_TAG_POSITION_3:
                 {
-                    // drive forward 60cm
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
-                    int[] e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    // do autonomous code to move to Location 3
+                    // move off the wall
+                    //drivetrain.Drive(0.55);
+                    drivetrain.Drive(0.55, 0.60);
+                    check_condition_Time( 725 );
                     drivetrain.stopAll();
-
-                    // rotate about 90 degrees
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
-                    e = drivetrain.getBackEncoderValues();
+                    check_condition_Time( 500 );
+                    // rotate about 45 degrees
                     drivetrain.RotateRight(0.90);
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    drivetrain.stopAll();
-
+                    check_condition_Time( 610 );
                     // move forward into location 3
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
-                    e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    check_condition_Time( 830 );
+                    // rotate back 45 degrees
+                    //drivetrain.RotateLeft(0.80);
+                    //check_condition_Time( 1500 );
+                    // move forward a few inches ... maybe
+
                     drivetrain.stopAll();
 
                 }

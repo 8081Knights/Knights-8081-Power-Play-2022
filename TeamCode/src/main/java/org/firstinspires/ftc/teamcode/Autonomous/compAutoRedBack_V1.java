@@ -123,6 +123,8 @@ public class compAutoRedBack_V1 extends LinearOpMode
                             tagFound = false;
                             break;
                     }
+                    // jump out of the FOR loop if we have received a stop
+                    if ( isStopRequested() ) { break; }
                 }
 
                 if(tagFound)
@@ -203,24 +205,45 @@ public class compAutoRedBack_V1 extends LinearOpMode
                 {
                     // Do autonomous code to move to Location 1
                     // move off the wall
-                    drivetrain.Drive(0.60);
-                    check_condition_Time( 725 );
-                    // rotate about 45 degrees
-                    drivetrain.RotateLeft(0.90);
-                    check_condition_Time( 610 );
-                    // move forward into location 1
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    int[] e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    check_condition_Time( 100 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
 
+                    // rotate about 45 degrees
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateLeft(0.90);
+                    check_condition_Time( 610 );
+                    drivetrain.stopAll();
+
+                    // move forward into location 1
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(0.50);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
                 }
                 break;
                 case ID_TAG_POSITION_2:
                 {
                     // Do autonomous code to move to Location 2
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
+                    int[] e = drivetrain.getBackEncoderValues();
+
                     drivetrain.Drive(0.50);
-                    //drivetrain.DriveByPower( 0.5, 0.5, 0.5, 0.5);
                     check_condition_Time( 1200 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+
                     drivetrain.stopAll();
                 }
                 break;

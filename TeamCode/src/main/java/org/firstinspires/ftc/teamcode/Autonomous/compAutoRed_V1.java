@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name="compAutoRed_Terminal")
-public class conpAutoRed_V1 extends LinearOpMode
+public class compAutoRed_V1 extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
@@ -197,30 +197,50 @@ public class conpAutoRed_V1 extends LinearOpMode
             /*
              * Insert your autonomous code here, probably using the tag pose to decide your configuration.
              */
+            drivetrain.setMotorForwardDirection(true);
 
             switch(tagOfInterest.id) {
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
                     // move off the wall
-                    drivetrain.Drive(0.60);
-                    check_condition_Time( 725 );
-                    // rotate about 45 degrees
-                    drivetrain.RotateLeft(0.90);
-                    check_condition_Time( 610 );
-                    // move forward into location 1
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    int[] e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    check_condition_Time( 100 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
 
+                    // rotate about 45 degrees
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateLeft(0.90);
+                    check_condition_Time( 610 );
+                    drivetrain.stopAll();
+
+                    // move forward into location 1
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(0.50);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
                 }
                 break;
                 case ID_TAG_POSITION_2:
                 {
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
+                    int[] e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
-                    //drivetrain.DriveByPower( 0.5, 0.5, 0.5, 0.5);
-                    check_condition_Time( 1200 );
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    //  was working with this => check_condition_Time( 1200 );
                     drivetrain.stopAll();
                 }
                 break;
