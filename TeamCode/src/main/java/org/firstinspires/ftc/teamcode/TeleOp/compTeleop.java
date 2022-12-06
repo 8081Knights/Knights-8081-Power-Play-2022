@@ -18,7 +18,9 @@ public class compTeleop extends OpMode {
 
     double speedMult = 0.7;
 
-    int scoreHeight = 100;
+    int scoreHeight = 200;
+
+    int slideTolerance = 10;
 
 
     enum slideHeight{
@@ -393,7 +395,9 @@ public class compTeleop extends OpMode {
                         commands.armOut();
 
 
-                        if(robot.leftSlide().getCurrentPosition() == high - scoreHeight && robot.rightSlide().getCurrentPosition() == high - scoreHeight){
+
+                        if((robot.leftSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance)){
+                            telemetry.addLine("SUCCESS!");
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -420,7 +424,8 @@ public class compTeleop extends OpMode {
                         commands.armBack();
 
 
-                        if(robot.leftSlide().getCurrentPosition() == high - scoreHeight && robot.rightSlide().getCurrentPosition() == high - scoreHeight){
+                        if((robot.leftSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance)){
+                            telemetry.addLine("SUCCESS!");
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -445,7 +450,8 @@ public class compTeleop extends OpMode {
 
 
 
-                        if(robot.leftSlide().getCurrentPosition() == mid - scoreHeight && robot.rightSlide().getCurrentPosition() == mid - scoreHeight){
+                        if((robot.leftSlide().getCurrentPosition() >= mid - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= mid - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= mid - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= mid - scoreHeight + slideTolerance)){
+                            telemetry.addLine("SUCCESS!");
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -469,7 +475,8 @@ public class compTeleop extends OpMode {
 
                         commands.armOut();
 
-                        if(robot.leftSlide().getCurrentPosition() == low - scoreHeight && robot.rightSlide().getCurrentPosition() == low - scoreHeight){
+                        if((robot.leftSlide().getCurrentPosition() >= low - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= low - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= low - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= low - scoreHeight + slideTolerance)){
+                            telemetry.addLine("SUCCESS!");
                             robot.clawGrab().setPosition(1);
                             break;
 
@@ -480,12 +487,7 @@ public class compTeleop extends OpMode {
 
                         }
 
-                        break;
 
-
-                    default:
-                        slide = prevPos;
-                        break;
 
                 }
 
