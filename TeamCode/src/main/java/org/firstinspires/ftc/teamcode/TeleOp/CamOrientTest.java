@@ -48,9 +48,13 @@ public class CamOrientTest extends OpMode {
     @Override
     public void loop() {
 
+        if(gamepad1.a){
+            detector.sortCont();
+            telemetry.addData("Silly cone position: ", detector.conePos());
+            telemetry.update();
+        }
 
-        telemetry.addData("Silly cone position: ", detector.conePos());
-        telemetry.update();
+
 
     }
 }

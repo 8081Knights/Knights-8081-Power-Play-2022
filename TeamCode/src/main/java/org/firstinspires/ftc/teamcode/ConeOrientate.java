@@ -20,9 +20,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 
 public class ConeOrientate extends OpenCvPipeline {
@@ -38,13 +40,15 @@ public class ConeOrientate extends OpenCvPipeline {
     OpenCvCamera cam;
 
     //For some reason this variable is returning a List error
-    List<MatOfPoint> cont;
+    List<MatOfPoint> cont = new ArrayList<MatOfPoint>();
 
-    
+
     MatOfPoint sortedCont;
-    Scalar color = new Scalar(255,255,255);
+    Scalar color = new Scalar(100,129,75);
     double[] rectArea = {0};
     RotatedRect[] rectPoint = {p};
+    Mat output = new Mat();
+    Mat hierarchy = new Mat();
 
 
 
@@ -54,25 +58,25 @@ public class ConeOrientate extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         //Low Color End
-        Scalar lowHsv = new Scalar(105, 0, 59);
+        Scalar lowHsv = new Scalar(0, 49, 75);
 
         //High Color End
-        Scalar highHsv = new Scalar(152, 224, 198);
-
-        Core.inRange(input, lowHsv, highHsv, input);
+        Scalar highHsv = new Scalar(75, 141, 198);
 
 
+        //Converting HSV image to Binary by checking if a pixel is in the specified range
+        Core.inRange(mat, lowHsv, highHsv, mat);
 
 
-        try{
-            Imgproc.drawContours(input, cont, Imgproc.CHAIN_APPROX_SIMPLE, color);
+        Imgproc.findContours(mat, cont, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+        
 
 
-        }
-        catch(Exception e){
-            return null;
-        }
+        return mat;
+    }
 
+    public void sortCont(){
         int i = 0;
         for (MatOfPoint contour : cont) {
             MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
@@ -106,14 +110,10 @@ public class ConeOrientate extends OpenCvPipeline {
                     rectPoint[b] = tempRect;
                 }
             }
+
         }
 
-
-
-
-        return null;
     }
-
     public double coneArea(){
         return rectArea[0];
     }

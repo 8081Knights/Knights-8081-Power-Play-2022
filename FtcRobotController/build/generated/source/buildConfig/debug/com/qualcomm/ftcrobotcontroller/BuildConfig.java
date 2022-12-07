@@ -8,5 +8,5 @@ public final class BuildConfig {
   public static final String LIBRARY_PACKAGE_NAME = "com.qualcomm.ftcrobotcontroller";
   public static final String BUILD_TYPE = "debug";
   // Field from default config.
-  public static final String APP_BUILD_TIME = "2022-12-07T13:31:53.259-0700";
+  public static final String APP_BUILD_TIME = "2022-12-07T16:50:19.792-0700";
 }
