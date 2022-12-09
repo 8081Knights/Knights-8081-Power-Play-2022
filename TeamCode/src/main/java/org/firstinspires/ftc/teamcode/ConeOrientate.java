@@ -54,6 +54,7 @@ public class ConeOrientate extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        mat = input;
         //Converting RGB image to HSV in order to easily look for color ranges
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
@@ -68,9 +69,10 @@ public class ConeOrientate extends OpenCvPipeline {
         Core.inRange(mat, lowHsv, highHsv, mat);
 
 
-        Imgproc.findContours(mat, cont, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+        Imgproc.findContours(mat, cont, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        
+
+
 
 
         return mat;

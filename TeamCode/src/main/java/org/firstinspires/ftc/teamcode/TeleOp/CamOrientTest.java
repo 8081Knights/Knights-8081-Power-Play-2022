@@ -20,6 +20,9 @@ public class CamOrientTest extends OpMode {
     ConeOrientate detector = new ConeOrientate();
     OpenCvCamera camera;
 
+    boolean aDown = false;
+    boolean success = false;
+
 
     @Override
     public void init() {
@@ -49,10 +52,43 @@ public class CamOrientTest extends OpMode {
     public void loop() {
 
         if(gamepad1.a){
-            detector.sortCont();
-            telemetry.addData("Silly cone position: ", detector.conePos());
-            telemetry.update();
+//            detector.sortCont();
+//            telemetry.addData("Silly cone position: ", detector.conePos());
+//            telemetry.update();
+            aDown = true;
         }
+
+//        Thread upPress = new Thread(() -> {
+//            if(aDown && !gamepad1.a){
+//                detector.sortCont();
+//                success = true;
+//                aDown = false;
+//            }
+//            else{
+//                return;
+//            }
+//
+//        });
+//
+//        upPress.start();
+
+
+        if(aDown && !gamepad1.a){
+            detector.sortCont();
+            success = true;
+            aDown = false;
+
+        }
+
+
+        if(success){
+            telemetry.addLine("Yay ur stupid code worked");
+
+        }
+
+        telemetry.addData("Silly cone position: ", detector.conePos());
+        telemetry.update();
+
 
 
 
