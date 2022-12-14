@@ -38,82 +38,106 @@ public class ConeOrientate extends OpenCvPipeline {
 
 
     OpenCvCamera cam;
-
-    //For some reason this variable is returning a List error
-    List<MatOfPoint> cont = new ArrayList<MatOfPoint>();
-
-
     MatOfPoint sortedCont;
+
+    List<MatOfPoint> cont;
+    //For some reason this variable is returning a List error
+
+
+
     Scalar color = new Scalar(100,129,75);
     double[] rectArea = {0};
     RotatedRect[] rectPoint = {p};
     Mat output = new Mat();
     Mat hierarchy = new Mat();
 
+    public boolean run = true;
+
 
 
     @Override
     public Mat processFrame(Mat input) {
+        //Clear the contour list maybe?
+        cont = new ArrayList<MatOfPoint>();
+
+        //Clear the output image
         mat = input;
+
         //Converting RGB image to HSV in order to easily look for color ranges
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         //Low Color End
-        Scalar lowHsv = new Scalar(0, 49, 75);
+        Scalar lowHsv = new Scalar(70, 63, 119);
 
         //High Color End
-        Scalar highHsv = new Scalar(75, 141, 198);
+        Scalar highHsv = new Scalar(137, 230, 230);
 
 
         //Converting HSV image to Binary by checking if a pixel is in the specified range
         Core.inRange(mat, lowHsv, highHsv, mat);
 
 
-        Imgproc.findContours(mat, cont, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-
-
+        //Only change the contour list if not currently sorting
+        if(run) {
+            Imgproc.findContours(mat, cont, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+        }
+        else{
+            //do nothing
+        }
 
 
         return mat;
     }
 
-    public void sortCont(){
+    public void sortCont(Telemetry telemetry){
+        run = false;
         int i = 0;
-        for (MatOfPoint contour : cont) {
-            MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
-            RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
-            double rectangleArea = boundingRect.size.area();
+        try{
+            for (MatOfPoint contour : cont) {
+                MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
+                RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
-            rectArea = Arrays.copyOf(rectArea, rectArea.length+1);
-            rectArea[i] = rectangleArea;
+                double rectangleArea = boundingRect.size.area();
 
-            rectPoint = Arrays.copyOf(rectPoint, rectPoint.length+1);
-            rectPoint[i] = boundingRect;
+                rectArea = Arrays.copyOf(rectArea, rectArea.length+1);
+                rectArea[i] = rectangleArea;
 
-
-            i++;
-
+                rectPoint = Arrays.copyOf(rectPoint, rectPoint.length+1);
+                rectPoint[i] = boundingRect;
 
 
-        }
+                i++;
 
-        for(int a = 0; a < rectArea.length; a++){
-            for(int b = a+1; b < rectArea.length; b++){
-                if(rectArea[a] > rectArea[b]){
-                    double tempArea = rectArea[a];
-                    RotatedRect tempRect = rectPoint[a];
 
-                    rectArea[a] = rectArea[b];
-                    rectPoint[a] = rectPoint[b];
 
-                    rectArea[b] = tempArea;
-                    rectPoint[b] = tempRect;
-                }
             }
 
+            for(int a = 0; a < rectArea.length; a++){
+                for(int b = a+1; b < rectArea.length; b++){
+                    if(rectArea[a] > rectArea[b]){
+                        double tempArea = rectArea[a];
+                        RotatedRect tempRect = rectPoint[a];
+
+                        rectArea[a] = rectArea[b];
+                        rectPoint[a] = rectPoint[b];
+
+                        rectArea[b] = tempArea;
+                        rectPoint[b] = tempRect;
+                    }
+                }
+
+            }
         }
+        catch(NullPointerException e){
+            telemetry.addLine("Oops no contours");
+        }
+
+        run = true;
+
+
+        return;
+
 
     }
     public double coneArea(){

@@ -23,6 +23,10 @@ public class CamOrientTest extends OpMode {
     boolean aDown = false;
     boolean success = false;
 
+    double pxDeg = 10;
+    double coneDegree = 0;
+    double center = 395;
+
 
     @Override
     public void init() {
@@ -74,9 +78,11 @@ public class CamOrientTest extends OpMode {
 
 
         if(aDown && !gamepad1.a){
-            detector.sortCont();
+            detector.sortCont(telemetry);
             success = true;
             aDown = false;
+
+            coneDegree = (detector.conePos().x-center)/pxDeg;
 
         }
 
