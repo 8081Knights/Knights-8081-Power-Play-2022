@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
 public class RobotCommands {
     HardwareSoftware robot = new HardwareSoftware();
+    GyroSensor gyro;
+
     public boolean home = true;
     public boolean out = false;
     public boolean back = false;
@@ -42,6 +45,7 @@ public class RobotCommands {
 
 
     public void init(HardwareSoftware robot){
+        gyro = new GyroSensor(robot, false);
         frontRight    = robot.frontRight();
         backRight     = robot.backRight();
         backLeft      = robot.backLeft();
@@ -155,6 +159,64 @@ public class RobotCommands {
 
         leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+
+    }
+
+    public void turnGyro(double angle, int speed){
+            double angleError = 1;
+            double currentAngle = gyro.getHeading();
+            boolean left = false;
+            double target = currentAngle + angle;
+
+            if(target >= 360){
+                target -= 360;
+            }
+
+            if(angle < 0){
+                left = true;
+                if (target < 0){
+                    target += 360;
+                }
+            }
+
+
+
+            while ((currentAngle > (target + angleError) || currentAngle < (target - angleError))) {
+
+                frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+                if(left){
+                    frontLeft.setVelocity(-speed);
+                    backLeft.setVelocity(-speed);
+                    frontRight.setVelocity(speed);
+                    backRight.setVelocity(speed);
+
+                }
+
+                else{
+                    frontLeft.setVelocity(speed);
+                    backLeft.setVelocity(speed);
+                    frontRight.setVelocity(-speed);
+                    backRight.setVelocity(-speed);
+
+                }
+
+                currentAngle = gyro.getHeading();
+                // telemetry.addData("heading", "%3d deg", currentAngle);
+                //
+                // telemetry.update();
+
+            }
+
+
+            frontLeft.setVelocity(0);
+            backRight.setVelocity(0);
+            frontRight.setVelocity(0);
+            backRight.setVelocity(0);
 
 
     }

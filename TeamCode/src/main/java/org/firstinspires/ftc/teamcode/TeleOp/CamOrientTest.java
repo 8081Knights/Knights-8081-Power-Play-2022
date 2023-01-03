@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.ConeOrientate;
 import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntf;
+import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,6 +26,7 @@ public class CamOrientTest extends OpMode {
 
     double pxDeg = 10;
     double coneDegree = 0;
+    double coneTolerance = 4;
     double center = 395;
 
 
@@ -32,6 +34,11 @@ public class CamOrientTest extends OpMode {
     public void init() {
         robot.init(hardwareMap);
         camera = robot.getFrontWebCam();
+
+        GyroSensor gyro = new GyroSensor(robot, false);
+
+        gyro.initializeZeroPosition();
+
 
 
         camera.setPipeline(detector);
@@ -50,10 +57,13 @@ public class CamOrientTest extends OpMode {
             }
         });
 
+
+
     }
 
     @Override
     public void loop() {
+        commands.init(robot);
 
         if(gamepad1.a){
 //            detector.sortCont();
@@ -92,6 +102,11 @@ public class CamOrientTest extends OpMode {
 
         }
 
+        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
+            commands.turnGyro(coneDegree, 500);
+        }
+
+        telemetry.addData("Silly cone angle: ", coneDegree);
         telemetry.addData("Silly cone position: ", detector.conePos());
         telemetry.update();
 
