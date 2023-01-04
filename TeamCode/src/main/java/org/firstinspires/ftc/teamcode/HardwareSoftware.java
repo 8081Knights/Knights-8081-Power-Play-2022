@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static android.os.SystemClock.sleep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,6 +27,8 @@ public class HardwareSoftware {
 //    DcMotorEx turnEncoder   = null;
 
     DcMotorEx armDrive = null;
+
+    BNO055IMUImpl imu = null;
 
     DcMotorEx leftSlide = null;
     DcMotorEx rightSlide = null;
@@ -48,6 +52,9 @@ public class HardwareSoftware {
 
     public void init(HardwareMap ahw){
         hw = ahw;
+
+        imu = hw.get(BNO055IMUImpl.class, "imu");
+
 
         frontRight = hw.get(DcMotorEx.class, "frontRight");
         backRight = hw.get(DcMotorEx.class, "backRight");
@@ -166,6 +173,8 @@ public class HardwareSoftware {
     public Servo clawGrab(){return clawGrab;}
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
+
+    public BNO055IMUImpl getImu(){return imu;}
 
 
 }

@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CamOrientTest extends OpMode {
 
     HardwareSoftware robot = new HardwareSoftware();
-    RobotCommands commands;
+    RobotCommands commands = new RobotCommands();
     ConeOrientate detector = new ConeOrientate();
     OpenCvCamera camera;
 
@@ -102,9 +102,9 @@ public class CamOrientTest extends OpMode {
 
         }
 
-        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
-            commands.turnGyro(coneDegree, 500);
-        }
+//        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
+//            commands.turnGyro(coneDegree, 500);
+//        }
 
         telemetry.addData("Silly cone angle: ", coneDegree);
         telemetry.addData("Silly cone position: ", detector.conePos());

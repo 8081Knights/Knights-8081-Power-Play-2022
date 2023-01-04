@@ -46,7 +46,7 @@ public class GyroSensor {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         // TODO fix later
-        //imu = robot.getIMU();
+        imu = rs.getImu();
 
         imu.initialize(parameters);
 
