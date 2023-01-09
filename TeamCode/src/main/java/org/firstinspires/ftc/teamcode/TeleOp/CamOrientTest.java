@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CamOrientTest extends OpMode {
 
     HardwareSoftware robot = new HardwareSoftware();
-    RobotCommands commands;
+    RobotCommands commands = new RobotCommands();
     ConeOrientate detector = new ConeOrientate();
     OpenCvCamera camera;
 
@@ -33,6 +33,8 @@ public class CamOrientTest extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        commands.init(robot);
+
         camera = robot.getFrontWebCam();
 
         GyroSensor gyro = new GyroSensor(robot, false);
@@ -63,7 +65,6 @@ public class CamOrientTest extends OpMode {
 
     @Override
     public void loop() {
-        commands.init(robot);
 
         if(gamepad1.a){
 //            detector.sortCont();
@@ -102,9 +103,9 @@ public class CamOrientTest extends OpMode {
 
         }
 
-        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
-            commands.turnGyro(coneDegree, 500);
-        }
+//        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
+//            commands.turnGyro(coneDegree, 500);
+//        }
 
         telemetry.addData("Silly cone angle: ", coneDegree);
         telemetry.addData("Silly cone position: ", detector.conePos());

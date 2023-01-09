@@ -4,8 +4,11 @@ package org.firstinspires.ftc.teamcode;
 
 import static android.os.SystemClock.sleep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -25,6 +28,8 @@ public class HardwareSoftware {
 //    DcMotorEx turnEncoder   = null;
 
     DcMotorEx armDrive = null;
+
+    BNO055IMUImpl imu = null;
 
     DcMotorEx leftSlide = null;
     DcMotorEx rightSlide = null;
@@ -48,6 +53,9 @@ public class HardwareSoftware {
 
     public void init(HardwareMap ahw){
         hw = ahw;
+
+        imu = hw.get(BNO055IMUImpl.class, "imu");
+
 
         frontRight = hw.get(DcMotorEx.class, "frontRight");
         backRight = hw.get(DcMotorEx.class, "backRight");
@@ -81,11 +89,11 @@ public class HardwareSoftware {
 //        turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
 
-        backLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.FORWARD);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
 
 
 
@@ -166,6 +174,8 @@ public class HardwareSoftware {
     public Servo clawGrab(){return clawGrab;}
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
+
+    public BNO055IMUImpl getImu(){return imu;}
 
 
 }
