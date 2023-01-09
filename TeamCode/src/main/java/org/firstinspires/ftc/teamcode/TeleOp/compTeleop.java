@@ -17,6 +17,7 @@ public class compTeleop extends OpMode {
 
 
     double speedMult = 0.7;
+    boolean x =  false;
 
     int scoreHeight = 200;
 
@@ -93,8 +94,8 @@ public class compTeleop extends OpMode {
         double[] speeds = {
                 (-drive - strafe - twist),
                 (-drive + strafe + twist),
-                (drive + strafe - twist),
-                (drive - strafe + twist)
+                (drive - strafe - twist),
+                (drive + strafe + twist)
         };
 
         // Because we are adding vectors and motors only take values between
@@ -173,11 +174,21 @@ public class compTeleop extends OpMode {
         else if(gamepad1.right_bumper){
             robot.clawGrab().setPosition(0);
         }
-        else if(gamepad1.y){
-            speedMult = .2;
-        }
+//        else if(gamepad1.y){
+//            speedMult = .2;
+//        }
         else if(gamepad1.x){
-            speedMult = 0.7;
+
+            x=true;
+        }
+        else if(x && !gamepad1.x){
+            x = false;
+            if(speedMult == 0.7){
+                speedMult = 0.2;
+            }
+            else{
+                speedMult = 0.7;
+            }
         }
 //        else if(gamepad1.b){
 //            slide = slideHeight.Pickup;
