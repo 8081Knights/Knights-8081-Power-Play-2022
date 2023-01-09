@@ -212,7 +212,7 @@ public class DriveTrainIntf {
     private boolean currentlyInForwardDirection = true;
 
     public void setMotorForwardDirection(boolean mode) {
-        if (mode == false) {  // move robot FORWARD
+        if (mode == true) {  // move robot FORWARD
             m_LFDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             m_RFDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             m_LRDrive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -244,7 +244,7 @@ public class DriveTrainIntf {
     public boolean check_condition_encoder_distance(
             LinearOpMode caller, long left, long right, long count) {
 
-        int[] vals = getBackEncoderValues( );
+        int[] vals;
         // Use special methods to determine whether the encoder count
         // must be added or subtracted from the encoder start value
         long  left_count  = addCountToEncoder(vel_LR, left, count);
@@ -255,6 +255,9 @@ public class DriveTrainIntf {
         eTimer.reset();
 
         do {
+            // read the encoders-
+            vals = getBackEncoderValues( );
+
             // We end if the right encoder has hit it's mark
             if (right < right_count) {
                 // motor is moving forward, so encoder value should be greater than the target count
@@ -336,6 +339,7 @@ public class DriveTrainIntf {
     }
 
     static final double WHEEL_DIAMETER = 9.5; // in centimeters
+    static final double WHEEL_CIRCUMFERENCE = 12;
     static final long DCMOTOR_TICK_COUNT = 560;
     /*
     Provide the difference between the Ending Encoder Value and the Starting Encoder Value
@@ -348,7 +352,7 @@ public class DriveTrainIntf {
     }
 
     public long calcEncoderValueFromCentimeters( double centimeters ) {
-        return Math.round(centimeters/WHEEL_DIAMETER) * DCMOTOR_TICK_COUNT;
+        return Math.round(centimeters/WHEEL_CIRCUMFERENCE) * DCMOTOR_TICK_COUNT;
     }
 
 

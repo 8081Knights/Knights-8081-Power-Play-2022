@@ -53,11 +53,12 @@ public class compTeleop extends OpMode {
     public void init() {
 
         robot.init(hardwareMap);
+        commands.init(robot);
+
     }
 
     @Override
     public void loop() {
-        commands.init(robot);
         // Mecanum drive is controlled with three axes: drive (front-and-back),
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = gamepad1.left_stick_y;
@@ -90,10 +91,10 @@ public class compTeleop extends OpMode {
         // You may need to multiply some of these by -1 to invert direction of
         // the motor.  This is not an issue with the calculations themselves.
         double[] speeds = {
-                (-drive + strafe + twist),
                 (-drive - strafe - twist),
-                (drive - strafe + twist),
-                (drive + strafe - twist)
+                (-drive + strafe + twist),
+                (drive + strafe - twist),
+                (drive - strafe + twist)
         };
 
         // Because we are adding vectors and motors only take values between

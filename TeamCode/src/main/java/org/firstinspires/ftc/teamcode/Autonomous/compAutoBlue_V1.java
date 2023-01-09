@@ -218,7 +218,7 @@ public class compAutoBlue_V1 extends LinearOpMode
                     drivetrain.stopAll();
 
                     // rotate about 90 degrees
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    encoder_inc = 30; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
                     e = drivetrain.getBackEncoderValues();
                     drivetrain.RotateLeft(0.90);
                     check_condition_Time( 610 );

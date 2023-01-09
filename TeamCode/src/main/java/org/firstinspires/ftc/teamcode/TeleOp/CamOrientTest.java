@@ -33,6 +33,8 @@ public class CamOrientTest extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        commands.init(robot);
+
         camera = robot.getFrontWebCam();
 
         GyroSensor gyro = new GyroSensor(robot, false);
@@ -63,7 +65,6 @@ public class CamOrientTest extends OpMode {
 
     @Override
     public void loop() {
-        commands.init(robot);
 
         if(gamepad1.a){
 //            detector.sortCont();
