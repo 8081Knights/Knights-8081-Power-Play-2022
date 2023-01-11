@@ -92,10 +92,11 @@ public class compTeleop extends OpMode {
         // You may need to multiply some of these by -1 to invert direction of
         // the motor.  This is not an issue with the calculations themselves.
         double[] speeds = {
-                (-drive - strafe - twist),
                 (-drive + strafe + twist),
-                (drive - strafe - twist),
+                (-drive - strafe + twist),
+                (drive - strafe + twist),
                 (drive + strafe + twist)
+
         };
 
         // Because we are adding vectors and motors only take values between
@@ -133,7 +134,7 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(0.4);  //it was 45, but it was slightly too slow
             robot.clawWrist().setPosition(0);
-            robot.clawGrab().setPosition(0.45);
+            robot.clawGrab().setPosition(0.6);
 
         }
         else if(gamepad1.dpad_right){
