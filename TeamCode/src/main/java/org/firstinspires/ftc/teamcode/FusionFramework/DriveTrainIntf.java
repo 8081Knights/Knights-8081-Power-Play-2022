@@ -23,7 +23,7 @@ public class DriveTrainIntf {
     DcMotorEx m_LFDrive     = null;
 
     static final double TURN_CONSTANT =   0.50;  // This determines the speed of the turn (higher value is faster turn)
-    static final double ROTATE_CONSTANT =   0.75;
+    static final double TURN_CONSTANT_SLOW =   0.65;
 
     // Settings for the Condition Completion Checks
     private double vel_LF = 0;  // Left  Front Wheel velocity setting
@@ -61,19 +61,23 @@ public class DriveTrainIntf {
     // Rotate Left - stay in place but rotate robot left
     public void RotateLeft(double velocity) {
         stopAll(); // first ensure the robot is stopped
-        double fwdSpeed  = TURN_CONSTANT * velocity;
-        double revSpeed  = -1 * ROTATE_CONSTANT * velocity;
+        double lf  = -1 * TURN_CONSTANT_SLOW * velocity;
+        double lr  = -1 * TURN_CONSTANT * velocity;
+        double rf  =  TURN_CONSTANT * velocity;
+        double rr  =  TURN_CONSTANT_SLOW * velocity;
         /// Left-Front, Right-Front, Left-Rear, Right-Rear
-        Drive( revSpeed, fwdSpeed, revSpeed, fwdSpeed );
+        Drive( lf, rf, lr, rr );
     }
 
     // Rotate Right - stay in place but rotate robot right
     public void RotateRight(double velocity) {
         stopAll(); // first ensure the robot is stopped
-        double fwdSpeed  = TURN_CONSTANT * velocity;
-        double revSpeed  = -1 * ROTATE_CONSTANT * velocity;
+        double lf  = TURN_CONSTANT * velocity;
+        double lr  = TURN_CONSTANT_SLOW * velocity;
+        double rf  = -1 * TURN_CONSTANT_SLOW * velocity;
+        double rr  = -1 * TURN_CONSTANT * velocity;
         /// Left-Front, Right-Front, Left-Rear, Right-Rear
-        Drive( fwdSpeed, revSpeed, fwdSpeed, revSpeed );
+        Drive( lf, rf, lr, rr );
     }
 
     public void Drive(double velL, double velR) {
@@ -261,12 +265,12 @@ public class DriveTrainIntf {
             // We end if the right encoder has hit it's mark
             if (right < right_count) {
                 // motor is moving forward, so encoder value should be greater than the target count
-                if (vals[RIGHT_ENCODER] >= right_count) {
+                if (vals[RIGHT_ENCODER] >= (right_count-DC_MOTOR_TICK_ERROR) ) {
                     return true;
                 }
             } else {
                 // motor is moving backwards, so encoder value should be less than the target count
-                if (vals[RIGHT_ENCODER] <= right_count) {
+                if (vals[RIGHT_ENCODER] <= (right_count+DC_MOTOR_TICK_ERROR) ) {
                     return true;
                 }
             }
@@ -274,21 +278,114 @@ public class DriveTrainIntf {
             // OR We end if the left encoder has hit it's mark
             if (left < left_count) {
                 // motor is moving forward, so encoder value should be greater than the target count
-                if (vals[LEFT_ENCODER] >= left_count) {
+                if (vals[LEFT_ENCODER] >= (left_count-DC_MOTOR_TICK_ERROR) ) {
                     return true;
                 }
             } else {
                 // motor is moving backwards, so encoder value should be less than the target count
-                if (vals[LEFT_ENCODER] <= left_count) {
+                if (vals[LEFT_ENCODER] <= (left_count+DC_MOTOR_TICK_ERROR) ) {
                     return true;
                 }
             }
             try {
-                Thread.sleep(20); // time condition has not yet been met
+                Thread.sleep(5); // time condition has not yet been met
             } catch (InterruptedException e) {
                 // ignore interrupt
             }
-        } while ( (eTimer.milliseconds() < 8000 )  && (!caller.isStopRequested() ) );  // maximum wait time is 8 seconds
+        } while ( (eTimer.milliseconds() < 6000 )  && (!caller.isStopRequested() ) );  // maximum wait time is 8 seconds
+        return true;
+    }
+
+    public boolean check_condition_encoder_turning(
+            LinearOpMode caller, long left, long right, long count, boolean turn_left) {
+
+        int[] vals;
+        // Use special methods to determine whether the encoder count
+        // must be added or subtracted from the encoder start value
+        long  left_count  = addCountToEncoder(vel_LR, left, count);
+        long  right_count = addCountToEncoder(vel_RR, right, count);
+
+        // set timer for maximum loop running
+        ElapsedTime eTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        eTimer.reset();
+
+        do {
+            // read the encoders-
+            vals = getBackEncoderValues( );
+
+            if ( turn_left) { // check right encoder -- it's the outside wheel
+                // We end if the right encoder has hit it's mark
+                if (right < right_count) {
+                    // motor is moving forward, so encoder value should be greater than the target count
+                    if (vals[RIGHT_ENCODER] >= (right_count-DC_MOTOR_TICK_ERROR) ) {
+                        return true;
+                    }
+                } else {
+                    // motor is moving backwards, so encoder value should be less than the target count
+                    if (vals[RIGHT_ENCODER] <= (right_count + DC_MOTOR_TICK_ERROR)) {
+                        return true;
+                    }
+                }
+            } else {
+                // OR We end if the left encoder has hit it's mark
+                if (left < left_count) {
+                    // motor is moving forward, so encoder value should be greater than the target count
+                    if (vals[LEFT_ENCODER] >= (left_count-DC_MOTOR_TICK_ERROR) ) {
+                        return true;
+                    }
+                } else {
+                    // motor is moving backwards, so encoder value should be less than the target count
+                    if (vals[LEFT_ENCODER] <= (left_count + DC_MOTOR_TICK_ERROR)) {
+                        return true;
+                    }
+                }
+            }
+            try {
+                Thread.sleep(5); // time condition has not yet been met
+            } catch (InterruptedException e) {
+                // ignore interrupt
+            }
+        } while ( (eTimer.milliseconds() < 6000 )  && (!caller.isStopRequested() ) );  // maximum wait time is 8 seconds
+        return true;
+    }
+
+    public boolean check_condition_ultrasonic_distance(
+            LinearOpMode caller, double distance, MaxbotixUltrasonicI2c sensor, boolean forward) {
+
+        sensor.measureRange(); // get the sensor to measure pur range
+
+        // set timer for maximum loop running
+        ElapsedTime eTimer = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+        eTimer.reset();
+
+        do {
+
+            try {
+                Thread.sleep(90); // time condition has not yet been met
+            } catch (InterruptedException e) {
+                // ignore interrupt
+            }
+
+            double reading = sensor.getLastRange();
+
+            // We end if the right encoder has hit it's mark
+            if (forward) { // distance should be getting smaller
+                if (distance <= reading ) {
+                    return true;
+                }
+            } else {
+                // motor is moving backwards, so encoder value should be less than the target count
+                if (distance >= reading ) {
+                    return true;
+                }
+            }
+
+            caller.telemetry.addLine(String.format("\nRear Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
+            caller.telemetry.update();
+
+            sensor.measureRange(); // get the sensor to measure pur range
+
+        } while ( (eTimer.milliseconds() < 6000 )  && (!caller.isStopRequested() ) );  // maximum wait time is 8 seconds
         return true;
     }
 
@@ -339,8 +436,9 @@ public class DriveTrainIntf {
     }
 
     static final double WHEEL_DIAMETER = 9.5; // in centimeters
-    static final double WHEEL_CIRCUMFERENCE = 12;
-    static final long DCMOTOR_TICK_COUNT = 560;
+    static final double WHEEL_CIRCUMFERENCE = 39.50;  // 29.83; // 2*Pi*r = 9.5 * Pi
+    static final long DCMOTOR_TICK_COUNT = (28*20); // 28 ticks per motor revolution * 20:1 gearbox
+    static final long DC_MOTOR_TICK_ERROR = 28;
     /*
     Provide the difference between the Ending Encoder Value and the Starting Encoder Value
     and this function calculates the distance travelled based on the wheel diameter
@@ -348,7 +446,7 @@ public class DriveTrainIntf {
     If this function is used on non-driven or odometry wheels, this calculation will be more accurate
      */
     public float calcDistanceFromEncoderValue( int numberEncoderTicks ) {
-        return (float) (WHEEL_DIAMETER * (float)(numberEncoderTicks/DCMOTOR_TICK_COUNT));
+        return (float) (WHEEL_CIRCUMFERENCE * (float)(numberEncoderTicks/DCMOTOR_TICK_COUNT));
     }
 
     public long calcEncoderValueFromCentimeters( double centimeters ) {

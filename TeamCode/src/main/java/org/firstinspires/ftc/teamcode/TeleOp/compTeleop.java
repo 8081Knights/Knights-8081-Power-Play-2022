@@ -135,7 +135,7 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(0.4);  //it was 45, but it was slightly too slow
             robot.clawWrist().setPosition(0);
-            robot.clawGrab().setPosition(0.6);
+            robot.clawGrab().setPosition(0.55);
 
         }
         else if(gamepad1.dpad_right){
@@ -224,13 +224,13 @@ public class compTeleop extends OpMode {
 
         switch(slide){
             case Ground:
-                robot.leftSlide().setTargetPosition(0);
-                robot.rightSlide().setTargetPosition(0);
+                robot.leftSlide().setTargetPosition(100);
+                robot.rightSlide().setTargetPosition(100);
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armOut();
+//                commands.armOut();
                 prevPos = slide;
 
                 if(robot.leftSlide().getCurrentPosition() == 0 && robot.rightSlide().getCurrentPosition() == 0){

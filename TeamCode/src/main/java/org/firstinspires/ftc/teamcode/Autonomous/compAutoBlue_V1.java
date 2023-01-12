@@ -77,6 +77,11 @@ public class compAutoBlue_V1 extends LinearOpMode
         camera = robot.getFrontWebCam();
         drivetrain = new DriveTrainIntf(robot); // init the drive train manager
         drivetrain.setMotorMode( DcMotor.RunMode.RUN_USING_ENCODER );
+
+        // Tell ultrasonics to get the range
+        robot.get_front_ultrasonic().measureRange();
+        robot.get_back_ultrasonic().measureRange();
+
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -166,7 +171,15 @@ public class compAutoBlue_V1 extends LinearOpMode
             telemetry.addLine("\n \\ENCODER BACK WHEELS");
             telemetry.addLine(String.format("\n Left Encoders=%d", e[DriveTrainIntf.LEFT_ENCODER]));
             telemetry.addLine(String.format("\nRight Encoders=%d", e[DriveTrainIntf.RIGHT_ENCODER]));
+
+            telemetry.addLine(String.format("\nFront Ultrasonic=%d", robot.get_front_ultrasonic().getLastRange() ));
+            telemetry.addLine(String.format("\nRear Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
             telemetry.update();
+
+            // Tell ultrasonics to get the range
+            robot.get_front_ultrasonic().measureRange();
+            robot.get_back_ultrasonic().measureRange();
+
             sleep(20);
         }
 
@@ -207,49 +220,46 @@ public class compAutoBlue_V1 extends LinearOpMode
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
-                    // move off the wall
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    // move forward off the wall
+                    drivetrain.Drive(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+
+                    robot.get_back_ultrasonic().measureRange();
+                    try { // wait for ultrasonic to get the range
+                        Thread.sleep(90); // time condition has not yet been met
+                    } catch (InterruptedException exp) {
+                        // ignore interrupt
+                    }
+                    // use ultrasonic to measure distance
+                    drivetrain.check_condition_ultrasonic_distance( this, 60, robot.get_back_ultrasonic(), true);
+
+                    telemetry.addLine(String.format("\nBack Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
+                    telemetry.update();
+
+                    drivetrain.stopAll();
+
+                    // turn using the encoders
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
                     int[] e = drivetrain.getBackEncoderValues();
+
+                    drivetrain.RotateRight(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    drivetrain.check_condition_encoder_turning( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
+
+                    drivetrain.stopAll();
+
+                    // move backwards into location 1
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(85);
+                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
+                    drivetrain.Drive(-0.45);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    drivetrain.stopAll();
 
-                    // rotate about 90 degrees
-                    encoder_inc = 30; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
-                    e = drivetrain.getBackEncoderValues();
-                    drivetrain.RotateLeft(0.90);
-                    check_condition_Time( 610 );
-                    drivetrain.stopAll();
-
-                    // move forward into location 1
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
-                    e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
                 }
-//                {
-//                    // Do autonomous code to move to Location 1
-//                    // move off the wall
-//                    drivetrain.Drive(0.60);
-//                    check_condition_Time( 725 );
-//                    // rotate about 45 degrees
-//                    drivetrain.RotateLeft(0.90);
-//                    check_condition_Time( 610 );
-//                    // move forward into location 1
-//                    drivetrain.Drive(0.50);
-//                    check_condition_Time( 500 );
-//                    drivetrain.stopAll();
-//
-//
-//                }
                 break;
+
                 case ID_TAG_POSITION_2:
                 {
                     long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
@@ -265,32 +275,43 @@ public class compAutoBlue_V1 extends LinearOpMode
                 break;
                 case ID_TAG_POSITION_3:
                 {
-                   // drive forward 60cm
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(60);
+                    // Do autonomous code to move to Location 3
+                    // move forward off the wall
+                    drivetrain.Drive(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+
+                    robot.get_back_ultrasonic().measureRange();
+                    try { // wait for ultrasonic to get the range
+                        Thread.sleep(90); // time condition has not yet been met
+                    } catch (InterruptedException exp) {
+                        // ignore interrupt
+                    }
+                    // use ultrasonic to measure distance
+                    drivetrain.check_condition_ultrasonic_distance( this, 60, robot.get_back_ultrasonic(), true);
+
+                    telemetry.addLine(String.format("\nBack Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
+                    telemetry.update();
+
+                    drivetrain.stopAll();
+
+                    // turn using the encoders
+                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(59.20);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
                     int[] e = drivetrain.getBackEncoderValues();
+
+                    drivetrain.RotateRight(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    drivetrain.check_condition_encoder_turning( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
+
+                    drivetrain.stopAll();
+
+                    // move backwards into location 3
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(68);
+                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
+                    drivetrain.Drive(0.45);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    drivetrain.stopAll();
 
-                    // rotate about 90 degrees
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
-                    e = drivetrain.getBackEncoderValues();
-                    drivetrain.RotateRight(0.90);
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-                    drivetrain.stopAll();
-
-                    // move forward into location 3
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(30);
-                    e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.50);
-                    // change condition
-                    drivetrain.check_condition_encoder_distance( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
 
 

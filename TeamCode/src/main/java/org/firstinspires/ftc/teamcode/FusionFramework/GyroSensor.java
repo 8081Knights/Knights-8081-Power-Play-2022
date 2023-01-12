@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 public class GyroSensor {
 
     private   HardwareSoftware              robot;
-    private   BNO055IMUImpl //LynxEmbeddedIMU
+    private   BNO055IMU //LynxEmbeddedIMU
                                       imu; // the gyro in the Control Hub
     private   BNO055IMU.Parameters    parameters;
     private   boolean                 inCompassMode = false;

@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.FusionFramework.MaxbotixUltrasonicI2c;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -29,7 +30,7 @@ public class HardwareSoftware {
 
     DcMotorEx armDrive = null;
 
-    BNO055IMUImpl imu = null;
+    BNO055IMU imu = null;
 
     DcMotorEx leftSlide = null;
     DcMotorEx rightSlide = null;
@@ -40,6 +41,10 @@ public class HardwareSoftware {
     Servo clawWrist = null;
 
     OpenCvCamera frontWebCam;
+
+    MaxbotixUltrasonicI2c   front_ultrasonic = null;
+    MaxbotixUltrasonicI2c   back_ultrasonic = null;
+
 
     int tickPerIn = 1000;
     int armMax = 1000;
@@ -54,7 +59,7 @@ public class HardwareSoftware {
     public void init(HardwareMap ahw){
         hw = ahw;
 
-        imu = hw.get(BNO055IMUImpl.class, "imu");
+        imu = hw.get(BNO055IMU.class, "imu");
 
 
         frontRight = hw.get(DcMotorEx.class, "frontRight");
@@ -129,8 +134,9 @@ public class HardwareSoftware {
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         frontWebCam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
 
+        front_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "front_ultrasonic");
 
-
+        back_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "rear_ultrasonic");
 
 
 
@@ -176,7 +182,9 @@ public class HardwareSoftware {
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
 
-    public BNO055IMUImpl getImu(){return imu;}
+    public BNO055IMU getImu(){return imu;}
 
+    public MaxbotixUltrasonicI2c get_front_ultrasonic(){ return front_ultrasonic; }
+    public MaxbotixUltrasonicI2c get_back_ultrasonic(){ return back_ultrasonic; }
 
 }
