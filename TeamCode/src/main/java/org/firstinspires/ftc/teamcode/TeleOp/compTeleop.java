@@ -17,8 +17,7 @@ public class compTeleop extends OpMode {
 
 
     double speedMult = 0.7;
-
-    boolean x =  false;
+    boolean x = false;
 
 
     int scoreHeight = 200;
@@ -181,9 +180,20 @@ public class compTeleop extends OpMode {
 //        else if(gamepad1.y){
 //            speedMult = .2;
 //        }
-        else if(gamepad1.x){
+        else if(gamepad1.x) {
 
-            x=true;
+            x = true;
+        }
+
+        else if(x && !gamepad1.x){
+            x = false;
+
+            if(speedMult == .7){
+                speedMult = .2;
+            }
+            else{
+                speedMult = .7;
+            }
         }
         else if(x && !gamepad1.x){
             x = false;
