@@ -17,7 +17,9 @@ public class compTeleop extends OpMode {
 
 
     double speedMult = 0.7;
+
     boolean x =  false;
+
 
     int scoreHeight = 200;
 
@@ -170,11 +172,12 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.clawGrab().setPosition(0.45);
+            robot.clawGrab().setPosition(0.55);
         }
         else if(gamepad1.right_bumper){
             robot.clawGrab().setPosition(0);
         }
+
 //        else if(gamepad1.y){
 //            speedMult = .2;
 //        }
@@ -187,10 +190,13 @@ public class compTeleop extends OpMode {
             if(speedMult == 0.7){
                 speedMult = 0.2;
             }
-            else{
+            else {
                 speedMult = 0.7;
             }
-        }
+
+
+            }
+
 //        else if(gamepad1.b){
 //            slide = slideHeight.Pickup;
 //        }

@@ -39,7 +39,12 @@ public class CamOrientTest extends OpMode {
 
         GyroSensor gyro = new GyroSensor(robot, false);
 
-        gyro.initializeZeroPosition();
+        while(!gyro.isIMUready()){
+            //do nothing
+        }
+        if(gyro.isIMUready()) {
+            gyro.initializeZeroPosition();
+        }
 
 
 
