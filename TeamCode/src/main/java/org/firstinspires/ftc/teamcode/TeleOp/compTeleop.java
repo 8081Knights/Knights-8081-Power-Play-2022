@@ -18,9 +18,11 @@ public class compTeleop extends OpMode {
 
     double speedMult = 0.7;
     boolean x = false;
+    boolean y = false;
 
 
     int scoreHeight = 200;
+    int pickHeight = 0;
 
     int slideTolerance = 10;
 
@@ -205,14 +207,14 @@ public class compTeleop extends OpMode {
             }
 
 
-            }
+        }
 
-//        else if(gamepad1.b){
-//            slide = slideHeight.Pickup;
-//        }
-
-        else if(gamepad2.x){
+        else if(gamepad2.a){
+            y = true;
+        }
+        else if (y && !gamepad2.y){
             slide = slideHeight.Pickup;
+            pickHeight += 250;
         }
 
         else if(gamepad1.right_trigger > .1){
@@ -350,9 +352,10 @@ public class compTeleop extends OpMode {
                     robot.rightSlide().setVelocity(2000);
                     break;
                 }
-            case stack1:
-                robot.leftSlide().setTargetPosition(stack1);
-                robot.rightSlide().setTargetPosition(stack1);
+
+            case Pickup:
+                robot.leftSlide().setTargetPosition(pickHeight);
+                robot.rightSlide().setTargetPosition(pickHeight);
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -360,45 +363,7 @@ public class compTeleop extends OpMode {
                 commands.armHome();
                 prevPos = slide;
 
-                if(robot.leftSlide().getCurrentPosition() == stack1 && robot.rightSlide().getCurrentPosition() == stack1){
-                    break;
-
-                }
-                else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
-                    break;
-                }
-            case stack2:
-                robot.leftSlide().setTargetPosition(stack2);
-                robot.rightSlide().setTargetPosition(stack2);
-
-
-                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armHome();
-                prevPos = slide;
-
-                if(robot.leftSlide().getCurrentPosition() == stack2 && robot.rightSlide().getCurrentPosition() == stack2){
-                    break;
-
-                }
-                else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
-                    break;
-                }
-            case stack3:
-                robot.leftSlide().setTargetPosition(stack3);
-                robot.rightSlide().setTargetPosition(stack3);
-
-
-                robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armHome();
-                prevPos = slide;
-
-                if(robot.leftSlide().getCurrentPosition() == stack3 && robot.rightSlide().getCurrentPosition() == stack3){
+                if(robot.leftSlide().getCurrentPosition() == pickHeight && robot.rightSlide().getCurrentPosition() == pickHeight){
                     break;
 
                 }
