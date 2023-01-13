@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -89,6 +91,7 @@ public class RobotCommands {
     }
 
     public void armOut(){
+        sleep(100);
         armDrive.setTargetPosition(armOut);
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -103,6 +106,7 @@ public class RobotCommands {
 
     }
     public void armHigh(){
+        sleep(100);
         armDrive.setTargetPosition(armHigh);
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -117,6 +121,7 @@ public class RobotCommands {
 
     }
     public void armBack(){
+        sleep(100);
         armDrive.setTargetPosition(armBack);
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);

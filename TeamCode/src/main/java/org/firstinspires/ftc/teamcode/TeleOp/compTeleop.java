@@ -141,7 +141,7 @@ public class compTeleop extends OpMode {
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(0);
+            robot.clawElbow().setPosition(0.4);
         }
         else if(gamepad2.dpad_right){
             slide = slideHeight.HighB;
@@ -226,6 +226,7 @@ public class compTeleop extends OpMode {
             case Ground:
                 robot.leftSlide().setTargetPosition(100);
                 robot.rightSlide().setTargetPosition(100);
+
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
