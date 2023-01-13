@@ -216,46 +216,69 @@ public class compAutoBlue_V1 extends LinearOpMode
              */
             drivetrain.setMotorForwardDirection(true);
 
+
             switch(tagOfInterest.id) {
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
-                    // move forward off the wall
-                    drivetrain.Drive(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
-
-                    robot.get_back_ultrasonic().measureRange();
-                    try { // wait for ultrasonic to get the range
-                        Thread.sleep(90); // time condition has not yet been met
-                    } catch (InterruptedException exp) {
-                        // ignore interrupt
-                    }
-                    // use ultrasonic to measure distance
-                    drivetrain.check_condition_ultrasonic_distance( this, 60, robot.get_back_ultrasonic(), true);
-
-                    telemetry.addLine(String.format("\nBack Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
-                    telemetry.update();
-
-                    drivetrain.stopAll();
-
-                    // turn using the encoders
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    // ***********************************************************************************
+                    // move forward off the wall and push the cone out of the way
+                    //************************************************************************************
+                    long encoder_inc = 1500; //
                     int[] e = drivetrain.getBackEncoderValues();
-
-                    drivetrain.RotateRight(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
-                    drivetrain.check_condition_encoder_turning( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
-
-                    drivetrain.stopAll();
-
-                    // move backwards into location 1
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(85);
-                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.Drive(-0.45);
+                    drivetrain.Drive(0.55);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-
+                    drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
+                    // ******************************************************************************
+                    // Now move backwards into correct position
+                    // *******************************************************************************
+                    encoder_inc = (420);  // was 340, 380
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.Drive(-0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    // use ultrasonic to measure distance
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
+                    // ************************************************************************************
+                    // turn using the encoders by rotating right
+                    //**************************************************************************************
+                    encoder_inc = (885); //drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateRight(0.50); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    drivetrain.check_condition_encoder_turning( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
+                    drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
+                    // ************************************************************************************
+                    // Move backwards into location 1
+                    //**************************************************************************************
+                    encoder_inc = 840;
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(-0.40);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
                 }
                 break;
@@ -276,48 +299,73 @@ public class compAutoBlue_V1 extends LinearOpMode
                 case ID_TAG_POSITION_3:
                 {
                     // Do autonomous code to move to Location 3
-                    // move forward off the wall
-                    drivetrain.Drive(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
-
-                    robot.get_back_ultrasonic().measureRange();
-                    try { // wait for ultrasonic to get the range
-                        Thread.sleep(90); // time condition has not yet been met
-                    } catch (InterruptedException exp) {
-                        // ignore interrupt
-                    }
-                    // use ultrasonic to measure distance
-                    drivetrain.check_condition_ultrasonic_distance( this, 60, robot.get_back_ultrasonic(), true);
-
-                    telemetry.addLine(String.format("\nBack Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
-                    telemetry.update();
-
-                    drivetrain.stopAll();
-
-                    // turn using the encoders
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(59.20);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    // ***********************************************************************************
+                    // move forward off the wall and push the cone out of the way
+                    //************************************************************************************
+                    long encoder_inc = 1500; //
                     int[] e = drivetrain.getBackEncoderValues();
-
-                    drivetrain.RotateRight(0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
-                    drivetrain.check_condition_encoder_turning( this,
-                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
-
-                    drivetrain.stopAll();
-
-                    // move backwards into location 3
-                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(68);
-                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.45);
+                    drivetrain.Drive(0.55);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-
                     drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
+                    // ******************************************************************************
+                    // Now move backwards into correct position
+                    // *******************************************************************************
+                    encoder_inc = (320);
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.Drive(-0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    // use ultrasonic to measure distance
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
 
+                    // ************************************************************************************
+                    // turn using the encoders by rotating left
+                    //**************************************************************************************
+                    encoder_inc = (885); //drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateLeft(0.50); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    drivetrain.check_condition_encoder_turning( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, false);
+                    drivetrain.stopAll();
+                    // Pause to prevent wheel slippage and jerking
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException exc) {
+                        //ignore
+                    }
 
+                    // ************************************************************************************
+                    // Move backwards into location 3
+                    //**************************************************************************************
+                    encoder_inc = 1000;
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.Drive(-0.45);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
                 }
                 break;
             }
+            robot.clawElbow().setPosition(1);
+            robot.clawWrist().setPosition(0);
+            robot.clawGrab().setPosition(0.55);
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
