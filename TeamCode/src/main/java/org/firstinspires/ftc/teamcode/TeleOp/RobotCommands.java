@@ -43,7 +43,7 @@ public class RobotCommands {
 
     int armOut = 500;
     int armHigh = 650;
-    int armBack = 1425;
+    int armBack = 1525;
 
 
     public void init(HardwareSoftware robot){

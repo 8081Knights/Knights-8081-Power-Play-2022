@@ -47,7 +47,7 @@ public class compTeleop extends OpMode {
 
     int low = 350;
     int mid = 1000;
-    int high = 1500;
+    int high = 1550;
 
     int stack1 = 30;
     int stack2 = 60;
@@ -131,6 +131,7 @@ public class compTeleop extends OpMode {
             robot.clawElbow().setPosition(1);
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0);
+            pickHeight = 0;
 
         }
         else if(gamepad1.b){
@@ -138,6 +139,7 @@ public class compTeleop extends OpMode {
             robot.clawElbow().setPosition(0.4);  //it was 45, but it was slightly too slow
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0.55);
+            pickHeight = 0;
 
         }
         else if(gamepad1.dpad_right){
@@ -209,12 +211,13 @@ public class compTeleop extends OpMode {
 
         }
 
-        else if(gamepad2.a){
+        else if(gamepad1.y){
             y = true;
         }
-        else if (y && !gamepad2.y){
+        else if (y && !gamepad1.y){
             slide = slideHeight.Pickup;
             pickHeight += 250;
+            y = false;
         }
 
         else if(gamepad1.right_trigger > .1){
@@ -364,6 +367,8 @@ public class compTeleop extends OpMode {
                 prevPos = slide;
 
                 if(robot.leftSlide().getCurrentPosition() == pickHeight && robot.rightSlide().getCurrentPosition() == pickHeight){
+                    robot.leftSlide().setVelocity(0);
+                    robot.rightSlide().setVelocity(0);
                     break;
 
                 }
@@ -485,6 +490,12 @@ public class compTeleop extends OpMode {
 
 
                 }
+
+
+                telemetry.addData("Left Slide: ", robot.leftSlide().getCurrentPosition());
+                telemetry.addData("Right Slide: ", robot.rightSlide().getCurrentPosition());
+                telemetry.addData("Pick Height: ", pickHeight);
+
 
 
         }

@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="compAutoBlue_Terminal")
+@Autonomous(name="compAuto")
 public class compAutoBlue_V1 extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
@@ -366,6 +366,7 @@ public class compAutoBlue_V1 extends LinearOpMode
             robot.clawElbow().setPosition(1);
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0.55);
+            sleep(1000);
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
