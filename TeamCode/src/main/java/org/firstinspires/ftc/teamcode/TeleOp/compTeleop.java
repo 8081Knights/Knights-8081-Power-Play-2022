@@ -291,8 +291,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -312,8 +312,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -333,8 +333,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -354,8 +354,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -368,8 +368,8 @@ public class compTeleop extends OpMode {
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 commands.armBack();
                 prevPos = slide;
-                robot.leftSlide().setVelocity(2000);
-                robot.rightSlide().setVelocity(2000);
+                robot.leftSlide().setVelocity(slideSpeed);
+                robot.rightSlide().setVelocity(slideSpeed);
 
                 break;
 
@@ -399,8 +399,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -423,8 +423,8 @@ public class compTeleop extends OpMode {
 
                 }
                 else{
-                    robot.leftSlide().setVelocity(2000);
-                    robot.rightSlide().setVelocity(2000);
+                    robot.leftSlide().setVelocity(slideSpeed);
+                    robot.rightSlide().setVelocity(slideSpeed);
                     break;
                 }
 
@@ -447,8 +447,8 @@ public class compTeleop extends OpMode {
 
                         }
                         else{
-                            robot.leftSlide().setVelocity(2000);
-                            robot.rightSlide().setVelocity(2000);
+                            robot.leftSlide().setVelocity(slideSpeed);
+                            robot.rightSlide().setVelocity(slideSpeed);
                             break;
                         }
 
@@ -470,8 +470,8 @@ public class compTeleop extends OpMode {
 
                         }
                         else{
-                            robot.leftSlide().setVelocity(2000);
-                            robot.rightSlide().setVelocity(2000);
+                            robot.leftSlide().setVelocity(slideSpeed);
+                            robot.rightSlide().setVelocity(slideSpeed);
                             break;
                         }
 
@@ -490,8 +490,8 @@ public class compTeleop extends OpMode {
 
                         }
                         else{
-                            robot.leftSlide().setVelocity(2000);
-                            robot.rightSlide().setVelocity(2000);
+                            robot.leftSlide().setVelocity(slideSpeed);
+                            robot.rightSlide().setVelocity(slideSpeed);
                             break;
                         }
                     case Low:
@@ -507,8 +507,8 @@ public class compTeleop extends OpMode {
 
                         }
                         else{
-                            robot.leftSlide().setVelocity(2000);
-                            robot.rightSlide().setVelocity(2000);
+                            robot.leftSlide().setVelocity(slideSpeed);
+                            robot.rightSlide().setVelocity(slideSpeed);
                             break;
                         }
 
@@ -530,33 +530,35 @@ public class compTeleop extends OpMode {
 
 
     }
-    //Method to handle and truncate linear slide movement
-    public void slideChange(int height, int speed, int tolerance){
 
 
-        //Set target height for linear slides
-        robot.leftSlide().setTargetPosition(height);
-        robot.rightSlide().setTargetPosition(height);
-
-
-        //Tell the linear slides to move to the correct position
-        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        if((robot.leftSlide().getCurrentPosition() >= height - tolerance || robot.leftSlide().getCurrentPosition() <= height + tolerance) && (robot.rightSlide().getCurrentPosition() >= height - tolerance || robot.rightSlide().getCurrentPosition() <= height + tolerance)){
-            robot.leftSlide().setVelocity(0);
-            robot.rightSlide().setVelocity(0);
-
-
-        }
-        else{
-
-            robot.leftSlide().setVelocity(speed);
-            robot.rightSlide().setVelocity(speed);
-
-        }
-
-
-
-    }
+//    //Method to handle and truncate linear slide movement
+//    public void slideChange(int height, int speed, int tolerance){
+//
+//
+//        //Set target height for linear slides
+//        robot.leftSlide().setTargetPosition(height);
+//        robot.rightSlide().setTargetPosition(height);
+//
+//
+//        //Tell the linear slides to move to the correct position
+//        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//
+//        if((robot.leftSlide().getCurrentPosition() >= height - tolerance || robot.leftSlide().getCurrentPosition() <= height + tolerance) && (robot.rightSlide().getCurrentPosition() >= height - tolerance || robot.rightSlide().getCurrentPosition() <= height + tolerance)){
+//            robot.leftSlide().setVelocity(0);
+//            robot.rightSlide().setVelocity(0);
+//
+//
+//        }
+//        else{
+//
+//            robot.leftSlide().setVelocity(speed);
+//            robot.rightSlide().setVelocity(speed);
+//
+//        }
+//
+//
+//
+//    }
 }
