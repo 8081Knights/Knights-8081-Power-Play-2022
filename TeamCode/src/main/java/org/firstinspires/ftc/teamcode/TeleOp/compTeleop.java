@@ -7,26 +7,63 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
+//TODO: Test the low position for the linear slides because it uses the truncated RobotCommands method
+//TODO: Finish replacing the switch case code with the truncated RobotCommands method after getting low to work correctly and consistently
+
+//Written by the programmers of 8081 Knights of the Lab Table
+//Alex, Nathaniel, Sydney, Thomas
+
+//Honorary Mentions:
+//Ethan - Helped with tuning and testing
 
 
 @TeleOp(name = "Comp Tele")
 public class compTeleop extends OpMode {
 
+
+    //Hardware Map object
     HardwareSoftware robot = new HardwareSoftware();
+
+    //Truncated programs object
     RobotCommands commands = new RobotCommands();
 
-
+    // Handles the percentage of the motors when running the drive train, sets the initial speed to 70%
     double speedMult = 0.7;
+
+
+    //High and Low percentages for Drive train speed
+    //TODO: Can be tuned
+    double highDtSpeed = 0.7;
+    double lowDtSpeed = 0.2;
+
+    //Storage variable in order to make push button logic to work
     boolean x = false;
     boolean y = false;
 
+    //ALL OF THE STORAGE VARIABLES BELOW RELATE TO THE MOVEMENT AND TUNING OF THE LINEAR SLIDES
 
+    // Height that the linear slides drop when you pull the trigger
+    //TODO: Can be tuned however system doesn't work perfectly yet
     int scoreHeight = 200;
+
+    // Height the linear slides go to when picking cones up off the stack
     int pickHeight = 0;
 
-    int slideTolerance = 10;
+    // Range of which slides can be within the tolerances
+    //TODO: Can be tuned but wouldn't recommend
+    int slideTolerance = 0;
 
+    //Speed the Slides move at
+    //TODO: Can be tuned
+    int slideSpeed = 500;
 
+    //Linear Slide tick heights for each Pole height
+    //TODO: Can be tuned
+    int low = 1000;
+    int mid = 1550;
+    int high = 1550;
+
+    // Enumerator for availible positions at which slides can go to DO NOT TOUCH!
     enum slideHeight{
         Ground,
         Low,
@@ -45,13 +82,7 @@ public class compTeleop extends OpMode {
     slideHeight slide = slideHeight.Nothing;
     slideHeight prevPos = slide;
 
-    int low = 350;
-    int mid = 1000;
-    int high = 1550;
 
-    int stack1 = 30;
-    int stack2 = 60;
-    int stack3 = 90;
 
     @Override
     public void init() {
@@ -125,7 +156,7 @@ public class compTeleop extends OpMode {
         robot.backRight().setPower(speeds[3]*speedMult);
 
 
-
+        // Set the height to Home
         if (gamepad1.a){
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(1);
@@ -142,35 +173,46 @@ public class compTeleop extends OpMode {
             pickHeight = 0;
 
         }
+
+        // Set the height to Ground
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0.4);
         }
+
+        // Set the height to the High Back position
         else if(gamepad2.dpad_right){
             slide = slideHeight.HighB;
             robot.clawWrist().setPosition(1);
             robot.clawElbow().setPosition(1);
         }
+
+        // Set the height to the Low position
         else if(gamepad1.dpad_down){
             slide = slideHeight.Low;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
         }
+
+        // Set the height to the Middle position
         else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
         }
+
+        // Set the height to the high position
         else if(gamepad1.dpad_up){
             slide = slideHeight.High;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
         }
 
+        /*
         else if(gamepad2.dpad_down){
             slide = slideHeight.stack1;
-        }
+        } */
 
 
 
@@ -184,19 +226,22 @@ public class compTeleop extends OpMode {
 //        else if(gamepad1.y){
 //            speedMult = .2;
 //        }
+
+        //Push button logic for Toggling the Speed multiplier
         else if(gamepad1.x) {
 
             x = true;
         }
 
+        //Changes the speed of the Drive train on the up press of Gamepad 1 X
         else if(x && !gamepad1.x){
             x = false;
 
-            if(speedMult == .7){
-                speedMult = .2;
+            if(speedMult == highDtSpeed){
+                speedMult = lowDtSpeed;
             }
             else{
-                speedMult = .7;
+                speedMult = highDtSpeed;
             }
         }
         else if(x && !gamepad1.x){
@@ -210,7 +255,7 @@ public class compTeleop extends OpMode {
 
 
         }
-
+        // Logic for the cone stack -- Makes the slides run to a position
         else if(gamepad1.y){
             y = true;
         }
@@ -226,7 +271,7 @@ public class compTeleop extends OpMode {
 
 
 
-
+        // Handles arm and claw logic -- preset instructions for positioning
         switch(slide){
             case Ground:
                 robot.leftSlide().setTargetPosition(100);
@@ -251,17 +296,16 @@ public class compTeleop extends OpMode {
 
 
             case Low:
+
+
                 robot.leftSlide().setTargetPosition(low);
                 robot.rightSlide().setTargetPosition(low);
 
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armOut();
                 prevPos = slide;
-                robot.leftSlide().setVelocity(2000);
-                robot.rightSlide().setVelocity(2000);
-                if(robot.leftSlide().getCurrentPosition() ==  low && robot.rightSlide().getCurrentPosition() == low){
+                if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                     break;
 
                 }
@@ -271,6 +315,9 @@ public class compTeleop extends OpMode {
                     break;
                 }
 
+
+
+
             case Middle:
                 robot.leftSlide().setTargetPosition(mid);
                 robot.rightSlide().setTargetPosition(mid);
@@ -278,7 +325,6 @@ public class compTeleop extends OpMode {
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                commands.armHigh();
                 prevPos = slide;
                 if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                     break;
@@ -356,6 +402,8 @@ public class compTeleop extends OpMode {
                     break;
                 }
 
+
+
             case Pickup:
                 robot.leftSlide().setTargetPosition(pickHeight);
                 robot.rightSlide().setTargetPosition(pickHeight);
@@ -390,15 +438,9 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-
-                        commands.armOut();
-
-
-
-                        if((robot.leftSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance)){
-                            telemetry.addLine("SUCCESS!");
-                            robot.clawGrab().setPosition(1);
+                        commands.armHigh();
+                        prevPos = slide;
+                        if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 
                         }
@@ -407,6 +449,7 @@ public class compTeleop extends OpMode {
                             robot.rightSlide().setVelocity(2000);
                             break;
                         }
+
 
 
 
@@ -416,24 +459,18 @@ public class compTeleop extends OpMode {
                         robot.leftSlide().setTargetPosition(high - scoreHeight);
                         robot.rightSlide().setTargetPosition(high - scoreHeight);
 
-
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-
                         commands.armBack();
-
-
-                        if((robot.leftSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= high - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= high - scoreHeight + slideTolerance)){
-                            telemetry.addLine("SUCCESS!");
-                            robot.clawGrab().setPosition(1);
+                        prevPos = slide;
+                        if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 
                         }
                         else{
                             robot.leftSlide().setVelocity(2000);
                             robot.rightSlide().setVelocity(2000);
-
+                            break;
                         }
 
 
@@ -444,25 +481,17 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-
-                        commands.armOut();
-
-
-
-                        if((robot.leftSlide().getCurrentPosition() >= mid - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= mid - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= mid - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= mid - scoreHeight + slideTolerance)){
-                            telemetry.addLine("SUCCESS!");
-                            robot.clawGrab().setPosition(1);
+                        commands.armHigh();
+                        prevPos = slide;
+                        if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 
                         }
                         else{
                             robot.leftSlide().setVelocity(2000);
                             robot.rightSlide().setVelocity(2000);
-
+                            break;
                         }
-
-
                     case Low:
                         robot.leftSlide().setTargetPosition(low - scoreHeight);
                         robot.rightSlide().setTargetPosition(low - scoreHeight);
@@ -470,21 +499,15 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                        robot.leftSlide().setVelocity(2000);
-                        robot.rightSlide().setVelocity(2000);
-
-                        commands.armOut();
-
-                        if((robot.leftSlide().getCurrentPosition() >= low - scoreHeight - slideTolerance && robot.leftSlide().getCurrentPosition() <= low - scoreHeight + slideTolerance) && (robot.rightSlide().getCurrentPosition() >= low - scoreHeight - slideTolerance && robot.rightSlide().getCurrentPosition() <= low - scoreHeight + slideTolerance)){
-                            telemetry.addLine("SUCCESS!");
-                            robot.clawGrab().setPosition(1);
+                        prevPos = slide;
+                        if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 
                         }
                         else{
                             robot.leftSlide().setVelocity(2000);
                             robot.rightSlide().setVelocity(2000);
-
+                            break;
                         }
 
 
@@ -497,6 +520,37 @@ public class compTeleop extends OpMode {
                 telemetry.addData("Pick Height: ", pickHeight);
 
 
+
+        }
+
+
+
+
+
+    }
+    //Method to handle and truncate linear slide movement
+    public void slideChange(int height, int speed, int tolerance){
+
+
+        //Set target height for linear slides
+        robot.leftSlide().setTargetPosition(height);
+        robot.rightSlide().setTargetPosition(height);
+
+
+        //Tell the linear slides to move to the correct position
+        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        if((robot.leftSlide().getCurrentPosition() >= height - tolerance || robot.leftSlide().getCurrentPosition() <= height + tolerance) && (robot.rightSlide().getCurrentPosition() >= height - tolerance || robot.rightSlide().getCurrentPosition() <= height + tolerance)){
+            robot.leftSlide().setVelocity(0);
+            robot.rightSlide().setVelocity(0);
+
+
+        }
+        else{
+
+            robot.leftSlide().setVelocity(speed);
+            robot.rightSlide().setVelocity(speed);
 
         }
 

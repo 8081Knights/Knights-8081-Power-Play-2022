@@ -156,14 +156,32 @@ public class RobotCommands {
 
     }
 
-    public void slideChange(int height){
+    //Method to handle and truncate linear slide movement
+    public void slideChange(int height, int speed, int tolerance){
 
+
+        //Set target height for linear slides
         leftSlide.setTargetPosition(height);
         rightSlide.setTargetPosition(height);
 
 
+        //Tell the linear slides to move to the correct position
         leftSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        if((leftSlide.getCurrentPosition() >= height - tolerance || leftSlide.getCurrentPosition() <= height + tolerance) && (rightSlide.getCurrentPosition() >= height - tolerance || rightSlide.getCurrentPosition() <= height + tolerance)){
+            leftSlide.setVelocity(0);
+            rightSlide.setVelocity(0);
+
+
+        }
+        else{
+
+            leftSlide.setVelocity(speed);
+            rightSlide.setVelocity(speed);
+
+        }
+
 
 
     }

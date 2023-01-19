@@ -301,7 +301,7 @@ public class compAutoBlue_V1 extends LinearOpMode
                     // Do autonomous code to move to Location 3
                     // ***********************************************************************************
                     // move forward off the wall and push the cone out of the way
-                    //************************************************************************************
+                    //****************************************** ******************************************
                     long encoder_inc = 1500; //
                     int[] e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
