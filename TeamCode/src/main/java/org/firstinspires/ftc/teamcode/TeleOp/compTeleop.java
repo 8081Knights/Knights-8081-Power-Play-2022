@@ -167,7 +167,7 @@ public class compTeleop extends OpMode {
         }
         else if(gamepad1.b){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.4);  //it was 45, but it was slightly too slow
+            robot.clawElbow().setPosition(0.38);  //it was 45, but it was slightly too slow, it was 40, but it was too low EA
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0.55);
             pickHeight = 0;
