@@ -36,9 +36,21 @@ public class compTeleop extends OpMode {
     double highDtSpeed = 0.7;
     double lowDtSpeed = 0.2;
 
-    //Storage variable in order to make push button logic to work
+    //Storage variable in order to make push button logic to work DONT TOUCH
     boolean x = false;
     boolean y = false;
+
+    //Tunable servo position variables
+
+    //Storage variable How wide to open the claw
+    //TODO: Can be tuned
+    double clawOpen = 0.55;
+    double clawClose = 0;
+
+    //Storage variable for the height of the elbow joint when ready to pick up a cone
+    //TODO: Can be tuned
+    double elbowMid = 0.38;
+
 
     //ALL OF THE STORAGE VARIABLES BELOW RELATE TO THE MOVEMENT AND TUNING OF THE LINEAR SLIDES
 
@@ -167,9 +179,9 @@ public class compTeleop extends OpMode {
         }
         else if(gamepad1.b){
             slide = slideHeight.Home;
-            robot.clawElbow().setPosition(0.38);  //it was 45, but it was slightly too slow, it was 40, but it was too low EA
+            robot.clawElbow().setPosition(elbowMid);  //it was 45, but it was slightly too slow, it was 40, but it was too low EA
             robot.clawWrist().setPosition(0);
-            robot.clawGrab().setPosition(0.55);
+            robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
 
         }
@@ -217,10 +229,10 @@ public class compTeleop extends OpMode {
 
 
         else if(gamepad1.left_bumper){
-            robot.clawGrab().setPosition(0.55);
+            robot.clawGrab().setPosition(clawOpen);
         }
         else if(gamepad1.right_bumper){
-            robot.clawGrab().setPosition(0);
+            robot.clawGrab().setPosition(clawClose);
         }
 
 //        else if(gamepad1.y){
@@ -244,17 +256,7 @@ public class compTeleop extends OpMode {
                 speedMult = highDtSpeed;
             }
         }
-        else if(x && !gamepad1.x){
-            x = false;
-            if(speedMult == 0.7){
-                speedMult = 0.2;
-            }
-            else {
-                speedMult = 0.7;
-            }
 
-
-        }
         // Logic for the cone stack -- Makes the slides run to a position
         else if(gamepad1.y){
             y = true;
