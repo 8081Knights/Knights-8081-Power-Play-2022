@@ -2,17 +2,18 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static android.os.SystemClock.sleep;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
 public class RobotCommands {
     HardwareSoftware robot = new HardwareSoftware();
-    GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
 
     public boolean home = true;
     public boolean out = false;
@@ -47,7 +48,7 @@ public class RobotCommands {
 
 
     public void init(HardwareSoftware robot){
-        gyro = new GyroSensor(robot, false);
+        gyro = robot.gyro();
         frontRight    = robot.frontRight();
         backRight     = robot.backRight();
         backLeft      = robot.backLeft();
@@ -214,9 +215,9 @@ public class RobotCommands {
 
                 if(left){
                     frontLeft.setPower(-speed);
-                    backLeft.setPower(-speed);
+                    backLeft.setPower(speed);
                     frontRight.setPower(speed);
-                    backRight.setPower(speed);
+                    backRight.setPower(-speed);
 
                 }
 
@@ -242,6 +243,10 @@ public class RobotCommands {
             backRight.setPower(0);
 
 
+    }
+
+    public void initGyro(){
+        gyro.calibrate();
     }
 
 }

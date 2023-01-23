@@ -28,12 +28,12 @@ public class compTeleop extends OpMode {
     RobotCommands commands = new RobotCommands();
 
     // Handles the percentage of the motors when running the drive train, sets the initial speed to 70%
-    double speedMult = 0.7;
+    double speedMult = 0.85;
 
 
     //High and Low percentages for Drive train speed
     //TODO: Can be tuned
-    double highDtSpeed = 0.7;
+    double highDtSpeed = 0.85;
     double lowDtSpeed = 0.2;
 
     //Storage variable in order to make push button logic to work DONT TOUCH
@@ -56,7 +56,7 @@ public class compTeleop extends OpMode {
 
     // Height that the linear slides drop when you pull the trigger
     //TODO: Can be tuned however system doesn't work perfectly yet
-    int scoreHeight = 200;
+    int scoreHeight = 500;
 
     // Height the linear slides go to when picking cones up off the stack
     int pickHeight = 0;
@@ -67,13 +67,13 @@ public class compTeleop extends OpMode {
 
     //Speed the Slides move at
     //TODO: Can be tuned
-    int slideSpeed = 500;
+    int slideSpeed = 2000;
 
     //Linear Slide tick heights for each Pole height
     //TODO: Can be tuned
-    int low = 1000;
-    int mid = 1550;
-    int high = 1550;
+    int low = 1450;
+    int mid = 1700;
+    int high = 1700;
 
     // Enumerator for availible positions at which slides can go to DO NOT TOUCH!
     enum slideHeight{
@@ -190,7 +190,7 @@ public class compTeleop extends OpMode {
         else if(gamepad1.dpad_right){
             slide = slideHeight.Ground;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(0.4);
+            robot.clawElbow().setPosition(elbowMid);
         }
 
         // Set the height to the High Back position
@@ -204,14 +204,14 @@ public class compTeleop extends OpMode {
         else if(gamepad1.dpad_down){
             slide = slideHeight.Low;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(0);
+            robot.clawElbow().setPosition(elbowMid);
         }
 
         // Set the height to the Middle position
         else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(0);
+            robot.clawElbow().setPosition(elbowMid);
         }
 
         // Set the height to the high position
@@ -284,6 +284,7 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //                commands.armOut();
+                commands.armHome();
                 prevPos = slide;
 
                 if(robot.leftSlide().getCurrentPosition() == 0 && robot.rightSlide().getCurrentPosition() == 0){
@@ -306,6 +307,7 @@ public class compTeleop extends OpMode {
 
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                commands.armHome();
                 prevPos = slide;
                 if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                     break;
@@ -328,6 +330,7 @@ public class compTeleop extends OpMode {
                 robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 prevPos = slide;
+                commands.armHome();
                 if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                     break;
 
@@ -520,6 +523,7 @@ public class compTeleop extends OpMode {
                 telemetry.addData("Left Slide: ", robot.leftSlide().getCurrentPosition());
                 telemetry.addData("Right Slide: ", robot.rightSlide().getCurrentPosition());
                 telemetry.addData("Pick Height: ", pickHeight);
+                telemetry.update();
 
 
 

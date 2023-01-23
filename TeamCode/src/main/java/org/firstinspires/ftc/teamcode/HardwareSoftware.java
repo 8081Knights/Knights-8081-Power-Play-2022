@@ -6,10 +6,12 @@ import static android.os.SystemClock.sleep;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -40,6 +42,10 @@ public class HardwareSoftware {
     Servo clawElbow = null;
     Servo clawWrist = null;
 
+    //Gyro variable
+    IntegratingGyroscope gyro;
+    ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+
     OpenCvCamera frontWebCam;
 
     MaxbotixUltrasonicI2c   right_ultrasonic = null;
@@ -59,7 +65,7 @@ public class HardwareSoftware {
     public void init(HardwareMap ahw){
         hw = ahw;
 
-        imu = hw.get(BNO055IMU.class, "imu");
+//        imu = hw.get(BNO055IMU.class, "imu");
 
 
         frontRight = hw.get(DcMotorEx.class, "frontRight");
@@ -69,6 +75,9 @@ public class HardwareSoftware {
 //        encoder = hw.get(DcMotorEx.class, "encoder");
 //        strafeEncoder = hw.get(DcMotorEx.class, "strafeEncoder");
 //        turnEncoder = hw.get(DcMotorEx.class, "turnEncoder");
+
+        modernRoboticsI2cGyro = hw.get(ModernRoboticsI2cGyro.class, "gyro");
+
 
         armDrive = hw.get(DcMotorEx.class, "armDrive");
 
@@ -182,7 +191,11 @@ public class HardwareSoftware {
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
 
-    public BNO055IMU getImu(){return imu;}
+    public ModernRoboticsI2cGyro gyro(){return modernRoboticsI2cGyro;}
+
+    public BNO055IMU getImu(){
+        return imu;
+    }
 
     public MaxbotixUltrasonicI2c get_right_ultrasonic(){ return right_ultrasonic; }
     public MaxbotixUltrasonicI2c get_left_ultrasonic(){ return left_ultrasonic; }

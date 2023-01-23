@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
 import org.firstinspires.ftc.teamcode.ConeOrientate;
 import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntf;
-import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
+//import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -29,22 +31,18 @@ public class CamOrientTest extends OpMode {
     double coneTolerance = 4;
     double center = 395;
 
+    IntegratingGyroscope gyro;
+    ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+
 
     @Override
     public void init() {
         robot.init(hardwareMap);
         commands.init(robot);
+        commands.initGyro();
 
         camera = robot.getFrontWebCam();
 
-        GyroSensor gyro = new GyroSensor(robot, false);
-
-        while(!gyro.isIMUready()){
-            //do nothing
-        }
-        if(gyro.isIMUready()) {
-            gyro.initializeZeroPosition();
-        }
 
 
 
@@ -108,9 +106,9 @@ public class CamOrientTest extends OpMode {
 
         }
 
-//        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
-//            commands.turnGyro(coneDegree, 500);
-//        }
+        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
+            commands.turnGyro(coneDegree, 500);
+        }
 
         telemetry.addData("Silly cone angle: ", coneDegree);
         telemetry.addData("Silly cone position: ", detector.conePos());
