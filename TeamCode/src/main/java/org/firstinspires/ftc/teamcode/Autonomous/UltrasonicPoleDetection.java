@@ -35,15 +35,15 @@ public class UltrasonicPoleDetection {
             300,  // move -7 CM
             300,  // move -6 CM
             300,  // move -5 CM
-            300,  // move -4 CM
-            200, // move -3 CM
-            125, // move -2 CM
-            50,  // move -1 CM
+            -76,  // move -4 CM
+            -60, // move -3 CM
+            -40, // move -2 CM
+            -27,  // move -1 CM
             0, // move 0 CM
-            50,  // move 1 CM
-            125, // move 2 CM
-            200, // move 3 CM
-            300,  // move 4 CM
+            27,  // move 1 CM
+            40, // move 2 CM
+            60, // move 3 CM
+            76,  // move 4 CM
             300,  // move 5 CM
             300,  // move 6 CM
             300,  // move 7 CM
@@ -171,7 +171,7 @@ public class UltrasonicPoleDetection {
                     // increment count that one motor hit its target
                     motors_at_position |= 4; // set it 3
                 }
- 
+
                 if (m_RRDrive.getCurrentPosition() == RBencodervalue) {
                     // stop the motor
                     m_RRDrive.setVelocity(0);

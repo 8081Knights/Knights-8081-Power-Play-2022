@@ -79,8 +79,8 @@ public class compAutoBlue_V1 extends LinearOpMode
         drivetrain.setMotorMode( DcMotor.RunMode.RUN_USING_ENCODER );
 
         // Tell ultrasonics to get the range
-        robot.get_front_ultrasonic().measureRange();
-        robot.get_back_ultrasonic().measureRange();
+        robot.get_left_ultrasonic().measureRange();
+        robot.get_right_ultrasonic().measureRange();
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
@@ -172,13 +172,13 @@ public class compAutoBlue_V1 extends LinearOpMode
             telemetry.addLine(String.format("\n Left Encoders=%d", e[DriveTrainIntf.LEFT_ENCODER]));
             telemetry.addLine(String.format("\nRight Encoders=%d", e[DriveTrainIntf.RIGHT_ENCODER]));
 
-            telemetry.addLine(String.format("\nFront Ultrasonic=%d", robot.get_front_ultrasonic().getLastRange() ));
-            telemetry.addLine(String.format("\nRear Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange() ));
+            telemetry.addLine(String.format("\nLeft Ultrasonic=%d", robot.get_left_ultrasonic().getLastRange() ));
+            telemetry.addLine(String.format("\nRight Ultrasonic=%d", robot.get_right_ultrasonic().getLastRange() ));
             telemetry.update();
 
             // Tell ultrasonics to get the range
-            robot.get_front_ultrasonic().measureRange();
-            robot.get_back_ultrasonic().measureRange();
+            robot.get_left_ultrasonic().measureRange();
+            robot.get_right_ultrasonic().measureRange();
 
             sleep(20);
         }

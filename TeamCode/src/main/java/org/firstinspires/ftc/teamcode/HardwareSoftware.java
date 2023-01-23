@@ -42,8 +42,8 @@ public class HardwareSoftware {
 
     OpenCvCamera frontWebCam;
 
-    MaxbotixUltrasonicI2c   front_ultrasonic = null;
-    MaxbotixUltrasonicI2c   back_ultrasonic = null;
+    MaxbotixUltrasonicI2c   right_ultrasonic = null;
+    MaxbotixUltrasonicI2c   left_ultrasonic = null;
 
 
     int tickPerIn = 1000;
@@ -134,9 +134,9 @@ public class HardwareSoftware {
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         frontWebCam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
 
-        front_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "front_ultrasonic");
+        right_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "right_ultrasonic");
 
-        back_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "rear_ultrasonic");
+        left_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "left_ultrasonic");
 
 
 
@@ -184,7 +184,7 @@ public class HardwareSoftware {
 
     public BNO055IMU getImu(){return imu;}
 
-    public MaxbotixUltrasonicI2c get_front_ultrasonic(){ return front_ultrasonic; }
-    public MaxbotixUltrasonicI2c get_back_ultrasonic(){ return back_ultrasonic; }
+    public MaxbotixUltrasonicI2c get_right_ultrasonic(){ return right_ultrasonic; }
+    public MaxbotixUltrasonicI2c get_left_ultrasonic(){ return left_ultrasonic; }
 
 }

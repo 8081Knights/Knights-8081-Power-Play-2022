@@ -350,7 +350,7 @@ public class DriveTrainIntf {
                 }
             }
 
-            caller.telemetry.addLine(String.format("\nRear Ultrasonic=%d", robot.get_back_ultrasonic().getLastRange()));
+            caller.telemetry.addLine(String.format("\nleft Ultrasonic=%d", robot.get_left_ultrasonic().getLastRange()));
             caller.telemetry.update();
 
             sensor.measureRange(); // get the sensor to measure pur range
