@@ -39,8 +39,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="compAuto")
-public class CompAuto extends LinearOpMode
+@Autonomous(name="compAutoPark")
+public class CompAutoPark extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
