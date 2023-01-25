@@ -39,6 +39,7 @@ public class compTeleop extends OpMode {
     //Storage variable in order to make push button logic to work DONT TOUCH
     boolean x = false;
     boolean y = false;
+    boolean leftTrigger = false;
 
     //Tunable servo position variables
 
@@ -50,6 +51,10 @@ public class compTeleop extends OpMode {
     //Storage variable for the height of the elbow joint when ready to pick up a cone
     //TODO: Can be tuned
     double elbowMid = 0.38;
+
+    //Variable that changes where the claw elbow goes when the left trigger is pressed
+    double clawScore = 0.8;
+
 
 
     //ALL OF THE STORAGE VARIABLES BELOW RELATE TO THE MOVEMENT AND TUNING OF THE LINEAR SLIDES
@@ -72,7 +77,7 @@ public class compTeleop extends OpMode {
     //Linear Slide tick heights for each Pole height
     //TODO: Can be tuned
     int low = 1450;
-    int mid = 1700;
+    int mid = 1800;
     int high = 1700;
 
     // Enumerator for availible positions at which slides can go to DO NOT TOUCH!
@@ -93,6 +98,7 @@ public class compTeleop extends OpMode {
 
     slideHeight slide = slideHeight.Nothing;
     slideHeight prevPos = slide;
+
 
 
 
@@ -269,6 +275,19 @@ public class compTeleop extends OpMode {
 
         else if(gamepad1.right_trigger > .1){
             slide = slideHeight.score;
+        }
+        else if(gamepad1.left_trigger > .1){
+            leftTrigger = true;
+        }
+        else if(leftTrigger && gamepad1.left_trigger < .1){
+            leftTrigger = false;
+
+            if(robot.clawElbow().getPosition() > 0.1){
+                robot.clawElbow().setPosition(0);
+            }
+            else{
+                robot.clawElbow().setPosition(clawScore);
+            }
         }
 
      /*   else if(gamepad1.left_trigger > .1){
