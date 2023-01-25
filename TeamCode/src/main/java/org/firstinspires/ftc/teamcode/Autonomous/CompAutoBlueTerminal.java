@@ -192,16 +192,90 @@ public class CompAutoBlueTerminal extends LinearOpMode
                  * Insert your autonomous code here, probably using the tag pose to decide your configuration.
                  */
                 drivetrain.setMotorForwardDirection(true);
-
+                //move forward a bit before turing
+                long encoder_inc = 268; //
+                int[] e = drivetrain.getBackEncoderValues();
+                drivetrain.Drive(0.55);
+                // change condition
+                drivetrain.check_condition_encoder_distance( this,
+                        e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                drivetrain.stopAll();
+                // Pause to prevent wheel slippage and jerking
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
+                //turn to the right towards terminal
+                encoder_inc = (885); //drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                e = drivetrain.getBackEncoderValues();
+                drivetrain.RotateRight(0.50); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                drivetrain.check_condition_encoder_turning( this,
+                        e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
+                drivetrain.stopAll();
+                // Pause to prevent wheel slippage and jerking
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
+                //move forward into terminal
+                encoder_inc = 949;
+                e = drivetrain.getBackEncoderValues();
+                drivetrain.Drive(0.55);
+                // change condition
+                drivetrain.check_condition_encoder_distance( this,
+                        e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                drivetrain.stopAll();
+                // Pause to prevent wheel slippage and jerking
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
+                // score cone
+                robot.clawWrist().setPosition(0);
+                robot.clawElbow().setPosition(0.38);
+                robot.clawGrab().setPosition(0.55);
+                sleep(1000);
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
+                // put claw in up position
+                robot.clawElbow().setPosition(1);
+                robot.clawWrist().setPosition(0);
+                robot.clawGrab().setPosition(0.55);
+                sleep(1000);
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
+                // turn left towards signal zones
+                encoder_inc = (885); //drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                e = drivetrain.getBackEncoderValues();
+                drivetrain.RotateLeft(0.50); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                drivetrain.check_condition_encoder_turning( this,
+                        e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
+                drivetrain.stopAll();
+                // Pause to prevent wheel slippage and jerking
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException exc) {
+                    //ignore
+                }
 
                 switch(tagOfInterest.id) {
                     case ID_TAG_POSITION_1:
                     {
                         // Do autonomous code to move to Location 1
                         // ***********************************************************************************
-                        //move forward a bit before turing
-                        long encoder_inc = 268; //
-                        int[] e = drivetrain.getBackEncoderValues();
+
+                        // move forward into zone 3
+                        encoder_inc = 949;
+                        e = drivetrain.getBackEncoderValues();
                         drivetrain.Drive(0.55);
                         // change condition
                         drivetrain.check_condition_encoder_distance( this,
