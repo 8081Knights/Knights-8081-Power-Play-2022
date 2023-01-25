@@ -271,6 +271,10 @@ public class compTeleop extends OpMode {
             slide = slideHeight.score;
         }
 
+     /*   else if(gamepad1.left_trigger > .1){
+            slide = slideHeight.score;
+        }
+*/
 
 
         // Handles arm and claw logic -- preset instructions for positioning

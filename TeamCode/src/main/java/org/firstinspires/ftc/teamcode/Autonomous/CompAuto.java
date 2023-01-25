@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name="compAuto")
-public class compAutoBlue_V1 extends LinearOpMode
+public class CompAuto extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
@@ -226,7 +226,6 @@ public class compAutoBlue_V1 extends LinearOpMode
                     //************************************************************************************
                     long encoder_inc = 1500; //
                     int[] e = drivetrain.getBackEncoderValues();
-                    // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.55);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
