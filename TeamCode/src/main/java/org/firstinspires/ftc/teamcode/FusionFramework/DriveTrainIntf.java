@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.FusionFramework;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class DriveTrainIntf {
 
     private HardwareSoftware robot;
-    private GyroSensor gyro;
+    private ModernRoboticsI2cGyro m_gyro;
 
     DcMotorEx m_RFDrive = null;
     DcMotorEx m_RRDrive = null;
@@ -24,6 +26,10 @@ public class DriveTrainIntf {
 
     static final double TURN_CONSTANT = 0.50;  // This determines the speed of the turn (higher value is faster turn)
     static final double TURN_CONSTANT_SLOW = 0.65;
+    static final double P_DRIVE_COEFF = 0.1;
+    static final double P_TURN_COEFF = 0.1;
+    static final double STRAFE_CONSTANT = 0.85;
+    static final double HEADING_THRESHOLD = 3; // how close a gyro reading will be to requested angle
 
     // Settings for the Condition Completion Checks
     private double vel_LF = 0;  // Left  Front Wheel velocity setting
@@ -34,7 +40,7 @@ public class DriveTrainIntf {
     public DriveTrainIntf(HardwareSoftware hs) {
 
         robot = hs;
-        gyro = null;
+        m_gyro = hs.gyro();
 
         m_LFDrive = robot.frontLeft();
         m_RFDrive = robot.frontRight();
@@ -47,8 +53,8 @@ public class DriveTrainIntf {
 
     }
 
-    public void setGyro(GyroSensor g) {
-        gyro = g;
+    public void setGyro(ModernRoboticsI2cGyro g) {
+        m_gyro = g;
     }
 
     public void stopAll() {
@@ -508,5 +514,358 @@ public class DriveTrainIntf {
     public long calcEncoderValueFromCentimeters(double centimeters) {
         return Math.round(centimeters / WHEEL_CIRCUMFERENCE) * DCMOTOR_TICK_COUNT;
     }
+
+
+    // ****************************************************************************************************
+    // ****************************************************************************************************
+    //     GYRO DRIVE & TURN CODE
+    // ****************************************************************************************************
+    // ****************************************************************************************************
+
+    /**
+     *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Driver stops the opmode running.
+     *
+     * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
+     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     * @param holdTime   The maximum time to allow this function to run
+     */
+    public void gyroDrive ( LinearOpMode caller,
+                            double speed,
+                            double distance,
+                            double angle,
+                            double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        int     newLeftDriveTarget;
+        int     newRightDriveTarget;
+        int     newLeftArmTarget;
+        int     newRightArmTarget;
+        int     moveCounts;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+
+        caller.telemetry.addData("Entered gyroDrive",  "distance= %g", distance );
+        caller.telemetry.update();
+
+        holdTimer.reset();
+        // Ensure that the opmode is still active
+        if (caller.opModeIsActive()&& (holdTimer.time() < holdTime)) {
+
+            caller.telemetry.addData("Setting motors in gyroDrive",  "holdtime= %g", holdTimer.time() );
+            caller.telemetry.update();
+
+            // Determine new target position, and pass to motor controller
+            moveCounts = (int)((distance + 0.7783)/0.05874);
+            newLeftDriveTarget  = m_LFDrive.getCurrentPosition() + moveCounts;
+            newRightDriveTarget = m_RFDrive.getCurrentPosition() + moveCounts;
+            newLeftArmTarget    = m_LRDrive.getCurrentPosition() + moveCounts;
+            newRightArmTarget   = m_RRDrive.getCurrentPosition() + moveCounts;
+
+            // Set Target and Turn On RUN_TO_POSITION
+            m_LFDrive.setTargetPosition(newLeftDriveTarget);
+            m_RFDrive.setTargetPosition(newRightDriveTarget);
+            m_LRDrive.setTargetPosition(newLeftArmTarget);
+            m_RRDrive.setTargetPosition(newRightArmTarget);
+
+            m_LFDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_RFDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_LRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_RRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+
+            Drive(speed, speed, speed, speed); // DriveTrainIntf.Drive()
+
+            int counter = 0;
+            // keep looping while we are still active, and ALL motors are running.
+            while (caller.opModeIsActive() && (holdTimer.time() < holdTime) &&
+                    (m_LFDrive.isBusy() && m_RFDrive.isBusy() && m_LRDrive.isBusy() && m_RRDrive.isBusy())) {
+
+                // adjust relative speed based on heading error.
+                error = getError(angle); //we had to do this because it was over-rotating by 5.56% of the intended angle
+                steer = getSteer(error, P_DRIVE_COEFF);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                Drive(leftSpeed, rightSpeed, leftSpeed, rightSpeed); // DriveTrainIntf.Drive()
+            }
+
+            // Stop all motion;
+            stopAll(); // DriveTrainIntf
+
+            // Turn off RUN_TO_POSITION
+            setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+
+    /**
+     *  Method to spin on central axis to point in a new direction.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the heading (angle)
+     *  2) Driver stops the opmode running.
+     *
+     * @param speed Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     */
+    public void gyroTurn ( LinearOpMode caller, double speed, double angle, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we are still active, and not on heading.
+        while (caller.opModeIsActive() &&  (holdTimer.time() < holdTime)) {
+            if ( onHeading(caller, speed, angle, P_TURN_COEFF) ) {
+                return;
+            }
+            // Update telemetry & Allow time for other processes to run.
+            caller.telemetry.update();
+        }
+    }
+
+    /**
+     *  Method to obtain & hold a heading for a finite amount of time
+     *  Move will stop once the requested time has elapsed
+     *
+     * @param speed      Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     * @param holdTime   Length of time (in seconds) to hold the specified heading.
+     */
+    public void gyroHold( LinearOpMode caller, double speed, double angle, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+        boolean last_error_positive = ((angle - m_gyro.getHeading())>0)?true:false;
+
+        while (caller.opModeIsActive() && (holdTimer.time() < holdTime)) {
+            if ((angle - m_gyro.getHeading())>0) {
+                if (!last_error_positive) return; // end we crossed our angle
+            } else {
+                if (last_error_positive) return; // end we crossed our angle
+            }
+            // Update telemetry & Allow time for other processes to run.
+            if ( onHeading(caller, speed, angle - (angle * .0555555), P_TURN_COEFF) )
+                return;
+            caller.telemetry.update();
+        }
+
+        // Stop all motion;
+        stopAll(); // DriveTrainIntf
+    }
+
+    /**
+     * Perform one cycle of closed loop heading control.
+     *
+     * @param speed     Desired speed of turn.
+     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
+     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                  If a relative angle is required, add/subtract from current heading.
+     * @param PCoeff    Proportional Gain coefficient
+     * @return          TRUE if the robot is on the set heading, or FALSE otherwise
+     */
+    private boolean onHeading(LinearOpMode caller, double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = //getError(angle);
+                angle - m_gyro.getHeading();
+        while (error > 180)  error -= 360;
+        while (error <= -180) error += 360;
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            return true;
+        } else {
+            // steer will be positive or negative depending on the direction we need to go
+            steer = getSteer(error, PCoeff);
+            leftSpeed = speed * steer;
+            rightSpeed = -leftSpeed;
+
+        }
+
+        // Send desired speeds to motors.
+        Drive(leftSpeed, rightSpeed, leftSpeed, rightSpeed); // DriveTrainIntf.Drive()
+
+        // Display it for the driver.
+        caller.telemetry.addData("Target", "%5.2f", angle);
+        caller.telemetry.addData("Heading", "%d", m_gyro.getHeading());
+        caller.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        caller.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    public void gyroStrafe ( LinearOpMode caller,
+                             double speed,
+                             double distance, // distance in CENTIMETERS
+                             double angle,
+                             double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        int     newLeftDriveTarget;
+        int     newRightDriveTarget;
+        int     newLeftArmTarget;
+        int     newRightArmTarget;
+        int     moveCounts;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+
+        holdTimer.reset();
+
+        // Ensure that the opmode is still active
+        if (caller.opModeIsActive() && (holdTimer.time() < holdTime)) {
+            distance /= STRAFE_CONSTANT; // increase distance by Strafe Constant
+
+            // Determine new target position, and pass to motor controller
+            moveCounts = (int)((distance +0.7183)/0.05874);
+            newLeftDriveTarget = m_LFDrive.getCurrentPosition() + moveCounts; // Front
+            newRightDriveTarget = m_RFDrive.getCurrentPosition() - moveCounts; // Front
+            newLeftArmTarget = m_LRDrive.getCurrentPosition() - moveCounts; // Back
+            newRightArmTarget = m_RRDrive.getCurrentPosition() + moveCounts; // Back
+
+            // Set Target and Turn On RUN_TO_POSITION
+            m_LFDrive.setTargetPosition(newLeftDriveTarget);
+            m_RFDrive.setTargetPosition(newRightDriveTarget);
+            m_LRDrive.setTargetPosition(newLeftArmTarget);
+            m_RRDrive.setTargetPosition(newRightArmTarget);
+
+            m_LFDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_RFDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_LRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            m_RRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            //speed = Range.clip(speed, 0.0, 1.0);
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+
+
+            Drive(speed, speed, speed, speed); // DriveTrainIntf.Drive()
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (caller.opModeIsActive() && (holdTimer.time() < holdTime) &&
+                    (m_LFDrive.isBusy() && m_RFDrive.isBusy() && m_LRDrive.isBusy() && m_RRDrive.isBusy())) {
+
+                // adjust relative speed based on heading error.
+                error = getError(angle); //no correction - using updated getError() with gyro.getHeading instead of IntegratedZValue()
+                steer = getSteer(error, P_DRIVE_COEFF);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                Drive(leftSpeed, rightSpeed, leftSpeed, rightSpeed); // DriveTrainIntf.Drive()
+
+                // Display drive status for the driver.
+                caller.telemetry.addData(">", "Robot Heading = %d", m_gyro.getHeading());
+                caller.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                caller.telemetry.addData("Target",  "%7d:%7d",      newLeftDriveTarget,  newRightDriveTarget, newLeftArmTarget, newRightArmTarget);
+                caller.telemetry.addData("Actual",  "%7d:%7d",      m_LFDrive.getCurrentPosition(),
+                        m_RFDrive.getCurrentPosition(),
+                        m_LRDrive.getCurrentPosition(),
+                        m_RRDrive.getCurrentPosition());
+                caller.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                caller.telemetry.update();
+            }
+
+            // Stop all motion;
+            stopAll(); // DriveTrainIntf
+
+            // Turn off RUN_TO_POSITION
+            setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+
+    /**
+     * getError determines the error between the target angle and the robot's current heading
+     * @param   inAngle  Desired angle (relative to global reference established at last Gyro Reset).
+     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
+     */
+    private double getError(double inAngle) {
+
+        // calculate error in -179 to +180 range
+        // Don't use the integrated Z Value because that is not adjusted based upon the calibration
+        //robotError = targetAngle - m_gyro.getIntegratedZValue();
+        int heading = m_gyro.getHeading();  // return a value between 0 and 360
+
+        // Reduce the input angle to within range o to 360 (for input angles that are negative)
+        double targetAngle = (inAngle < 0 )?inAngle+360:inAngle;
+
+        // Figure out the error angle
+        double robotError = targetAngle - heading;
+
+        // Figure out the error angle
+        if (robotError < -180) {
+            robotError += 360;
+
+        } else if (robotError > 180) { // target angle is greater than 180
+            robotError -= 360;
+        }
+        // This returns a value between -179 to -1 (to turn counter clockwise)
+        // and 1 to 180 (to turn clockwise)
+        return robotError;
+    }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     * @param error   Error angle in robot relative degrees
+     * @param PCoeff  Proportional Gain Coefficient
+     * @return double  the steering adjustment between -1.0 and 1.0
+     */
+    private double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
+    }
+
 
 }

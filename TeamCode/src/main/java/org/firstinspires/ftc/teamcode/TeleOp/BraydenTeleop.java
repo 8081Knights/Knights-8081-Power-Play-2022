@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Ethan - Helped with tuning and testing
 
 
-@TeleOp(name = "Ethan Teleop")
-public class compTeleop extends OpMode {
+@TeleOp(name = "Brayden Teleop")
+public class BraydenTeleop extends OpMode {
 
 
     //Hardware Map object
@@ -107,9 +107,6 @@ public class compTeleop extends OpMode {
 
         robot.init(hardwareMap);
         commands.init(robot);
-        robot.clawElbow().setPosition(1);
-        robot.clawWrist().setPosition(0);
-        robot.clawGrab().setPosition(0);
 
     }
 

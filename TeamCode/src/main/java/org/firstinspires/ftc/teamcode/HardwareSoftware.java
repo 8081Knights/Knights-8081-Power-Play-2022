@@ -56,6 +56,7 @@ public class HardwareSoftware {
     int armMax = 1000;
     int armMin = 10;
 
+
     int low = 500;
     int mid = 1000;
     int high = 1500;
@@ -119,6 +120,7 @@ public class HardwareSoftware {
         rightSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftSlide.setTargetPositionTolerance(5);
         rightSlide.setTargetPositionTolerance(5);
+
 
 
 
@@ -191,7 +193,7 @@ public class HardwareSoftware {
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
 
-    public ModernRoboticsI2cGyro gyro(){return modernRoboticsI2cGyro;}
+    public ModernRoboticsI2cGyro gyro(){ return modernRoboticsI2cGyro;}
 
     public BNO055IMU getImu(){
         return imu;

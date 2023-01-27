@@ -20,6 +20,7 @@ public class RobotCommands {
     public boolean back = false;
 
 
+
     DcMotorEx frontRight   ;
     DcMotorEx backRight    ;
     DcMotorEx backLeft     ;
@@ -42,8 +43,8 @@ public class RobotCommands {
     //Drive Constants
     int tickPerIn = 1000;
 
-    int armOut = 500;
-    int armHigh = 650;
+    int armOut = 650;
+    int armMid = 250;
     int armBack = 1525;
 
 
@@ -106,9 +107,10 @@ public class RobotCommands {
 //        clawElbow.setPosition(0);
 
     }
-    public void armHigh(){
+
+    public void armMid(){
         sleep(100);
-        armDrive.setTargetPosition(armHigh);
+        armDrive.setTargetPosition(armMid);
 
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
