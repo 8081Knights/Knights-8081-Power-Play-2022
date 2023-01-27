@@ -184,6 +184,7 @@ public class compTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0);
             pickHeight = 0;
+            speedMult = highDtSpeed;
 
         }
         else if(gamepad1.b){
@@ -192,6 +193,7 @@ public class compTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
+            speedMult = highDtSpeed;
 
         }
 
@@ -200,6 +202,8 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Ground;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
+            speedMult = lowDtSpeed;
+
         }
 
         // Set the height to the High Back position
@@ -207,6 +211,8 @@ public class compTeleop extends OpMode {
             slide = slideHeight.HighB;
             robot.clawWrist().setPosition(1);
             robot.clawElbow().setPosition(1);
+            speedMult = lowDtSpeed;
+
         }
 
         // Set the height to the Low position
@@ -214,6 +220,8 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Low;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
+            speedMult = lowDtSpeed;
+
         }
 
         // Set the height to the Middle position
@@ -221,6 +229,8 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Middle;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
+            speedMult = lowDtSpeed;
+
         }
 
         // Set the height to the high position
@@ -228,6 +238,8 @@ public class compTeleop extends OpMode {
             slide = slideHeight.High;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(0);
+            speedMult = lowDtSpeed;
+
         }
 
         /*
