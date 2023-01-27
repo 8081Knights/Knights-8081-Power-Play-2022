@@ -39,8 +39,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="compAutoBlue_Terminal by Time")
-public class compAutoBlue_Time extends LinearOpMode
+@Autonomous(name="Blue_Terminal by Time")
+public class Blue_TimeAuto extends LinearOpMode
 {
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
