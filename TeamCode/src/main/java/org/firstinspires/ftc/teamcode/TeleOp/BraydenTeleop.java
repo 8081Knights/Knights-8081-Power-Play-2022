@@ -53,7 +53,8 @@ public class BraydenTeleop extends OpMode {
     double elbowMid = 0.38;
 
     //Variable that changes where the claw elbow goes when the left trigger is pressed
-    double clawScore = 0.8;
+    double clawScoreHigh = 0.8;
+    double clawScoreLow = 0.42;
 
 
 
@@ -182,6 +183,8 @@ public class BraydenTeleop extends OpMode {
             robot.clawGrab().setPosition(0);
             pickHeight = 0;
             speedMult = highDtSpeed;
+            clawScoreHigh = 0.8;
+            clawScoreLow = 0.42;
 
 
         }
@@ -192,6 +195,8 @@ public class BraydenTeleop extends OpMode {
             robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
             speedMult = highDtSpeed;
+            clawScoreHigh = 0.8;
+            clawScoreLow = 0.42;
 
 
         }
@@ -202,6 +207,8 @@ public class BraydenTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
             speedMult = lowDtSpeed;
+            clawScoreHigh = 0.8;
+            clawScoreLow = 0.42;
 
         }
 
@@ -220,12 +227,16 @@ public class BraydenTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
             speedMult = lowDtSpeed;
+            clawScoreHigh = 0.8;
+            clawScoreLow = 0.42;
 
         }
 
         // Set the height to the Middle position
         else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
+            clawScoreHigh = 0.5;
+            clawScoreLow = 0;
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
             speedMult = lowDtSpeed;
@@ -296,11 +307,11 @@ public class BraydenTeleop extends OpMode {
         else if(leftTrigger && gamepad1.left_trigger < .1){
             leftTrigger = false;
 
-            if(robot.clawElbow().getPosition() > 0.5){
-                robot.clawElbow().setPosition(0.42);
+            if(robot.clawElbow().getPosition() > clawScoreHigh - 0.05){
+                robot.clawElbow().setPosition(clawScoreLow);
             }
             else{
-                robot.clawElbow().setPosition(clawScore);
+                robot.clawElbow().setPosition(clawScoreHigh);
             }
         }
 

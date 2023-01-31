@@ -104,15 +104,16 @@ public class HardwareSoftware {
 //        turnEncoder.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 //
+        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
+
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
 //        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
 //        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
-//
-//        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-
-        frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+//        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
 
