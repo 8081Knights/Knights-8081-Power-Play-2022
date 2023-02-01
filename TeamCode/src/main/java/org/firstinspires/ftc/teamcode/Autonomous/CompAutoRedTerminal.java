@@ -222,9 +222,15 @@ public class CompAutoRedTerminal extends LinearOpMode
             } catch (InterruptedException exc) {
                 //ignore
             }
-            //turn to the right towards terminal as tight as possible to avoid ground terminal
-            drivetrain.gyroTurn ( this, 0.4, -90, 1.50);
+            //turn to the left towards terminal as tight as possible to avoid ground terminal
+            encoder_inc = (1050); //1000 //was 950 //was 885 //was 850 //was 750
+            e = drivetrain.getBackEncoderValues();
+            drivetrain.RotateLeft(0.80); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+            drivetrain.check_condition_encoder_turning( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
             drivetrain.stopAll();
+//            drivetrain.gyroTurn ( this, 0.4, -90, 1.50);
+//            drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
             try {
                 Thread.sleep(500);
@@ -271,7 +277,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                 //ignore
             }
             // move backward out of terminal
-            encoder_inc = 600; //was 650 // was 680 // was 700 //was 750 // was 809 //was 839 //was 889
+            encoder_inc = 900; //was 850 //was 800 // was700 //680 //was 600 //was 650 // was 680 // was 700 //was 750 // was 809 //was 839 //was 889
             e = drivetrain.getBackEncoderValues();
             drivetrain.Drive(-0.3); //was 0.55
             // change condition
@@ -284,9 +290,15 @@ public class CompAutoRedTerminal extends LinearOpMode
             } catch (InterruptedException exc) {
                 //ignore
             }
-            // turn towards the signal zones
-            drivetrain.gyroTurn ( this, 0.4, -0, 2.0);
+            // turn right towards the signal zones
+            encoder_inc = (750); // was 850 // was 800 //was 885
+            e = drivetrain.getBackEncoderValues();
+            drivetrain.RotateRight(0.80); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+            drivetrain.check_condition_encoder_turning( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
             drivetrain.stopAll();
+//            drivetrain.gyroTurn ( this, 0.4, -0, 2.0);
+//            drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
             try {
                 Thread.sleep(250);
@@ -316,7 +328,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                     // ******************************************************************************
                     // Now move backwards into correct position
                     // *******************************************************************************
-                    encoder_inc = (600); //was 500 //was 420 // was 340, 380
+                    encoder_inc = (550); //was 600 //was 500 //was 420 // was 340, 380
                     e = drivetrain.getBackEncoderValues();
                     drivetrain.Drive(-0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
                     // use ultrasonic to measure distance
@@ -332,8 +344,14 @@ public class CompAutoRedTerminal extends LinearOpMode
                     // ************************************************************************************
                     // turn using the encoders by rotating right
                     //**************************************************************************************
-                    drivetrain.gyroTurn ( this, 0.6, -80, 2.0);
+                    encoder_inc = (885); //drivetrain.calcEncoderValueFromCentimeters(59.158);; // drivetrain.calcEncoderValueFromCentimeters(30); //shortest arc length distance
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.RotateRight(0.50); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
+                    drivetrain.check_condition_encoder_turning( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc, true);
                     drivetrain.stopAll();
+//                    drivetrain.gyroTurn ( this, 0.6, -80, 2.0);
+//                    drivetrain.stopAll();
                     // Pause to prevent wheel slippage and jerking
                     try {
                         Thread.sleep(250);
@@ -346,7 +364,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                     encoder_inc = 890; //was 860
                     e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.Drive(0.40);
+                    drivetrain.Drive(-0.40);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
@@ -360,7 +378,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                     // ***********************************************************************************
 
                     //move forward a bit into position 2
-                    encoder_inc = 600; //was 500 //was 450 //was 400 //was 350 //was 300 //was 268
+                    encoder_inc = 750; //was 600 //was 500 //was 450 //was 400 //was 350 //was 300 //was 268
                     e = drivetrain.getBackEncoderValues();
                     drivetrain.Drive(0.55);
                     // change condition
@@ -389,7 +407,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                     // ******************************************************************************
                     // Now move backwards into correct position
                     // *******************************************************************************
-                    encoder_inc = (600); //was 500 //was 420 // was 340, 380
+                    encoder_inc = (450); //was 500 //was 600 //was 500 //was 420 // was 340, 380
                     e = drivetrain.getBackEncoderValues();
                     drivetrain.Drive(-0.40); // DO NOT INCREASE SPEED - it will change all the distance sensor and encoder values due to wheel slippage
                     // use ultrasonic to measure distance
@@ -421,7 +439,7 @@ public class CompAutoRedTerminal extends LinearOpMode
                     // ************************************************************************************
                     // Move forwards into location 3
                     //**************************************************************************************
-                    encoder_inc = 950; //was 1000
+                    encoder_inc = 1000; //was 1000
                     e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(-0.45);
