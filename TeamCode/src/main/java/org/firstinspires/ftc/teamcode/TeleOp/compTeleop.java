@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Ethan - Helped with tuning and testing
 
 
-@TeleOp(name = "Ethan Teleop")
+@TeleOp(name = "1. Ethan Teleop")
 public class compTeleop extends OpMode {
 
 
