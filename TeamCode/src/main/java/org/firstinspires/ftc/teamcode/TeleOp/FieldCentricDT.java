@@ -65,17 +65,17 @@ public class FieldCentricDT extends OpMode {
 
 
         //the inverse tangent of opposite/adjacent gives us our gamepad degree
-        robotDegree = robot.gyro().getHeading();
+        robotDegree = Math.toRadians(robot.gyro().getHeading());
 
 
-        double rotX = gamepadXCoordinate * Math.cos(-robotDegree) - gamepadYCoordinate * Math.sin(-robotDegree);
-        double rotY = gamepadXCoordinate * Math.sin(-robotDegree) + gamepadYCoordinate * Math.cos(-robotDegree);
+        double rotX = gamepadXCoordinate * Math.cos(robotDegree) - gamepadYCoordinate * Math.sin(robotDegree);
+        double rotY = gamepadXCoordinate * Math.sin(robotDegree) + gamepadYCoordinate * Math.cos(robotDegree);
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
-        double frontLeftPower = (rotY + rotX + driveTurn) / denominator;
-        double backLeftPower = (rotY - rotX + driveTurn) / denominator;
-        double frontRightPower = (rotY - rotX - driveTurn) / denominator;
-        double backRightPower = (rotY + rotX - driveTurn) / denominator;
+        double frontLeftPower = (rotY + rotX - driveTurn) / denominator;
+        double backLeftPower = (-rotY + rotX + driveTurn) / denominator;
+        double frontRightPower = (rotY + rotX + driveTurn) / denominator;
+        double backRightPower = (-rotY + rotX - driveTurn) / denominator;
 
         robot.frontRight().setPower(frontRightPower);
         robot.frontLeft().setPower(frontLeftPower);

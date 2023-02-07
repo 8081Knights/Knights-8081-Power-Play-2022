@@ -31,17 +31,32 @@ public class CamOrientTest extends OpMode {
     double coneTolerance = 4;
     double center = 395;
 
-    IntegratingGyroscope gyro;
-    ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+
 
 
     @Override
     public void init() {
         robot.init(hardwareMap);
-        commands.init(robot);
-        commands.initGyro();
-
         camera = robot.getFrontWebCam();
+        commands.init(robot);
+        robot.clawElbow().setPosition(1);
+        robot.clawWrist().setPosition(0);
+        robot.clawGrab().setPosition(0.4);
+
+
+        robot.gyro().initialize();
+        robot.gyro().calibrate();
+
+        while(robot.gyro().isCalibrating()){
+
+            telemetry.addLine("Gyro is calibrating");
+            telemetry.update();
+
+        }
+
+        telemetry.clear();
+        telemetry.addLine("ur cringe");
+        telemetry.update();
 
 
 

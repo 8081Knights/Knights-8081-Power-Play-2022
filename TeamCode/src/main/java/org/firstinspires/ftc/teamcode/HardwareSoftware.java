@@ -42,6 +42,9 @@ public class HardwareSoftware {
     Servo clawElbow = null;
     Servo clawWrist = null;
 
+    Servo bumper1 = null;
+    Servo bumper2 = null;
+
     //Gyro variable
     IntegratingGyroscope gyro;
     ModernRoboticsI2cGyro modernRoboticsI2cGyro;
@@ -94,6 +97,8 @@ public class HardwareSoftware {
         clawWrist = hw.get(Servo.class, "clawWrist");
         clawElbow = hw.get(Servo.class, "clawElbow");
 
+        bumper1 = hw.get(Servo.class, "bumper1");
+        bumper2 = hw.get(Servo.class, "bumper2");
 
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -197,6 +202,9 @@ public class HardwareSoftware {
     public Servo clawGrab(){return clawGrab;}
     public Servo clawWrist(){return clawWrist;}
     public Servo clawElbow(){return clawElbow;}
+
+    public Servo bumper1(){return bumper1;}
+    public Servo bumper2(){return bumper2;}
 
     public ModernRoboticsI2cGyro gyro(){ return modernRoboticsI2cGyro;}
 
