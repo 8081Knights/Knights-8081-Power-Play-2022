@@ -242,6 +242,7 @@ public class compTeleop extends OpMode {
 
         }
 
+
         /*
         else if(gamepad2.dpad_down){
             slide = slideHeight.stack1;

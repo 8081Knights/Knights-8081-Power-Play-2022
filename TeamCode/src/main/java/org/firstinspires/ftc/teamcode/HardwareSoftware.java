@@ -30,6 +30,8 @@ public class HardwareSoftware {
 //    DcMotorEx strafeEncoder = null;
 //    DcMotorEx turnEncoder   = null;
 
+    DcMotorEx odometryX = null;
+
     DcMotorEx armDrive = null;
 
     BNO055IMU imu = null;
@@ -76,6 +78,8 @@ public class HardwareSoftware {
 //        encoder = hw.get(DcMotorEx.class, "encoder");
 //        strafeEncoder = hw.get(DcMotorEx.class, "strafeEncoder");
 //        turnEncoder = hw.get(DcMotorEx.class, "turnEncoder");
+
+        odometryX = hw.get(DcMotorEx.class, "odometryX");
 
         modernRoboticsI2cGyro = hw.get(ModernRoboticsI2cGyro.class, "gyro");
 
@@ -176,6 +180,8 @@ public class HardwareSoftware {
     public DcMotorEx backLeft(){
         return backLeft;
     }
+
+    public DcMotorEx odometryX() { return odometryX; }
 
     public OpenCvCamera getFrontWebCam() { return frontWebCam; }
 //
