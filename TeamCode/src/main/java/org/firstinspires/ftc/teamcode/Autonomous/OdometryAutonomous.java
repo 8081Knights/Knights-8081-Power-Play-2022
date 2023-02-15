@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntf;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.firstinspires.ftc.teamcode.TeleOp.RobotCommands;
+import org.firstinspires.ftc.teamcode.TeleOp.compTeleop;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -55,9 +56,19 @@ public class OdometryAutonomous extends LinearOpMode {
     public void runOpMode()
     {
         robot.init(hardwareMap);
+        commands.init(robot);
+        commands.initGyro();
         camera = robot.getFrontWebCam();
         drivetrain = new DriveTrainIntf(robot); // init the drive train manager
         drivetrain.setMotorMode( DcMotor.RunMode.RUN_USING_ENCODER );
+
+        //calibrate gyro
+        while(robot.gyro().isCalibrating()){
+            telemetry.addLine("Calibrating Gyro Don't Move!!");
+            telemetry.update();
+        }
+        telemetry.addLine("Gyro Calibrated, OK to Move.");
+        telemetry.update();
 
         // Tell ultrasonics to get the range
         robot.get_left_ultrasonic().measureRange();
@@ -197,16 +208,52 @@ public class OdometryAutonomous extends LinearOpMode {
              */
             drivetrain.setMotorForwardDirection(true);
 
+// grab cone
+            robot.clawGrab().setPosition(0);
+            // move claw into center of the robot
+            robot.clawWrist().setPosition(0);
 
+            //move forward a bit before turing
+            long encoder_inc = 34;
+            int[] e = drivetrain.getBackEncoderValues();
+            drivetrain.Drive(0.55);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            drivetrain.stopAll();
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
+
+            //turn 45 degrees toward low pole
+            drivetrain.gyroTurn ( this, 0.4, -45, 1.50);
+            drivetrain.stopAll();
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
+
+            //score on the low pole
+            //******************************************
+            score_low_position();
+            sleep(15000);
+
+           /*
             switch(tagOfInterest.id) {
+
                 case ID_TAG_POSITION_1:
                 {
                     // Do autonomous code to move to Location 1
                     // ***********************************************************************************
                     // move forward off the wall and push the cone out of the way
                     //************************************************************************************
-                    long encoder_inc = 1500; //
-                    int[] e = drivetrain.getBackEncoderValues();
+                    encoder_inc = 1500; //
+                    e = drivetrain.getBackEncoderValues();
                     drivetrain.Drive(0.55);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
@@ -270,8 +317,8 @@ public class OdometryAutonomous extends LinearOpMode {
                     od_x.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                     //run to position 2
-                    long encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
-                    int[] e = drivetrain.getBackEncoderValues();
+                    encoder_inc = drivetrain.calcEncoderValueFromCentimeters(100);
+                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.50);
                     // change condition
@@ -299,8 +346,8 @@ public class OdometryAutonomous extends LinearOpMode {
                     // ***********************************************************************************
                     // move forward off the wall and push the cone out of the way
                     //****************************************** ******************************************
-                    long encoder_inc = 1500; //
-                    int[] e = drivetrain.getBackEncoderValues();
+                    encoder_inc = 1500; //
+                    e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.Drive(0.55);
                     // change condition
@@ -359,14 +406,15 @@ public class OdometryAutonomous extends LinearOpMode {
                     drivetrain.stopAll();
                 }
                 break;
-            }
+            } */
+
             robot.clawElbow().setPosition(1);
             robot.clawWrist().setPosition(0);
             robot.clawGrab().setPosition(0.55);
             sleep(1000);
             try {
                 Thread.sleep(1500);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException exe) {
                 //ignore
             }
 
@@ -408,4 +456,46 @@ public class OdometryAutonomous extends LinearOpMode {
         }
         return true;
     }
+
+    public void score_low_position()
+    {
+        robot.leftSlide().setTargetPosition(1350);
+        robot.rightSlide().setTargetPosition(1350);
+
+
+        robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armHome();
+        robot.leftSlide().setVelocity(2000);
+        robot.rightSlide().setVelocity(2000);
+
+        do {
+            if (robot.leftSlide().getCurrentPosition() == 1350) {
+                robot.leftSlide().setVelocity(0);
+            }
+            if (robot.rightSlide().getCurrentPosition() == 1350) {
+                robot.rightSlide().setVelocity(0);
+            }
+        } while(robot.leftSlide().getCurrentPosition() != 1350 && robot.rightSlide().getCurrentPosition() != 1350);
+
+        robot.leftSlide().setVelocity(0);
+        robot.rightSlide().setVelocity(0);
+
+    }
+
+    public void armHome()
+    {
+        DcMotorEx armDrive = robot.armDrive();
+        armDrive.setTargetPosition(0);
+
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setVelocity(1000);
+
+        while(armDrive.getCurrentPosition() != 0){
+            sleep(25);
+        }
+
+        armDrive.setVelocity(0);
+    }
 }
+
