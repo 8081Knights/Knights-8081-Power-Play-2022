@@ -216,16 +216,16 @@ public class RobotCommands {
                 backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 if(left){
-                    frontLeft.setPower(-speed);
+                    frontLeft.setPower(speed);
                     backLeft.setPower(speed);
                     frontRight.setPower(speed);
-                    backRight.setPower(-speed);
+                    backRight.setPower(speed);
 
                 }
 
                 else{
-                    frontLeft.setPower(speed);
-                    backLeft.setPower(speed);
+                    frontLeft.setPower(-speed);
+                    backLeft.setPower(-speed);
                     frontRight.setPower(-speed);
                     backRight.setPower(-speed);
 

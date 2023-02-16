@@ -62,42 +62,25 @@ public class FieldCentricDT extends OpMode {
         gamepadXCoordinate = gamepad1.left_stick_x; //this simply gives our x value relative to the driver
         gamepadYCoordinate = -gamepad1.left_stick_y; //this simply gives our y vaue relative to the driver
 
-        gamepadHypot = Range.clip(Math.hypot(gamepadXCoordinate, gamepadYCoordinate), -1, 1);
 
 
-        //finds just how much power to give the robot based on how much x and y given by gamepad
-        //range.clip helps us keep our power within positive 1
-        // also helps set maximum possible value of 1/sqrt(2) for x and y controls if at a 45 degree angle (which yields greatest possible value for y+x)
-        gamepadDegree = Math.atan2(gamepadYCoordinate, gamepadXCoordinate);
         //the inverse tangent of opposite/adjacent gives us our gamepad degree
-        robotDegree = robot.gyro().getHeading();
-        //gives us the angle our robot is at
-        movementDegree = Math.toRadians(gamepadDegree) - robotDegree;
-        //adjust the angle we need to move at by finding needed movement degree based on gamepad and robot angles
-//        gamepadXControl = Math.cos(Math.toRadians(movementDegree)) * gamepadHypot;
-//        //by finding the adjacent side, we can get our needed x value to power our motors
-//        gamepadYControl = Math.sin(Math.toRadians(movementDegree)) * gamepadHypot;
-        //by finding the opposite side, we can get our needed y value to power our motors
-
-        /**
-         * again, make sure you've changed the motor names and variables to fit your team
-         */
+        robotDegree = Math.toRadians(robot.gyro().getHeading());
 
 
-        telemetry.addData("Gamepad Angle: ", gamepadDegree);
+        double rotX = gamepadXCoordinate * Math.cos(robotDegree) - gamepadYCoordinate * Math.sin(robotDegree);
+        double rotY = gamepadXCoordinate * Math.sin(robotDegree) + gamepadYCoordinate * Math.cos(robotDegree);
 
-        //by mulitplying the gamepadYControl and gamepadXControl by their respective absolute values, we can guarantee that our motor powers will not exceed 1 without any driveTurn
-        //since we've maxed out our hypot at 1, the greatest possible value of x+y is (1/sqrt(2)) + (1/sqrt(2)) = sqrt(2)
-        //since (1/sqrt(2))^2 = 1/2 = .5, we know that we will not exceed a power of 1 (with no turn), giving us more precision for our driving
-//        robot.frontRight().setPower(gamepadYControl * Math.abs(gamepadYControl) - gamepadXControl * Math.abs(gamepadXControl) + driveTurn);
-//        robot.backRight().setPower(gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl * Math.abs(gamepadXControl) + driveTurn);
-//        robot.frontLeft().setPower(gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl * Math.abs(gamepadXControl) - driveTurn);
-//        robot.backLeft().setPower(gamepadYControl * Math.abs(gamepadYControl) - gamepadXControl * Math.abs(gamepadXControl) - driveTurn);
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
+        double frontLeftPower = (rotY + rotX - driveTurn) / denominator;
+        double backLeftPower = (-rotY + rotX + driveTurn) / denominator;
+        double frontRightPower = (rotY + rotX + driveTurn) / denominator;
+        double backRightPower = (-rotY + rotX - driveTurn) / denominator;
 
-        robot.frontRight().setPower(Math.sin(movementDegree - (Math.PI / 4)) * gamepadHypot + driveTurn);
-        robot.frontLeft().setPower(Math.sin(movementDegree + (Math.PI / 4)) * gamepadHypot - driveTurn);
-        robot.backRight().setPower(Math.sin(movementDegree + (Math.PI / 4)) * gamepadHypot + driveTurn);
-        robot.backLeft().setPower(Math.sin(movementDegree - (Math.PI / 4)) * gamepadHypot - driveTurn);
+        robot.frontRight().setPower(frontRightPower);
+        robot.frontLeft().setPower(frontLeftPower);
+        robot.backRight().setPower(backRightPower);
+        robot.backLeft().setPower(backLeftPower);
 
 
     }

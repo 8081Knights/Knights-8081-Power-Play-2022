@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Ethan - Helped with tuning and testing
 
 
-@TeleOp(name = "Ethan Teleop")
+@TeleOp(name = "1. Ethan Teleop")
 public class compTeleop extends OpMode {
 
 
@@ -39,6 +39,7 @@ public class compTeleop extends OpMode {
     //Storage variable in order to make push button logic to work DONT TOUCH
     boolean x = false;
     boolean y = false;
+    boolean y2 = false;
     boolean leftTrigger = false;
 
     //Tunable servo position variables
@@ -105,76 +106,73 @@ public class compTeleop extends OpMode {
     @Override
     public void init() {
 
+        //Initialize Hardware Map
         robot.init(hardwareMap);
+
+        //Initialize pre programmed commands file
         commands.init(robot);
+
+        //Make sure the claw is properly placed
         robot.clawElbow().setPosition(1);
         robot.clawWrist().setPosition(0);
         robot.clawGrab().setPosition(0);
+
+
+        //Initialize and Calibrate the Gyro
+        robot.gyro().initialize();
+        robot.gyro().calibrate();
+
+        while(robot.gyro().isCalibrating()){
+
+            telemetry.addLine("Gyro is calibrating");
+            telemetry.update();
+
+        }
+
+        telemetry.clear();
+
+        telemetry.update();
+
 
     }
 
     @Override
     public void loop() {
-        // Mecanum drive is controlled with three axes: drive (front-and-back),
-        // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = gamepad1.left_stick_y;
-        double strafe = gamepad1.right_stick_x;
-        double twist  = gamepad1.left_stick_x;
+
+        //Turn Variable for Headless Robot Logic
+        double driveTurn = -gamepad1.right_stick_x;
+        //driveVertical = -gamepad1.right_stick_y;
+        //driveHorizontal = gamepad1.right_stick_x;
+
+        //Drive X and Y for Headless
+        double gamepadXCoordinate = gamepad1.left_stick_x; //this simply gives our x value relative to the driver
+        double gamepadYCoordinate = -gamepad1.left_stick_y; //this simply gives our y vaue relative to the driver
 
 
 
-        /*
-         * If we had a gyro and wanted to do field-oriented control, here
-         * is where we would implement it.
-         *
-         * The idea is fairly simple; we have a robot-oriented Cartesian (x,y)
-         * coordinate (strafe, drive), and we just rotate it by the gyro
-         * reading minus the offset that we read in the init() method.
-         * Some rough pseudocode demonstrating:
-         *
-         * if Field Oriented Control:
-         *     get gyro heading
-         *     subtract initial offset from heading
-         *     convert heading to radians (if necessary)
-         *     new strafe = strafe * cos(heading) - drive * sin(heading)
-         *     new drive  = strafe * sin(heading) + drive * cos(heading)
-         *
-         * If you want more understanding on where these rotation formulas come
-         * from, refer to
-         * https://en.wikipedia.org/wiki/Rotation_(mathematics)#Two_dimensions
-         */
+        //the inverse tangent of opposite/adjacent gives us our gamepad degree
+        double robotDegree = Math.toRadians(robot.gyro().getHeading());
 
-        // You may need to multiply some of these by -1 to invert direction of
-        // the motor.  This is not an issue with the calculations themselves.
-        double[] speeds = {
-                (-drive + strafe + twist),
-                (-drive - strafe + twist),
-                (drive - strafe + twist),
-                (drive + strafe + twist)
 
-        };
+        //Final X and Y for corrected driving (Field Centric Drive Logic)
+        double rotX = gamepadXCoordinate * Math.cos(robotDegree) - gamepadYCoordinate * Math.sin(robotDegree);
+        double rotY = gamepadXCoordinate * Math.sin(robotDegree) + gamepadYCoordinate * Math.cos(robotDegree);
 
-        // Because we are adding vectors and motors only take values between
-        // [-1,1] we may need to normalize them.
 
-        // Loop through all values in the speeds[] array and find the greatest
-        // *magnitude*.  Not the greatest velocity.
-        double max = Math.abs(speeds[0]);
-        for(int i = 0; i < speeds.length; i++) {
-            if ( max < Math.abs(speeds[i]) ) max = Math.abs(speeds[i]);
-        }
+        //Denominator makes sure the motors are never set past 1 power
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
 
-        // If and only if the maximum is outside of the range we want it to be,
-        // normalize all the other speeds based on the given speed value.
-        if (max > 1) {
-            for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
-        }
+        //Power Variables
+        double frontLeftPower = (rotY + rotX - driveTurn) / denominator;
+        double backLeftPower = (-rotY + rotX + driveTurn) / denominator;
+        double frontRightPower = (rotY + rotX + driveTurn) / denominator;
+        double backRightPower = (-rotY + rotX - driveTurn) / denominator;
 
-        // apply the calculated values to the motors.
-        robot.frontLeft().setPower(speeds[0]*speedMult);
-        robot.frontRight().setPower(speeds[1]*speedMult);
-        robot.backLeft().setPower(speeds[2]*speedMult);
-        robot.backRight().setPower(speeds[3]*speedMult);
+        //Set Power to Motors
+        robot.frontRight().setPower(frontRightPower);
+        robot.frontLeft().setPower(frontLeftPower);
+        robot.backRight().setPower(backRightPower);
+        robot.backLeft().setPower(backLeftPower);
 
 
         // Set the height to Home
@@ -303,6 +301,20 @@ public class compTeleop extends OpMode {
             }
             else{
                 robot.clawElbow().setPosition(clawScore);
+            }
+        }
+
+        else if(gamepad2.y){
+            y2 = true;
+        }
+        else if(y2 && !gamepad2.y){
+            if(robot.bumper1().getPosition() > 0){
+                robot.bumper1().setPosition(0);
+                robot.bumper2().setPosition(0);
+            }
+            else{
+                robot.bumper1().setPosition(1);
+                robot.bumper2().setPosition(1);
             }
         }
 
