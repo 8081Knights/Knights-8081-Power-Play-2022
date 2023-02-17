@@ -24,6 +24,10 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous(name="OdometryAutonomous")
 public class OdometryAutonomous extends LinearOpMode {
+
+    static final int SLIDE_POSITION_LOW    = 950;
+    static final int SLIDE_POSITION_SCORE    = 425;
+
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
     DriveTrainIntf drivetrain;
@@ -69,10 +73,6 @@ public class OdometryAutonomous extends LinearOpMode {
         }
         telemetry.addLine("Gyro Calibrated, OK to Move.");
         telemetry.update();
-
-        // Tell ultrasonics to get the range
-        robot.get_left_ultrasonic().measureRange();
-        robot.get_right_ultrasonic().measureRange();
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
@@ -164,13 +164,13 @@ public class OdometryAutonomous extends LinearOpMode {
             telemetry.addLine(String.format("\n Left Encoders=%d", e[DriveTrainIntf.LEFT_ENCODER]));
             telemetry.addLine(String.format("\nRight Encoders=%d", e[DriveTrainIntf.RIGHT_ENCODER]));
 
-            telemetry.addLine(String.format("\nLeft Ultrasonic=%d", robot.get_left_ultrasonic().getLastRange() ));
-            telemetry.addLine(String.format("\nRight Ultrasonic=%d", robot.get_right_ultrasonic().getLastRange() ));
+            //telemetry.addLine(String.format("\nLeft Ultrasonic=%d", robot.get_left_ultrasonic().getLastRange() ));
+            //telemetry.addLine(String.format("\nRight Ultrasonic=%d", robot.get_right_ultrasonic().getLastRange() ));
             telemetry.update();
 
             // Tell ultrasonics to get the range
-            robot.get_left_ultrasonic().measureRange();
-            robot.get_right_ultrasonic().measureRange();
+            //robot.get_left_ultrasonic().measureRange();
+            //robot.get_right_ultrasonic().measureRange();
 
             sleep(20);
         }
@@ -208,10 +208,16 @@ public class OdometryAutonomous extends LinearOpMode {
              */
             drivetrain.setMotorForwardDirection(true);
 
-// grab cone
+            // grab cone
             robot.clawGrab().setPosition(0);
+            //45 degrees so don't run into claw mount point
+            sleep(50);
+            robot.clawGrab().setPosition(0);  // repeat claw grab to be sure
+            robot.clawElbow().setPosition(0.38);
             // move claw into center of the robot
             robot.clawWrist().setPosition(0);
+            sleep(50);
+            robot.clawGrab().setPosition(0);   // repeat claw grab to be sure
 
             //move forward a bit before turing
             long encoder_inc = 34;
@@ -229,19 +235,103 @@ public class OdometryAutonomous extends LinearOpMode {
             }
 
             //turn 45 degrees toward low pole
-            drivetrain.gyroTurn ( this, 0.4, -45, 1.50);
+            drivetrain.gyroTurn ( this, 0.4, -40, 1.50);
             drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
             try {
-                Thread.sleep(500);
+                Thread.sleep(25);
             } catch (InterruptedException exc) {
                 //ignore
             }
 
             //score on the low pole
             //******************************************
-            score_low_position();
-            sleep(15000);
+            slides_move_to_position(SLIDE_POSITION_LOW, true); // raise the slides
+            telemetry.addLine("finished slides_score_low_position()");
+            telemetry.update();
+            arm45Degrees(); // position claw and arm
+            telemetry.addLine("finished arm45Degrees()");
+            telemetry.update();
+
+            slides_move_to_position(0, false);
+            robot.clawGrab().setPosition(1);
+            telemetry.addLine("finished slides_move_to_position() @ 0");
+            telemetry.update();
+            sleep(25);
+
+            //turn back towards 0 degrees
+            drivetrain.gyroTurn ( this, 0.4, 0, 1.50);
+            drivetrain.stopAll();
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
+
+            encoder_inc = drivetrain.calcEncoderValueFromCentimeters(55);
+            e = drivetrain.getBackEncoderValues();
+            // Do autonomous code to move to Location 2
+            drivetrain.Drive(0.50);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            //  was working with this => check_condition_Time( 1200 );
+            drivetrain.stopAll();
+
+            // Raise the claw
+            robot.clawElbow().setPosition(1); // full up
+
+            //turn right towards cone stack
+            drivetrain.gyroTurn ( this, 0.4, 90, 1.50);
+            drivetrain.stopAll();
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
+
+            // Move forward a bit to align between poles
+            encoder_inc = 100;
+            e = drivetrain.getBackEncoderValues();
+            // Do autonomous code to move to Location 2
+            drivetrain.Drive(0.50);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            //  was working with this => check_condition_Time( 1200 );
+            drivetrain.stopAll();
+
+            // Strafe into position in front of cone stack
+            encoder_inc = 1100; //short at 1000
+            e = drivetrain.getBackEncoderValues();
+            // Do autonomous code to move to Location 2
+            drivetrain.StrafeLeft(0.65);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            //  was working with this => check_condition_Time( 1200 );
+            drivetrain.stopAll();
+
+            drivetrain.gyroTurn ( this, 0.4, 90, 1.50);
+            drivetrain.stopAll();
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
+
+            encoder_inc = drivetrain.calcEncoderValueFromCentimeters(50);
+            e = drivetrain.getBackEncoderValues();
+            // Do autonomous code to move to Location 2
+            drivetrain.Drive(0.50);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            //  was working with this => check_condition_Time( 1200 );
+            drivetrain.stopAll();
 
            /*
             switch(tagOfInterest.id) {
@@ -457,29 +547,43 @@ public class OdometryAutonomous extends LinearOpMode {
         return true;
     }
 
-    public void score_low_position()
-    {
-        robot.leftSlide().setTargetPosition(1350);
-        robot.rightSlide().setTargetPosition(1350);
 
+    public void slides_move_to_position( int pos, boolean brake)
+    {
+        robot.leftSlide().setTargetPosition(pos);
+        robot.rightSlide().setTargetPosition(pos);
+
+        if ( brake) {
+            robot.leftSlide().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.rightSlide().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } else {
+            robot.leftSlide().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot.rightSlide().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
 
         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        armHome();
         robot.leftSlide().setVelocity(2000);
         robot.rightSlide().setVelocity(2000);
 
+        int ls = robot.leftSlide().getCurrentPosition();
+        int rs = robot.rightSlide().getCurrentPosition();
         do {
-            if (robot.leftSlide().getCurrentPosition() == 1350) {
+            if (ls == pos) {
                 robot.leftSlide().setVelocity(0);
             }
-            if (robot.rightSlide().getCurrentPosition() == 1350) {
+            if (rs == pos) {
                 robot.rightSlide().setVelocity(0);
             }
-        } while(robot.leftSlide().getCurrentPosition() != 1350 && robot.rightSlide().getCurrentPosition() != 1350);
+            sleep(25);
+            ls = robot.leftSlide().getCurrentPosition();
+            rs = robot.rightSlide().getCurrentPosition();
 
-        robot.leftSlide().setVelocity(0);
-        robot.rightSlide().setVelocity(0);
+        } while( ( (rs < (pos-5)) || (rs > (pos+5)) )  &&
+                 ( (ls < (pos-5)) || (ls > (pos+5)) )   );
+
+//        robot.leftSlide().setVelocity(0);
+//        robot.rightSlide().setVelocity(0);
 
     }
 
@@ -491,11 +595,58 @@ public class OdometryAutonomous extends LinearOpMode {
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armDrive.setVelocity(1000);
 
+         // set to home position
+        robot.clawElbow().setPosition(1); // full up
+        robot.clawWrist().setPosition(0);
+
         while(armDrive.getCurrentPosition() != 0){
             sleep(25);
         }
 
         armDrive.setVelocity(0);
     }
+
+
+    //  Used to set the Arm to 45% and claw forward to grab or drop
+    //
+    public void arm45Degrees()
+    {
+        int target = 250;
+        DcMotorEx armDrive = robot.armDrive();
+        armDrive.setTargetPosition(target);
+
+        armDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setVelocity(1500);
+
+        // set the claw to ~40%
+        robot.clawElbow().setPosition(0.38);  //elbowMid - it was 45, but it was slightly too slow, it was 40, but it was too low EA
+        robot.clawWrist().setPosition(0);
+
+        int pos = armDrive.getCurrentPosition();
+        while(pos != target){
+            if (( pos > (target-10)) && (pos < (target+10)) ) {
+                break;
+            }
+            sleep(25);
+            pos = armDrive.getCurrentPosition();
+        }
+
+        armDrive.setVelocity(0);
+    }
+
+
+    /* Control Variables
+        // reset positions
+        robot.clawElbow().setPosition(1); // full up
+        robot.clawWrist().setPosition(0);  //  side to side movement
+        robot.clawGrab().setPosition(0);
+
+        // Positions to grab a cone
+        robot.clawElbow().setPosition(0.38);  //elbowMid - it was 45, but it was slightly too slow, it was 40, but it was too low EA
+        robot.clawWrist().setPosition(0);
+        robot.clawGrab().setPosition(0.55);  // claw open
+
+     */
 }
 

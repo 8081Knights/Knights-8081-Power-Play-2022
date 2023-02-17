@@ -102,6 +102,29 @@ public class DriveTrainIntf {
         Drive(); // call private drive() routine to turn on motors
     }
 
+
+    // Strafe Right - move robot laterally to right
+    public void StrafeRight(double velocity) {
+        stopAll(); // first ensure the robot is stopped
+        double fwd = velocity* MOTOR_MAX_VELOCITY;
+        double rev = velocity* NEG_MOTOR_MAX_VELOCITY;
+        m_LFDrive.setVelocity(fwd);
+        m_RFDrive.setVelocity(fwd);
+        m_LRDrive.setVelocity(rev);
+        m_RRDrive.setVelocity(rev);
+    }
+
+    // Strafe Right - move robot laterally to right
+    public void StrafeLeft(double velocity) {
+        stopAll(); // first ensure the robot is stopped
+        double fwd = velocity* MOTOR_MAX_VELOCITY;
+        double rev = velocity* NEG_MOTOR_MAX_VELOCITY;
+        m_LFDrive.setVelocity(rev);
+        m_RFDrive.setVelocity(rev);
+        m_LRDrive.setVelocity(fwd);
+        m_RRDrive.setVelocity(fwd);
+    }
+
     /// Left-Front, Right-Front, Left-Rear, Right-Rear
     public void Drive(double velLF, double velRF, double velLR, double velRR) {
         // convert relative vel to velocity based on max velocity
@@ -372,6 +395,7 @@ public class DriveTrainIntf {
 
     // Maximum velocity of slowest motor under load is 1340 (calculated from test_Motor_MaxVelocity
     public static final int MOTOR_MAX_VELOCITY = 1340;
+    public static final int NEG_MOTOR_MAX_VELOCITY = -1340;
     // F = 32767 / maxV = 32767 / 1340 = 24.45298507
     // P = 0.1 * F  = 2.44529
     // I = 0.1 * P  = 0.244529

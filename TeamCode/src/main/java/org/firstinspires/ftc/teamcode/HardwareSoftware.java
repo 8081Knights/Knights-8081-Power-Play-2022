@@ -10,6 +10,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -31,6 +32,7 @@ public class HardwareSoftware {
 //    DcMotorEx turnEncoder   = null;
 
     DcMotorEx odometryX = null;
+    DistanceSensor   frontDistance = null;
 
     DcMotorEx armDrive = null;
 
@@ -159,11 +161,11 @@ public class HardwareSoftware {
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         frontWebCam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
 
-        right_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "right_ultrasonic");
+        //right_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "right_ultrasonic");
 
-        left_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "left_ultrasonic");
+        //left_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "left_ultrasonic");
 
-
+        frontDistance = hw.get(DistanceSensor.class, "front_distance");
 
     }
 
@@ -220,5 +222,5 @@ public class HardwareSoftware {
 
     public MaxbotixUltrasonicI2c get_right_ultrasonic(){ return right_ultrasonic; }
     public MaxbotixUltrasonicI2c get_left_ultrasonic(){ return left_ultrasonic; }
-
+    public DistanceSensor        get_front_distance_sensor() { return frontDistance; }
 }
