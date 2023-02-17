@@ -131,7 +131,7 @@ public class RobotCommands {
 
 
 
-        armDrive.setVelocity(1000);
+        armDrive.setVelocity(2000);
 
 //        clawWrist.setPosition(1);
 //        clawElbow.setPosition(0);

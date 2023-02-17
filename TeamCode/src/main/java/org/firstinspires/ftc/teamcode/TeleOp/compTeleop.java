@@ -306,18 +306,17 @@ public class compTeleop extends OpMode {
         }
 
         else if(gamepad2.y){
-            y2 = true;
+            robot.bumper1().setPosition(0.1);
+            robot.bumper2().setPosition(0.7);
+
         }
-        else if(y2 && !gamepad2.y){
-            if(robot.bumper1().getPosition() < 1){
-                robot.bumper1().setPosition(1);
-                robot.bumper2().setPosition(1);
-            }
-            else{
-                robot.bumper1().setPosition(0);
-                robot.bumper2().setPosition(0);
-            }
+        else if(gamepad2.x){
+            robot.bumper1().setPosition(0);
+            robot.bumper2().setPosition(0);
+
         }
+
+
 
      /*   else if(gamepad1.left_trigger > .1){
             slide = slideHeight.score;
