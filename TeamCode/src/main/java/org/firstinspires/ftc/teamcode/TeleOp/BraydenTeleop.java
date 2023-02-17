@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Alex, Nathaniel, Sydney, Thomas
 
 //Honorary Mentions:
-//Ethan - Helped with tuning and testing
+//Ethan - Helped with tuning and testing (lets gooooooooooooooooo -ethan)
 
 
 @TeleOp(name = "2. Brayden Teleop")

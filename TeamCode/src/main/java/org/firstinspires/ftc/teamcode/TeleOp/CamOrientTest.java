@@ -107,11 +107,13 @@ public class CamOrientTest extends OpMode {
 
 
         if(aDown && !gamepad1.a){
-            detector.sortCont(telemetry);
-            success = true;
+//            detector.sortCont(telemetry);
+//            success = true;
             aDown = false;
+//
+//            coneDegree = (detector.conePos().x-center)/pxDeg;
+            commands.turnGyro(45, 0.5);
 
-            coneDegree = (detector.conePos().x-center)/pxDeg;
 
         }
 
