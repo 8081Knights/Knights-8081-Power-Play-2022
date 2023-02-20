@@ -43,7 +43,7 @@ public class RobotCommands {
     //Drive Constants
     int tickPerIn = 1000;
 
-    int armOut = 710;
+    int armOut = 720;
     int armMid = 250;
     int armBack = 1625;
 // EA i moved arm out a little bit higher than previous(650)
@@ -240,9 +240,11 @@ public class RobotCommands {
 
 
             frontLeft.setPower(0);
-            backRight.setPower(0);
+            backLeft.setPower(0);
             frontRight.setPower(0);
             backRight.setPower(0);
+
+            sleep(100);
 
 
     }
