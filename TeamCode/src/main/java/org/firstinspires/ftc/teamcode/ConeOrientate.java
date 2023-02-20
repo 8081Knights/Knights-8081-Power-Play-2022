@@ -146,7 +146,6 @@ public class ConeOrientate extends OpenCvPipeline {
 
 
         isBusy = false;
-        return;
 
 
     }
