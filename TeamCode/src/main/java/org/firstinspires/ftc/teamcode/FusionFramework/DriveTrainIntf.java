@@ -29,7 +29,7 @@ public class DriveTrainIntf {
     static final double P_DRIVE_COEFF = 0.1;
     static final double P_TURN_COEFF = 0.1;
     static final double STRAFE_CONSTANT = 0.85;
-    static final double HEADING_THRESHOLD = 3; // how close a gyro reading will be to requested angle
+    static final double HEADING_THRESHOLD = 2; // how close a gyro reading will be to requested angle
 
     // Settings for the Condition Completion Checks
     private double vel_LF = 0;  // Left  Front Wheel velocity setting

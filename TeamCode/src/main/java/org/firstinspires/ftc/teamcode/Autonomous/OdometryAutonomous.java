@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static com.qualcomm.robotcore.hardware.DistanceSensor.distanceOutOfRange;
+
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,7 +12,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntf;
+import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntfTest;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.firstinspires.ftc.teamcode.TeleOp.RobotCommands;
 import org.firstinspires.ftc.teamcode.TeleOp.compTeleop;
@@ -26,7 +32,25 @@ import java.util.concurrent.TimeUnit;
 public class OdometryAutonomous extends LinearOpMode {
 
     static final int SLIDE_POSITION_LOW    = 950;
-    static final int SLIDE_POSITION_SCORE    = 425;
+    static final int SLIDE_POSITION_LOW_SCORE       = 1200;
+    static final int SLIDE_POSITION_MEDIUM_SCORE    = 1300;
+    static final int SLIDE_POSITION_CONE_STACK_4    = 310; // 260 works but on rim
+    static final int SLIDE_POSITION_CONE_STACK_3    = 200;
+    static final int SLIDE_POSITION_CONE_STACK_2    = 100;
+    static final int SLIDE_POSITION_CONE_STACK_1    = 0;
+    static final int SLIDE_ERROR_MARGIN      = 8;
+    static final int ARM_ERROR_MARGIN      = 10;
+
+    static final double ELBOW_POSITION_UP   = 1.0;
+    static final double ELBOW_POSITION_CONE_SCORE   = 0.70;
+    static final double ELBOW_POSITION_CONE_GRAB   = 0.50;
+    static final double ELBOW_POSITION_DOWN  = 0.0;
+
+
+    static final double WRIST_POSITION_UP   = 0.0;
+
+    static final double CLAW_OPEN   = 1.0;
+    static final double CLAW_CLOSE  = 0.0;
 
     HardwareSoftware robot = new HardwareSoftware();
     RobotCommands commands = new RobotCommands();
@@ -56,6 +80,7 @@ public class OdometryAutonomous extends LinearOpMode {
 
     AprilTagDetection tagOfInterest = null;
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode()
     {
@@ -209,18 +234,18 @@ public class OdometryAutonomous extends LinearOpMode {
             drivetrain.setMotorForwardDirection(true);
 
             // grab cone
-            robot.clawGrab().setPosition(0);
+            robot.clawGrab().setPosition(CLAW_CLOSE);
             //45 degrees so don't run into claw mount point
             sleep(50);
-            robot.clawGrab().setPosition(0);  // repeat claw grab to be sure
-            robot.clawElbow().setPosition(0.38);
+            robot.clawGrab().setPosition(CLAW_CLOSE);  // repeat claw grab to be sure
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE);
             // move claw into center of the robot
             robot.clawWrist().setPosition(0);
             sleep(50);
-            robot.clawGrab().setPosition(0);   // repeat claw grab to be sure
+            robot.clawGrab().setPosition(CLAW_CLOSE);   // repeat claw grab to be sure
 
             //move forward a bit before turing
-            long encoder_inc = 34;
+            long encoder_inc = 48;
             int[] e = drivetrain.getBackEncoderValues();
             drivetrain.Drive(0.55);
             // change condition
@@ -229,7 +254,7 @@ public class OdometryAutonomous extends LinearOpMode {
             drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
             try {
-                Thread.sleep(250);
+                Thread.sleep(50);
             } catch (InterruptedException exc) {
                 //ignore
             }
@@ -247,28 +272,19 @@ public class OdometryAutonomous extends LinearOpMode {
             //score on the low pole
             //******************************************
             slides_move_to_position(SLIDE_POSITION_LOW, true); // raise the slides
-            telemetry.addLine("finished slides_score_low_position()");
-            telemetry.update();
-            arm45Degrees(); // position claw and arm
-            telemetry.addLine("finished arm45Degrees()");
-            telemetry.update();
+            armToPosition(320); // position claw and arm
 
             slides_move_to_position(0, false);
-            robot.clawGrab().setPosition(1);
-            telemetry.addLine("finished slides_move_to_position() @ 0");
-            telemetry.update();
+            robot.clawGrab().setPosition(CLAW_OPEN);
             sleep(25);
 
             //turn back towards 0 degrees
             drivetrain.gyroTurn ( this, 0.4, 0, 1.50);
             drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException exc) {
-                //ignore
-            }
+            sleep(25);
 
+            // Drive forward toward the cone stack
             encoder_inc = drivetrain.calcEncoderValueFromCentimeters(55);
             e = drivetrain.getBackEncoderValues();
             // Do autonomous code to move to Location 2
@@ -280,31 +296,26 @@ public class OdometryAutonomous extends LinearOpMode {
             drivetrain.stopAll();
 
             // Raise the claw
-            robot.clawElbow().setPosition(1); // full up
+            robot.clawElbow().setPosition(ELBOW_POSITION_UP); // full up
 
             //turn right towards cone stack
-            drivetrain.gyroTurn ( this, 0.4, 90, 1.50);
+            drivetrain.gyroTurn ( this, 0.4, 91, 1.50);
             drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException exc) {
-                //ignore
-            }
+            sleep(25);
 
             // Move forward a bit to align between poles
-            encoder_inc = 100;
+            encoder_inc = 80; // was100 but it sometimes hit the pole
             e = drivetrain.getBackEncoderValues();
             // Do autonomous code to move to Location 2
             drivetrain.Drive(0.50);
             // change condition
             drivetrain.check_condition_encoder_distance( this,
                     e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-            //  was working with this => check_condition_Time( 1200 );
             drivetrain.stopAll();
 
             // Strafe into position in front of cone stack
-            encoder_inc = 1100; //short at 1000
+            encoder_inc = 1140; //short at 1100 //short at 1000; 1200 was too long
             e = drivetrain.getBackEncoderValues();
             // Do autonomous code to move to Location 2
             drivetrain.StrafeLeft(0.65);
@@ -314,25 +325,161 @@ public class OdometryAutonomous extends LinearOpMode {
             //  was working with this => check_condition_Time( 1200 );
             drivetrain.stopAll();
 
+            sleep (50);
+
+            //Reset turn position after the strafe
             drivetrain.gyroTurn ( this, 0.4, 90, 1.50);
             drivetrain.stopAll();
             // Pause to prevent wheel slippage and jerking
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException exc) {
-                //ignore
-            }
+            sleep (50);
 
-            encoder_inc = drivetrain.calcEncoderValueFromCentimeters(50);
+
+            // Set up arm to grab a cone
+            //******************************************
+            slides_move_to_position(SLIDE_POSITION_CONE_STACK_4, true); // raise the slides
+            //move claw down ready to score
+            robot.clawGrab().setPosition(CLAW_OPEN);
+            sleep(20);
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_GRAB);
+            //sleep(150); // need to wait time for elbow to drop into position to get cone
+
+
+            //move forward toward cone stack
+            encoder_inc = 850; //875 was great for position
+            telemetry.update();
             e = drivetrain.getBackEncoderValues();
             // Do autonomous code to move to Location 2
             drivetrain.Drive(0.50);
             // change condition
             drivetrain.check_condition_encoder_distance( this,
                     e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-            //  was working with this => check_condition_Time( 1200 );
             drivetrain.stopAll();
 
+
+            //move bumbers down
+            //robot.bumper1().setPosition(0); //was 1 //not working
+            // sleep(20);
+            robot.bumper2().setPosition(1);
+/*
+            // get the distance sensor
+            double dis = robot.get_front_distance_sensor().getDistance( DistanceUnit.CM);
+            if ( dis == distanceOutOfRange ) {
+                telemetry.addLine(" Distance Sensor: OUT OF RANGE\n" );
+            } else {
+                telemetry.addLine(String.format("Distance Sensor:  = %.2f\n", dis));
+            }
+            telemetry.update();
+            */
+
+            // grab a cone
+            sleep(50); // pause to ensure we are in position
+            robot.clawGrab().setPosition(CLAW_CLOSE);
+            sleep(275);
+            // pull up the cone
+            // Set up arm to grab a cone
+            //******************************************
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE);
+            slides_move_to_position(SLIDE_POSITION_LOW_SCORE, true); // raise the slides
+
+            // move backwards
+            //move backward toward scoring pole
+            encoder_inc = drivetrain.calcEncoderValueFromCentimeters(22);
+            e = drivetrain.getBackEncoderValues();
+            drivetrain.Drive(-0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            drivetrain.stopAll();
+
+            //Turn toward the pole
+            drivetrain.gyroTurn ( this, 0.4, 162, 1.50); // 156 to the left
+            drivetrain.stopAll();
+
+            // Lower the claw for scoring
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_GRAB); // full up
+            // Pause to prevent wheel slippage and jerking
+            sleep (50);
+
+
+            // ********************************************************************88
+            // ********************************************************************88
+            // Score on Low Pole
+            slides_move_to_position(SLIDE_POSITION_LOW, true); // raise the slides
+            slides_move_to_position(0, false);
+
+            robot.clawGrab().setPosition(CLAW_OPEN);
+            sleep(25);
+            // Raise the claw
+            robot.clawElbow().setPosition(ELBOW_POSITION_UP); // full up
+            sleep (150);
+            // End score on low pole
+            // ********************************************************************88
+            // ********************************************************************88
+
+            // back up a little
+
+            // turn toward the cones
+            drivetrain.gyroTurn ( this, 0.4, 90, 1.50); // 156 to the left
+
+            // Set up arm to grab a cone
+            //******************************************
+            slides_move_to_position(SLIDE_POSITION_CONE_STACK_3, true); // raise the slides
+            //move claw down ready to score
+            robot.clawGrab().setPosition(CLAW_OPEN);
+            sleep(20);
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_GRAB);
+            //sleep(150); // need to wait time for elbow to drop into position to get cone
+
+            // move forward to cone stack
+            encoder_inc = 380;  // 400 is OK, 375 better
+            e = drivetrain.getBackEncoderValues();
+            drivetrain.Drive(0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            drivetrain.stopAll();
+
+            // grab a cone
+            sleep(150); // pause to ensure we are in position
+            robot.clawGrab().setPosition(CLAW_CLOSE);
+            sleep(275);
+            // pull up the cone
+            // Set up arm to grab a cone
+            //******************************************
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE);
+            slides_move_to_position(SLIDE_POSITION_LOW_SCORE, true); // raise the slides
+
+
+            //move backward toward scoring pole
+            encoder_inc = 1000;
+            e = drivetrain.getBackEncoderValues();
+            drivetrain.Drive(-0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            drivetrain.stopAll();
+
+            //Turn toward the pole
+            drivetrain.gyroTurn ( this, 0.4, 180, 2.50); // 156 to the left
+            drivetrain.stopAll();
+
+            // raise arm to score on medium pole
+            armToPosition(650);
+            // Turn with cone over the pole
+            drivetrain.gyroTurn ( this, 0.4, 235, 2.50);
+            drivetrain.stopAll();
+
+            slides_move_to_position(SLIDE_POSITION_LOW  , true); // raise the slides
+
+            armToPosition(400);
+            robot.clawElbow().setPosition(0.40);
+
+            // Pause to prevent wheel slippage and jerking
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException exc) {
+                //ignore
+            }
            /*
             switch(tagOfInterest.id) {
 
@@ -579,8 +726,11 @@ public class OdometryAutonomous extends LinearOpMode {
             ls = robot.leftSlide().getCurrentPosition();
             rs = robot.rightSlide().getCurrentPosition();
 
-        } while( ( (rs < (pos-5)) || (rs > (pos+5)) )  &&
-                 ( (ls < (pos-5)) || (ls > (pos+5)) )   );
+            telemetry.addLine(String.format("slides_move_to_position Left: %d  Right: %d", ls, rs ));
+            telemetry.update();
+
+        } while( ( (rs < (pos-SLIDE_ERROR_MARGIN)) || (rs > (pos+SLIDE_ERROR_MARGIN)) )  &&
+                 ( (ls < (pos-SLIDE_ERROR_MARGIN)) || (ls > (pos+SLIDE_ERROR_MARGIN)) )   );
 
 //        robot.leftSlide().setVelocity(0);
 //        robot.rightSlide().setVelocity(0);
@@ -625,7 +775,7 @@ public class OdometryAutonomous extends LinearOpMode {
 
         int pos = armDrive.getCurrentPosition();
         while(pos != target){
-            if (( pos > (target-10)) && (pos < (target+10)) ) {
+            if (( pos > (target-ARM_ERROR_MARGIN)) && (pos < (target+ARM_ERROR_MARGIN)) ) {
                 break;
             }
             sleep(25);
@@ -633,6 +783,32 @@ public class OdometryAutonomous extends LinearOpMode {
         }
 
         armDrive.setVelocity(0);
+    }
+
+
+    public void armToPosition(int target)
+    {
+        DcMotorEx armDrive = robot.armDrive();
+        armDrive.setTargetPosition(target);
+
+        armDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armDrive.setVelocity(1500);
+
+        // set the claw to ~40%
+        robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE);
+        robot.clawWrist().setPosition(WRIST_POSITION_UP);
+
+        int pos = armDrive.getCurrentPosition();
+        while(pos != target){
+            if (( pos > (target-ARM_ERROR_MARGIN)) && (pos < (target+ARM_ERROR_MARGIN)) ) {
+                break;
+            }
+            sleep(25);
+            pos = armDrive.getCurrentPosition();
+        }
+
+        //armDrive.setVelocity(0);
     }
 
 
