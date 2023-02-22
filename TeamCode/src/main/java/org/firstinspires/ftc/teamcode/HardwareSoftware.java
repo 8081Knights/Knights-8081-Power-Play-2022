@@ -177,7 +177,9 @@ public class HardwareSoftware {
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         frontWebCam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "frontWebcam"), cameraMonitorViewId);
 
-        //right_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "right_ultrasonic");
+
+//
+//        left_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "left_ultrasonic");
 
         //left_ultrasonic = hw.get(MaxbotixUltrasonicI2c.class, "left_ultrasonic");
 

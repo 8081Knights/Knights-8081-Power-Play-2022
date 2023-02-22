@@ -32,6 +32,8 @@ public class ConeOrientate extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
 
+    public boolean isBusy = false;
+
     Point l = new Point(0,0);
     Size s = new Size(0,0);
     RotatedRect p = new RotatedRect(l, s, 0);
@@ -89,12 +91,21 @@ public class ConeOrientate extends OpenCvPipeline {
         return mat;
     }
 
-    public void sortCont(Telemetry telemetry){
-        run = false;
+
+    public List<MatOfPoint> getContourList(){
+        List<MatOfPoint> contr = cont;
+
+        return contr;
+    }
+
+    public void sortCont(Telemetry telemetry, List<MatOfPoint> contours){
+
         int i = 0;
 
+        isBusy = true;
+
         try{
-            for (MatOfPoint contour : cont) {
+            for (MatOfPoint contour : contours) {
                 MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
                 RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
@@ -133,12 +144,13 @@ public class ConeOrientate extends OpenCvPipeline {
             telemetry.addLine("Oops no contours");
         }
 
-        run = true;
+
+        isBusy = false;
 
 
-        return;
-
-
+    }
+    public boolean isBusy(){
+        return isBusy;
     }
     public double coneArea(){
         return rectArea[0];

@@ -7,6 +7,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,6 +28,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 /**
  * feel free to change the name or group of your class to better fit your robot
  */
+@Disabled
 @TeleOp(name = "DriverRelativeControl")
 public class HeadlessRobot extends LinearOpMode {
 

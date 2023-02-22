@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import android.widget.LinearLayout;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.FusionFramework.DriveTrainIntfTest;
 import org.firstinspires.ftc.teamcode.FusionFramework.HardwareSoftwareTest;
 import org.firstinspires.ftc.teamcode.TeleOp.RobotCommands;
 
+@Disabled
     @TeleOp(name = "Motor Functionality Test 1")
     public class MotorFunctionTest extends LinearOpMode
     {

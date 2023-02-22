@@ -24,9 +24,10 @@ public class CamOrientTest extends OpMode {
     OpenCvCamera camera;
 
     boolean aDown = false;
+    boolean b = false;
     boolean success = false;
 
-    double pxDeg = 10;
+    double pxDeg = 15;
     double coneDegree = 0;
     double coneTolerance = 4;
     double center = 395;
@@ -41,7 +42,7 @@ public class CamOrientTest extends OpMode {
         commands.init(robot);
         robot.clawElbow().setPosition(1);
         robot.clawWrist().setPosition(0);
-        robot.clawGrab().setPosition(0.4);
+        robot.clawGrab().setPosition(0.55);
 
 
         robot.gyro().initialize();
@@ -91,38 +92,32 @@ public class CamOrientTest extends OpMode {
             aDown = true;
         }
 
-//        Thread upPress = new Thread(() -> {
-//            if(aDown && !gamepad1.a){
-//                detector.sortCont();
-//                success = true;
-//                aDown = false;
-//            }
-//            else{
-//                return;
-//            }
-//
-//        });
-//
-//        upPress.start();
-
 
         if(aDown && !gamepad1.a){
-            detector.sortCont(telemetry);
-            success = true;
-            aDown = false;
+            boolean busy = detector.isBusy();
+            if(busy) {
+                telemetry.addLine("busy!");
+                telemetry.update();
+            }
+            else{
+                detector.sortCont(telemetry, detector.getContourList());
+            }
 
+
+            aDown = false;
+//
             coneDegree = (detector.conePos().x-center)/pxDeg;
 
-        }
-
-
-        if(success){
-            telemetry.addLine("Yay ur stupid code worked");
 
         }
 
-        if(coneDegree>coneTolerance || coneDegree<-coneTolerance){
+
+        if(gamepad1.b){
+            b = true;
+        }
+        if(!gamepad1.b && b){
             commands.turnGyro(coneDegree, 500);
+            b = false;
         }
 
         telemetry.addData("Silly cone angle: ", coneDegree);

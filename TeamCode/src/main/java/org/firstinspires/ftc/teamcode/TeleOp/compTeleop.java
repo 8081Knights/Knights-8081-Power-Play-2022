@@ -35,13 +35,13 @@ public class compTeleop extends OpMode {
     double voltage;
 
     // Handles the percentage of the motors when running the drive train, sets the initial speed to 70%
-    double speedMult = 0.85;
+    double speedMult = 1;
 
 
     //High and Low percentages for Drive train speed
     //TODO: Can be tuned
-    double highDtSpeed = 0.85;
-    double lowDtSpeed = 0.2;
+    double highDtSpeed = 1;
+    double lowDtSpeed = 0.3;
 
     //Storage variable in order to make push button logic to work DONT TOUCH
     boolean x = false;
@@ -58,7 +58,7 @@ public class compTeleop extends OpMode {
 
     //Storage variable for the height of the elbow joint when ready to pick up a cone
     //TODO: Can be tuned
-    double elbowMid = 0.38;
+    double elbowMid = 0.5;
 
     //Variable that changes where the claw elbow goes when the left trigger is pressed
     double clawScore = 0.8;
@@ -140,6 +140,7 @@ public class compTeleop extends OpMode {
         }
 
         telemetry.clear();
+        telemetry.addLine("Ready to Drive");
 
         telemetry.update();
 
@@ -173,10 +174,10 @@ public class compTeleop extends OpMode {
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
 
         //Power Variables
-        double frontLeftPower = (rotY + rotX - driveTurn) / denominator;
-        double backLeftPower = (-rotY + rotX + driveTurn) / denominator;
-        double frontRightPower = (rotY + rotX + driveTurn) / denominator;
-        double backRightPower = (-rotY + rotX - driveTurn) / denominator;
+        double frontLeftPower = ((rotY + rotX - driveTurn) / denominator)*speedMult;
+        double backLeftPower = ((-rotY + rotX + driveTurn) / denominator)*speedMult;
+        double frontRightPower = ((rotY + rotX + driveTurn) / denominator)*speedMult;
+        double backRightPower = ((-rotY + rotX - driveTurn) / denominator)*speedMult;
 
         //Set Power to Motors
         robot.frontRight().setPower(frontRightPower);
@@ -190,7 +191,7 @@ public class compTeleop extends OpMode {
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(1);
             robot.clawWrist().setPosition(0);
-            robot.clawGrab().setPosition(0);
+            robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
             speedMult = highDtSpeed;
 
@@ -314,9 +315,6 @@ public class compTeleop extends OpMode {
             }
         }
 
-        else if(gamepad2.y){
-            y2 = true;
-        }
         else if(y2 && !gamepad2.y){
             if(robot.bumper2().getPosition() > 0){
                 robot.bumper1().setPosition(1);
@@ -342,6 +340,7 @@ public class compTeleop extends OpMode {
         if(voltage > .5){
             robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
         }
+
 
      /*   else if(gamepad1.left_trigger > .1){
             slide = slideHeight.score;
@@ -559,7 +558,7 @@ public class compTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                        commands.armHome();
+                        commands.armMid();
                         if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 

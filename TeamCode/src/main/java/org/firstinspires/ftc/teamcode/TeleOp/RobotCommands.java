@@ -43,10 +43,10 @@ public class RobotCommands {
     //Drive Constants
     int tickPerIn = 1000;
 
-    int armOut = 650;
+    int armOut = 720;
     int armMid = 250;
-    int armBack = 1525;
-
+    int armBack = 1625;
+// EA i moved arm out a little bit higher than previous(650)
 
     public void init(HardwareSoftware robot){
         gyro = robot.gyro();
@@ -131,7 +131,7 @@ public class RobotCommands {
 
 
 
-        armDrive.setVelocity(1000);
+        armDrive.setVelocity(2000);
 
 //        clawWrist.setPosition(1);
 //        clawElbow.setPosition(0);
@@ -189,8 +189,8 @@ public class RobotCommands {
 
     }
 
-    public void turnGyro(double angle, int speed){
-            double angleError = 1;
+    public void turnGyro(double angle, double speed){
+            double angleError = 10;
             double currentAngle = gyro.getHeading();
             boolean left = false;
             double target = currentAngle + angle;
@@ -216,18 +216,18 @@ public class RobotCommands {
                 backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 if(left){
-                    frontLeft.setPower(speed);
+                    frontLeft.setPower(-speed);
                     backLeft.setPower(speed);
                     frontRight.setPower(speed);
-                    backRight.setPower(speed);
+                    backRight.setPower(-speed);
 
                 }
 
                 else{
-                    frontLeft.setPower(-speed);
+                    frontLeft.setPower(speed);
                     backLeft.setPower(-speed);
                     frontRight.setPower(-speed);
-                    backRight.setPower(-speed);
+                    backRight.setPower(speed);
 
                 }
 
@@ -240,9 +240,11 @@ public class RobotCommands {
 
 
             frontLeft.setPower(0);
-            backRight.setPower(0);
+            backLeft.setPower(0);
             frontRight.setPower(0);
             backRight.setPower(0);
+
+            sleep(100);
 
 
     }

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
+@Disabled
 @TeleOp(name="Encoder Motor Test")
 public class EncoderTest extends OpMode {
 
