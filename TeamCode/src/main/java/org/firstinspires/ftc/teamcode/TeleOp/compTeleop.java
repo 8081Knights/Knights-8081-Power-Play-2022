@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
@@ -26,6 +28,11 @@ public class compTeleop extends OpMode {
 
     //Truncated programs object
     RobotCommands commands = new RobotCommands();
+
+    //Timer Variable
+    ElapsedTime timer = new ElapsedTime();
+
+    double voltage;
 
     // Handles the percentage of the motors when running the drive train, sets the initial speed to 70%
     double speedMult = 0.85;
@@ -111,6 +118,9 @@ public class compTeleop extends OpMode {
 
         //Initialize pre programmed commands file
         commands.init(robot);
+
+        timer.reset();
+        timer.startTime();
 
         //Make sure the claw is properly placed
         robot.clawElbow().setPosition(1);
@@ -308,14 +318,29 @@ public class compTeleop extends OpMode {
             y2 = true;
         }
         else if(y2 && !gamepad2.y){
-            if(robot.bumper1().getPosition() > 0){
-                robot.bumper1().setPosition(0);
+            if(robot.bumper2().getPosition() > 0){
+                robot.bumper1().setPosition(1);
                 robot.bumper2().setPosition(0);
             }
             else{
-                robot.bumper1().setPosition(1);
-                robot.bumper2().setPosition(1);
+                robot.bumper1().setPosition(0.5);
+                robot.bumper2().setPosition(0.5);
             }
+        }
+
+        //Touch Sensor Voltage
+        voltage =  robot.FSR().getVoltage();
+
+        //LED code
+        if(timer.time() >= 90 && timer.time() <= 120 ){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+        } else {
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
+        }
+
+        //Activate LED Change when cone picked up
+        if(voltage > .5){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
         }
 
      /*   else if(gamepad1.left_trigger > .1){

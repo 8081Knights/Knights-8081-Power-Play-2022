@@ -7,6 +7,8 @@ import static android.os.SystemClock.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -48,6 +50,14 @@ public class HardwareSoftware {
 
     Servo bumper1 = null;
     Servo bumper2 = null;
+
+    //Led Variables
+    RevBlinkinLedDriver blinkin = null;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
+
+    //Touch Sensor
+    private AnalogInput FSR = null;
+
 
     //Gyro variable
     IntegratingGyroscope gyro;
@@ -105,6 +115,12 @@ public class HardwareSoftware {
 
         bumper1 = hw.get(Servo.class, "bumper1");
         bumper2 = hw.get(Servo.class, "bumper2");
+
+        blinkin = hw.get(RevBlinkinLedDriver.class, "blinkin");
+        pattern = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_PARTY_PALETTE;
+
+        FSR  = hw.get(AnalogInput.class, "FSR");
+
 
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -213,6 +229,10 @@ public class HardwareSoftware {
 
     public Servo bumper1(){return bumper1;}
     public Servo bumper2(){return bumper2;}
+
+    public RevBlinkinLedDriver Blinkin(){return blinkin;}
+
+    public AnalogInput FSR(){return FSR;}
 
     public ModernRoboticsI2cGyro gyro(){ return modernRoboticsI2cGyro;}
 
