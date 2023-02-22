@@ -150,6 +150,12 @@ public class compTeleop extends OpMode {
     @Override
     public void loop() {
 
+        while(robot.gyro().isCalibrating()){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+            telemetry.addLine("Gyro is Calibrating!!");
+            telemetry.update();
+        }
+
         //Turn Variable for Headless Robot Logic
         double driveTurn = -gamepad1.right_stick_x;
         //driveVertical = -gamepad1.right_stick_y;
@@ -324,6 +330,11 @@ public class compTeleop extends OpMode {
                 robot.bumper1().setPosition(0.5);
                 robot.bumper2().setPosition(0.5);
             }
+        }
+
+        else if(gamepad1.x && gamepad1.b){
+            robot.gyro().calibrate();
+
         }
 
         //Touch Sensor Voltage
