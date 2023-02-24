@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="multiConeAuto")
+@Autonomous(name="multiConeAutoRight")
 public class multiConeAuto extends LinearOpMode {
     static final int SLIDE_POSITION_LOW    = 950;
     static final int SLIDE_POSITION_LOW_SCORE       = 1200;

@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Ethan - Helped with tuning and testing
 
 
-@TeleOp(name = "1. Ethan Teleop")
-public class compTeleop extends OpMode {
+@TeleOp(name = "4. Judges Teleop")
+public class JudgesTeleop extends OpMode {
 
 
     //Hardware Map object
@@ -150,43 +150,6 @@ public class compTeleop extends OpMode {
 
     @Override
     public void loop() {
-
-
-
-        //Turn Variable for Headless Robot Logic
-        double driveTurn = -gamepad1.right_stick_x;
-        //driveVertical = -gamepad1.right_stick_y;
-        //driveHorizontal = gamepad1.right_stick_x;
-
-        //Drive X and Y for Headless
-        double gamepadXCoordinate = gamepad1.left_stick_x; //this simply gives our x value relative to the driver
-        double gamepadYCoordinate = -gamepad1.left_stick_y; //this simply gives our y vaue relative to the driver
-
-
-
-        //the inverse tangent of opposite/adjacent gives us our gamepad degree
-        double robotDegree = Math.toRadians(robot.gyro().getHeading());
-
-
-        //Final X and Y for corrected driving (Field Centric Drive Logic)
-        double rotX = gamepadXCoordinate * Math.cos(robotDegree) - gamepadYCoordinate * Math.sin(robotDegree);
-        double rotY = gamepadXCoordinate * Math.sin(robotDegree) + gamepadYCoordinate * Math.cos(robotDegree);
-
-
-        //Denominator makes sure the motors are never set past 1 power
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
-
-        //Power Variables
-        double frontLeftPower = ((rotY + rotX - driveTurn) / denominator)*speedMult;
-        double backLeftPower = ((-rotY + rotX + driveTurn) / denominator)*speedMult;
-        double frontRightPower = ((rotY + rotX + driveTurn) / denominator)*speedMult;
-        double backRightPower = ((-rotY + rotX - driveTurn) / denominator)*speedMult;
-
-        //Set Power to Motors
-        robot.frontRight().setPower(frontRightPower);
-        robot.frontLeft().setPower(frontLeftPower);
-        robot.backRight().setPower(backRightPower);
-        robot.backLeft().setPower(backLeftPower);
 
 
         // Set the height to Home
@@ -319,8 +282,8 @@ public class compTeleop extends OpMode {
         }
 
         else if(y2 && !gamepad2.y){
-           y2 = false;
-           robot.gyro().calibrate();
+            y2 = false;
+            robot.gyro().calibrate();
         }
 
 //        else if(gamepad1.x && gamepad1.b){
@@ -336,27 +299,14 @@ public class compTeleop extends OpMode {
         voltage =  robot.FSR().getVoltage();
 
         //LED code
-        if(timer.time() < 90){
+        if(timer.time() > 0) {
             robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
-        } else if(timer.time() >= 90 && timer.time() < 115 ){
-            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
-        } else if(timer.time() >= 115 && timer.time() <= 120){
-            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         }
-
         //Activate LED Change when cone picked up
         if(voltage > .005){
             robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
             robot.clawGrab().setPosition(clawClose);
         }
-
-        //Emergency Mode
-        while(robot.gyro().isCalibrating()){
-            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-            telemetry.addLine("Gyro is Calibrating!!");
-            telemetry.update();
-        }
-
 
      /*   else if(gamepad1.left_trigger > .1){
             slide = slideHeight.score;
