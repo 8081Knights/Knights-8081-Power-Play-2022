@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 
@@ -14,11 +16,11 @@ import org.firstinspires.ftc.teamcode.HardwareSoftware;
 //Alex, Nathaniel, Sydney, Thomas
 
 //Honorary Mentions:
-//Ethan - Helped with tuning and testing (lets gooooooooooooooooo -ethan)
+//Ethan - Helped with tuning and testing
 
 
-@TeleOp(name = "2. Brayden Teleop")
-public class BraydenTeleop extends OpMode {
+@TeleOp(name = "3. Emergency Teleop")
+public class EmergencyTeleop extends OpMode {
 
 
     //Hardware Map object
@@ -27,19 +29,26 @@ public class BraydenTeleop extends OpMode {
     //Truncated programs object
     RobotCommands commands = new RobotCommands();
 
+    //Timer Variable
+    ElapsedTime timer = new ElapsedTime();
+
+    double voltage;
+
     // Handles the percentage of the motors when running the drive train, sets the initial speed to 70%
-    double speedMult = 0.85;
+    double speedMult = 1;
 
 
     //High and Low percentages for Drive train speed
     //TODO: Can be tuned
-    double highDtSpeed = 0.85;
-    double lowDtSpeed = 0.2;
+    double highDtSpeed = 1;
+    double lowDtSpeed = 0.3;
 
     //Storage variable in order to make push button logic to work DONT TOUCH
     boolean x = false;
     boolean y = false;
+    boolean y2 = false;
     boolean leftTrigger = false;
+    boolean emergency = false;
 
     //Tunable servo position variables
 
@@ -50,11 +59,10 @@ public class BraydenTeleop extends OpMode {
 
     //Storage variable for the height of the elbow joint when ready to pick up a cone
     //TODO: Can be tuned
-    double elbowMid = 0.3;
-// was .38 but idk what is happening
+    double elbowMid = 0.5;
+
     //Variable that changes where the claw elbow goes when the left trigger is pressed
-    double clawScoreHigh = 0.8;
-    double clawScoreLow = 0.42;
+    double clawScore = 0.8;
 
 
 
@@ -106,73 +114,64 @@ public class BraydenTeleop extends OpMode {
     @Override
     public void init() {
 
+        //Initialize Hardware Map
         robot.init(hardwareMap);
+
+        //Initialize pre programmed commands file
         commands.init(robot);
+
+        timer.reset();
+        timer.startTime();
+
+        //Make sure the claw is properly placed
+        robot.clawElbow().setPosition(1);
+        robot.clawWrist().setPosition(0);
+        robot.clawGrab().setPosition(0);
+
+
+
 
     }
 
     @Override
     public void loop() {
-        // Mecanum drive is controlled with three axes: drive (front-and-back),
-        // strafe (left-and-right), and twist (rotating the whole chassis).
-        double drive  = gamepad1.left_stick_y;
-        double strafe = gamepad1.right_stick_x;
-        double twist  = gamepad1.left_stick_x;
 
 
 
-        /*
-         * If we had a gyro and wanted to do field-oriented control, here
-         * is where we would implement it.
-         *
-         * The idea is fairly simple; we have a robot-oriented Cartesian (x,y)
-         * coordinate (strafe, drive), and we just rotate it by the gyro
-         * reading minus the offset that we read in the init() method.
-         * Some rough pseudocode demonstrating:
-         *
-         * if Field Oriented Control:
-         *     get gyro heading
-         *     subtract initial offset from heading
-         *     convert heading to radians (if necessary)
-         *     new strafe = strafe * cos(heading) - drive * sin(heading)
-         *     new drive  = strafe * sin(heading) + drive * cos(heading)
-         *
-         * If you want more understanding on where these rotation formulas come
-         * from, refer to
-         * https://en.wikipedia.org/wiki/Rotation_(mathematics)#Two_dimensions
-         */
+        //Turn Variable for Headless Robot Logic
+        double driveTurn = -gamepad1.right_stick_x;
+        //driveVertical = -gamepad1.right_stick_y;
+        //driveHorizontal = gamepad1.right_stick_x;
 
-        // You may need to multiply some of these by -1 to invert direction of
-        // the motor.  This is not an issue with the calculations themselves.
-        double[] speeds = {
-                (-drive + strafe + twist),
-                (-drive - strafe + twist),
-                (drive - strafe + twist),
-                (drive + strafe + twist)
+        //Drive X and Y for Headless
+        double gamepadXCoordinate = gamepad1.left_stick_x; //this simply gives our x value relative to the driver
+        double gamepadYCoordinate = -gamepad1.left_stick_y; //this simply gives our y vaue relative to the driver
 
-        };
 
-        // Because we are adding vectors and motors only take values between
-        // [-1,1] we may need to normalize them.
 
-        // Loop through all values in the speeds[] array and find the greatest
-        // *magnitude*.  Not the greatest velocity.
-        double max = Math.abs(speeds[0]);
-        for(int i = 0; i < speeds.length; i++) {
-            if ( max < Math.abs(speeds[i]) ) max = Math.abs(speeds[i]);
-        }
+        //the inverse tangent of opposite/adjacent gives us our gamepad degree
+        double robotDegree = 0;
 
-        // If and only if the maximum is outside of the range we want it to be,
-        // normalize all the other speeds based on the given speed value.
-        if (max > 1) {
-            for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
-        }
 
-        // apply the calculated values to the motors.
-        robot.frontLeft().setPower(speeds[0]*speedMult);
-        robot.frontRight().setPower(speeds[1]*speedMult);
-        robot.backLeft().setPower(speeds[2]*speedMult);
-        robot.backRight().setPower(speeds[3]*speedMult);
+        //Final X and Y for corrected driving (Field Centric Drive Logic)
+        double rotX = gamepadXCoordinate * Math.cos(robotDegree) - gamepadYCoordinate * Math.sin(robotDegree);
+        double rotY = gamepadXCoordinate * Math.sin(robotDegree) + gamepadYCoordinate * Math.cos(robotDegree);
+
+
+        //Denominator makes sure the motors are never set past 1 power
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(driveTurn), 1);
+
+        //Power Variables
+        double frontLeftPower = ((rotY + rotX - driveTurn) / denominator)*speedMult;
+        double backLeftPower = ((-rotY + rotX + driveTurn) / denominator)*speedMult;
+        double frontRightPower = ((rotY + rotX + driveTurn) / denominator)*speedMult;
+        double backRightPower = ((-rotY + rotX - driveTurn) / denominator)*speedMult;
+
+        //Set Power to Motors
+        robot.frontRight().setPower(frontRightPower);
+        robot.frontLeft().setPower(frontLeftPower);
+        robot.backRight().setPower(backRightPower);
+        robot.backLeft().setPower(backLeftPower);
 
 
         // Set the height to Home
@@ -180,12 +179,9 @@ public class BraydenTeleop extends OpMode {
             slide = slideHeight.Home;
             robot.clawElbow().setPosition(1);
             robot.clawWrist().setPosition(0);
-            robot.clawGrab().setPosition(0);
+            robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
             speedMult = highDtSpeed;
-            clawScoreHigh = 0.8;
-            clawScoreLow = 0.42;
-
 
         }
         else if(gamepad1.b){
@@ -195,9 +191,6 @@ public class BraydenTeleop extends OpMode {
             robot.clawGrab().setPosition(clawOpen);
             pickHeight = 0;
             speedMult = highDtSpeed;
-            clawScoreHigh = 0.8;
-            clawScoreLow = 0.42;
-
 
         }
 
@@ -207,8 +200,6 @@ public class BraydenTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
             speedMult = lowDtSpeed;
-            clawScoreHigh = 0.8;
-            clawScoreLow = 0.42;
 
         }
 
@@ -227,18 +218,14 @@ public class BraydenTeleop extends OpMode {
             robot.clawWrist().setPosition(0);
             robot.clawElbow().setPosition(elbowMid);
             speedMult = lowDtSpeed;
-            clawScoreHigh = 0.8;
-            clawScoreLow = 0.42;
 
         }
 
         // Set the height to the Middle position
         else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
-            clawScoreHigh = 0.5;
-            clawScoreLow = 0;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(elbowMid);
+            robot.clawElbow().setPosition(elbowMid - 0.05);
             speedMult = lowDtSpeed;
 
         }
@@ -251,6 +238,7 @@ public class BraydenTeleop extends OpMode {
             speedMult = lowDtSpeed;
 
         }
+
 
         /*
         else if(gamepad2.dpad_down){
@@ -307,13 +295,35 @@ public class BraydenTeleop extends OpMode {
         else if(leftTrigger && gamepad1.left_trigger < .1){
             leftTrigger = false;
 
-            if(robot.clawElbow().getPosition() > clawScoreHigh - 0.05){
-                robot.clawElbow().setPosition(clawScoreLow);
+            if(robot.clawElbow().getPosition() > 0.5){
+                robot.clawElbow().setPosition(0.42);
             }
             else{
-                robot.clawElbow().setPosition(clawScoreHigh);
+                robot.clawElbow().setPosition(clawScore);
             }
         }
+
+
+
+
+
+        //Touch Sensor Voltage
+        voltage =  robot.FSR().getVoltage();
+
+        //LED code
+        if(timer.time() >= 90 && timer.time() <= 120 ){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+        } else {
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+        }
+
+        //Activate LED Change when cone picked up
+        if(voltage > .02){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            robot.clawGrab().setPosition(clawClose);
+        }
+
+
 
      /*   else if(gamepad1.left_trigger > .1){
             slide = slideHeight.score;
@@ -531,7 +541,7 @@ public class BraydenTeleop extends OpMode {
 
                         robot.leftSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         robot.rightSlide().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                        commands.armHome();
+                        commands.armMid();
                         if(robot.leftSlide().getCurrentPosition() == mid && robot.rightSlide().getCurrentPosition() == mid){
                             break;
 

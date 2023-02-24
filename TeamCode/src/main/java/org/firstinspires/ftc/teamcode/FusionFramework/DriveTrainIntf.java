@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro.HeadingMode;
 
 import org.firstinspires.ftc.teamcode.HardwareSoftware;
 import org.firstinspires.ftc.teamcode.FusionFramework.GyroSensor;
@@ -114,6 +115,16 @@ public class DriveTrainIntf {
         m_RRDrive.setVelocity(rev);
     }
 
+    private void StrafeRight(double frontSpeed, double backSpeed) {
+        stopAll(); // first ensure the robot is stopped
+        double front = frontSpeed* MOTOR_MAX_VELOCITY;
+        double back = backSpeed* MOTOR_MAX_VELOCITY;
+        m_LFDrive.setVelocity(front);
+        m_RFDrive.setVelocity(back);
+        m_LRDrive.setVelocity(-1*front);
+        m_RRDrive.setVelocity(-1*back);
+    }
+
     // Strafe Right - move robot laterally to right
     public void StrafeLeft(double velocity) {
         stopAll(); // first ensure the robot is stopped
@@ -123,6 +134,16 @@ public class DriveTrainIntf {
         m_RFDrive.setVelocity(rev);
         m_LRDrive.setVelocity(fwd);
         m_RRDrive.setVelocity(fwd);
+    }
+
+    private void StrafeLeft(double frontSpeed, double backSpeed) {
+        stopAll(); // first ensure the robot is stopped
+        double front = frontSpeed* MOTOR_MAX_VELOCITY;
+        double back = backSpeed* MOTOR_MAX_VELOCITY;
+        m_LFDrive.setVelocity(-1*front);
+        m_RFDrive.setVelocity(-1*back);
+        m_LRDrive.setVelocity(front);
+        m_RRDrive.setVelocity(back);
     }
 
     /// Left-Front, Right-Front, Left-Rear, Right-Rear
@@ -523,7 +544,7 @@ public class DriveTrainIntf {
     static final double WHEEL_DIAMETER = 9.5; // in centimeters
     static final double WHEEL_CIRCUMFERENCE = 30.80;  // calculated by measurement
     static final long DCMOTOR_TICK_COUNT = (560); // 28 ticks per motor revolution * 20:1 gearbox
-    static final long DC_MOTOR_TICK_ERROR = 28;
+    static final long DC_MOTOR_TICK_ERROR = 14;  // was 28 02/22/2023 davewhee
 
     /*
     Provide the difference between the Ending Encoder Value and the Starting Encoder Value
@@ -662,6 +683,8 @@ public class DriveTrainIntf {
 
         ElapsedTime holdTimer = new ElapsedTime();
 
+        //m_gyro.setHeadingMode(HeadingMode.HEADING_CARDINAL);
+
         // keep looping while we are still active, and not on heading.
         while (caller.opModeIsActive() &&  (holdTimer.time() < holdTime)) {
             if ( onHeading(caller, speed, angle, P_TURN_COEFF) ) {
@@ -723,9 +746,11 @@ public class DriveTrainIntf {
         double leftSpeed;
         double rightSpeed;
 
+        int currHeading = m_gyro.getHeading();
         // determine turn power based on +/- error
-        error = //getError(angle);
-                angle - m_gyro.getHeading();
+
+        error = getError(angle);
+               // angle - currHeading;
         while (error > 180)  error -= 360;
         while (error <= -180) error += 360;
 
@@ -747,16 +772,17 @@ public class DriveTrainIntf {
 
         // Display it for the driver.
         caller.telemetry.addData("Target", "%5.2f", angle);
-        caller.telemetry.addData("Heading", "%d", m_gyro.getHeading());
+        caller.telemetry.addData("Heading", "%d", currHeading);
         caller.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
         caller.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+        caller.telemetry.update();
 
         return onTarget;
     }
 
     public void gyroStrafe ( LinearOpMode caller,
                              double speed,
-                             double distance, // distance in CENTIMETERS
+                             double distance, // distance in encoder ticks (negative is strafe left)
                              double angle,
                              double holdTime) {
 
@@ -770,14 +796,14 @@ public class DriveTrainIntf {
         double  max;
         double  error;
         double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+        double  frontSpeed;
+        double  backSpeed;
 
         holdTimer.reset();
 
         // Ensure that the opmode is still active
         if (caller.opModeIsActive() && (holdTimer.time() < holdTime)) {
-            distance /= STRAFE_CONSTANT; // increase distance by Strafe Constant
+            //distance /= STRAFE_CONSTANT; // increase distance by Strafe Constant
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int)((distance +0.7183)/0.05874);
@@ -802,7 +828,11 @@ public class DriveTrainIntf {
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
 
 
-            Drive(speed, speed, speed, speed); // DriveTrainIntf.Drive()
+            if (distance < 0) {
+                StrafeLeft(speed);
+            } else {
+                StrafeRight(speed);
+            }
 
             // keep looping while we are still active, and BOTH motors are running.
             while (caller.opModeIsActive() && (holdTimer.time() < holdTime) &&
@@ -816,18 +846,23 @@ public class DriveTrainIntf {
                 if (distance < 0)
                     steer *= -1.0;
 
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
+                backSpeed = speed - steer;
+                frontSpeed = speed + steer;
 
                 // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                max = Math.max(Math.abs(backSpeed), Math.abs(frontSpeed));
                 if (max > 1.0)
                 {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
+                    backSpeed /= max;
+                    frontSpeed /= max;
                 }
 
-                Drive(leftSpeed, rightSpeed, leftSpeed, rightSpeed); // DriveTrainIntf.Drive()
+                if (distance < 0) {
+                    StrafeLeft(backSpeed, frontSpeed );
+                } else {
+                    StrafeRight(frontSpeed, backSpeed);
+                }
+               //Drive(leftSpeed, rightSpeed, leftSpeed, rightSpeed); // DriveTrainIntf.Drive()
 
                 // Display drive status for the driver.
                 caller.telemetry.addData(">", "Robot Heading = %d", m_gyro.getHeading());
@@ -837,7 +872,7 @@ public class DriveTrainIntf {
                         m_RFDrive.getCurrentPosition(),
                         m_LRDrive.getCurrentPosition(),
                         m_RRDrive.getCurrentPosition());
-                caller.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                caller.telemetry.addData("Speed",   "%5.2f:%5.2f",  frontSpeed, backSpeed);
                 caller.telemetry.update();
             }
 

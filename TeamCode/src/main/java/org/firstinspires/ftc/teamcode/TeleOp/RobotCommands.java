@@ -43,7 +43,7 @@ public class RobotCommands {
     //Drive Constants
     int tickPerIn = 1000;
 
-    int armOut = 720;
+    int armOut = 710;
     int armMid = 250;
     int armBack = 1625;
 // EA i moved arm out a little bit higher than previous(650)

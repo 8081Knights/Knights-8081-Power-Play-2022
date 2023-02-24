@@ -28,9 +28,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="OdometryAutonomous")
-public class OdometryAutonomous extends LinearOpMode {
-
+@Autonomous(name="multiConeAuto")
+public class multiConeAuto extends LinearOpMode {
     static final int SLIDE_POSITION_LOW    = 950;
     static final int SLIDE_POSITION_LOW_SCORE       = 1200;
     static final int SLIDE_POSITION_MEDIUM_SCORE    = 1290;
@@ -273,9 +272,9 @@ public class OdometryAutonomous extends LinearOpMode {
 
             //score on the low pole
             //******************************************
-            robot.clawElbow().setPosition(ELBOW_POSITION_LOW_POLE); //0.70
+            robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE); //0.70
             slides_move_to_position(SLIDE_POSITION_LOW, true); // raise the slides
-            armToPosition(290); //295 too much //300 too much //305 too much // 308 too much // 293 290 was sometimes short//280 & 270 too short //250 to short //290 too far // position claw and arm
+            armToPosition(270); //288 290 & 295 too much //300 too much //305 too much // 308 too much // 293 290 was sometimes short//280 & 270 too short //250 to short //290 too far // position claw and arm
 
             slides_move_to_position(0, false);
             robot.clawGrab().setPosition(CLAW_OPEN);
@@ -457,75 +456,74 @@ public class OdometryAutonomous extends LinearOpMode {
             robot.clawElbow().setPosition(ELBOW_POSITION_CONE_SCORE);
             slides_move_to_position(SLIDE_POSITION_LOW_SCORE, true); // raise the slides
 
-
-            //move backward toward scoring pole
-            encoder_inc = 1000;
+            //move backward away from stack
+            encoder_inc = 100; //70 too short //40 too short //30 too short //900 when all the way back //1000 too far
             e = drivetrain.getBackEncoderValues();
             drivetrain.Drive(-0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
             // change condition
             drivetrain.check_condition_encoder_distance( this,
                     e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
             drivetrain.stopAll();
-
-            //Turn toward the pole
-            drivetrain.gyroTurn ( this, 0.4, 180, 2.50); // 156 to the left
-            drivetrain.stopAll();
-
-           //move backwards slightly
-            encoder_inc = 40;
-            e = drivetrain.getBackEncoderValues();
-            drivetrain.Drive(-0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
-            // change condition
-            drivetrain.check_condition_encoder_distance( this,
-                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-            drivetrain.stopAll();
-
-            // raise arm to score on medium pole
-            slides_move_to_position_even(SLIDE_POSITION_HIGH_SCORE - 20, true); // raise the slides
-            armToPosition(353); //354 too much //350 too little //355 too much //357 too much //359 too much //362 sometimes 370 once OK & 390 &420 & 450 too high /550 too high //350 too short //250 too short //350 too far out //550 too high //was 650 too high
-
-            //turn claw towards pole
-            robot.clawWrist().setPosition(0.35); //1 was too much
-
-            // Turn with cone over the pole
-            drivetrain.gyroTurn ( this, 0.4, 220, 1.50); //226 too much // 228 & 232 236 & 237 too much
-            drivetrain.stopAll();
-
-            encoder_inc = 30;
-            e = drivetrain.getBackEncoderValues();
-            drivetrain.Drive(-0.50);  // backwards will automatically decrement the encoder value in DriveTrain.addCountToEncoder()
-            // change condition
-            drivetrain.check_condition_encoder_distance( this,
-                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
-            drivetrain.stopAll();
-
-            slides_move_to_position(SLIDE_POSITION_LOW  , true); // raise the slides
-
-            armToPosition(400);
-            robot.clawElbow().setPosition(0.40);
-            robot.clawGrab().setPosition(CLAW_OPEN);
-
-            //Turn to zero position
-            armToPosition(0);
-            robot.clawElbow().setPosition(ELBOW_POSITION_UP);
-            robot.clawGrab().setPosition(CLAW_CLOSE);
-
-            drivetrain.gyroTurn ( this, 0.4, 0, 2.25);  // 1.25 time //-0 didn't work//-150 not enough //-100 not enough // -90 not enough //-5
 
             sleep(100);
 
-            // Pause to prevent wheel slippage and jerking
+            //strafe right to move away from edge
+            encoder_inc = 150; //100 to0 little //70 too little
+            e = drivetrain.getBackEncoderValues();
+            // Do autonomous code to move to Location 2
+            drivetrain.StrafeRight(0.55);
+            // change condition
+            drivetrain.check_condition_encoder_distance( this,
+                    e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+            //  was working with this => check_condition_Time( 1200 );
+            drivetrain.stopAll();
+            //
+            //turn forward
+            drivetrain.gyroTurn ( this, 0.4, 0, 1.50); // was 162 too short // 156 to the left
+            drivetrain.stopAll();
+
             try {
-                Thread.sleep(5000);
+                Thread.sleep(100);
             } catch (InterruptedException exc) {
                 //ignore
             }
 
+            //move slides and arm down
+            robot.clawElbow().setPosition(ELBOW_POSITION_UP);
+            sleep(25);
+            DcMotorEx armDrive = robot.armDrive();
+            armDrive.setTargetPosition(0);
+            slides_move_to_position(0, false);
+
+
+            //turn forward
+            drivetrain.gyroTurn ( this, 0.4, 0, 1.50); // was 162 too short // 156 to the left
+            drivetrain.stopAll();
+
             switch(tagOfInterest.id) {
 
                 case ID_TAG_POSITION_1:
-                    // Strafe into position in front of cone stack
-                    encoder_inc = 250; //short at 1100 //1140 too long //short at 1100 //short at 1000; 1200 was too long
+                    //strafe into position 2
+                    encoder_inc = 850;
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.StrafeLeft(0.55);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    //  was working with this => check_condition_Time( 1200 );
+                    drivetrain.stopAll();
+                    // Inch forward a little
+                    encoder_inc = 100;
+                    e = drivetrain.getBackEncoderValues();
+                    drivetrain.Drive(0.50);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    drivetrain.stopAll();
+
+                    // Strafe into position 1
+                    encoder_inc = 1250;
                     e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
                     drivetrain.StrafeLeft(0.65);
@@ -533,29 +531,39 @@ public class OdometryAutonomous extends LinearOpMode {
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
                     drivetrain.stopAll();
-                break;
+                    break;
 
                 case ID_TAG_POSITION_2:
 
-                    // nothing to do
-                    drivetrain.stopAll();
-
-                break;
-                case ID_TAG_POSITION_3:
-
-                    // Strafe into position in front of cone stack
-                    encoder_inc = 250; //short at 1100 //1140 too long //short at 1100 //short at 1000; 1200 was too long
+                    //strafe into position 2
+                    encoder_inc = 850;
                     e = drivetrain.getBackEncoderValues();
                     // Do autonomous code to move to Location 2
-                    drivetrain.StrafeRight(0.65);
+                    drivetrain.StrafeLeft(0.55);
                     // change condition
                     drivetrain.check_condition_encoder_distance( this,
                             e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    //  was working with this => check_condition_Time( 1200 );
                     drivetrain.stopAll();
-                    drivetrain.stopAll();
+                    break;
 
-                break;
+                case ID_TAG_POSITION_3:
+                    //strafe into square
+                    encoder_inc = 70;
+                    e = drivetrain.getBackEncoderValues();
+                    // Do autonomous code to move to Location 2
+                    drivetrain.StrafeRight(0.55);
+                    // change condition
+                    drivetrain.check_condition_encoder_distance( this,
+                            e[DriveTrainIntf.LEFT_ENCODER], e[DriveTrainIntf.RIGHT_ENCODER], encoder_inc);
+                    //  was working with this => check_condition_Time( 1200 );
+                    drivetrain.stopAll();
+                    break;
             }
+            //turn forward
+            drivetrain.gyroTurn ( this, 0.4, 0, 1.50); // was 162 too short // 156 to the left
+            drivetrain.stopAll();
+
             slides_move_to_position_even( 0, false);
             robot.clawElbow().setPosition(ELBOW_POSITION_UP);
             robot.clawWrist().setPosition(WRIST_POSITION_UP);
@@ -635,7 +643,7 @@ public class OdometryAutonomous extends LinearOpMode {
             telemetry.update();
 
         } while( ( (rs < (pos-SLIDE_ERROR_MARGIN)) || (rs > (pos+SLIDE_ERROR_MARGIN)) )  &&
-                 ( (ls < (pos-SLIDE_ERROR_MARGIN)) || (ls > (pos+SLIDE_ERROR_MARGIN)) )   );
+                ( (ls < (pos-SLIDE_ERROR_MARGIN)) || (ls > (pos+SLIDE_ERROR_MARGIN)) )   );
 
 //        robot.leftSlide().setVelocity(0);
 //        robot.rightSlide().setVelocity(0);
@@ -702,7 +710,7 @@ public class OdometryAutonomous extends LinearOpMode {
         armDrive.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armDrive.setVelocity(1000);
 
-         // set to home position
+        // set to home position
         robot.clawElbow().setPosition(1); // full up
         robot.clawWrist().setPosition(0);
 
@@ -788,4 +796,3 @@ public class OdometryAutonomous extends LinearOpMode {
 
      */
 }
-

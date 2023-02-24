@@ -48,6 +48,7 @@ public class compTeleop extends OpMode {
     boolean y = false;
     boolean y2 = false;
     boolean leftTrigger = false;
+    boolean emergency = false;
 
     //Tunable servo position variables
 
@@ -150,11 +151,7 @@ public class compTeleop extends OpMode {
     @Override
     public void loop() {
 
-        while(robot.gyro().isCalibrating()){
-            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-            telemetry.addLine("Gyro is Calibrating!!");
-            telemetry.update();
-        }
+
 
         //Turn Variable for Headless Robot Logic
         double driveTurn = -gamepad1.right_stick_x;
@@ -243,7 +240,7 @@ public class compTeleop extends OpMode {
         else if(gamepad1.dpad_left){
             slide = slideHeight.Middle;
             robot.clawWrist().setPosition(0);
-            robot.clawElbow().setPosition(elbowMid);
+            robot.clawElbow().setPosition(elbowMid - 0.05);
             speedMult = lowDtSpeed;
 
         }
@@ -322,20 +319,18 @@ public class compTeleop extends OpMode {
         }
 
         else if(y2 && !gamepad2.y){
-            if(robot.bumper2().getPosition() > 0){
-                robot.bumper1().setPosition(1);
-                robot.bumper2().setPosition(0);
-            }
-            else{
-                robot.bumper1().setPosition(0.5);
-                robot.bumper2().setPosition(0.5);
-            }
+           y2 = false;
+           robot.gyro().calibrate();
         }
 
-        else if(gamepad1.x && gamepad1.b){
-            robot.gyro().calibrate();
-
-        }
+//        else if(gamepad1.x && gamepad1.b){
+//            emergency = true;
+//
+//        }
+//        else if(emergency &&! gamepad1.x){
+//            emergency = false;
+//            robot.gyro().calibrate();
+//        }
 
         //Touch Sensor Voltage
         voltage =  robot.FSR().getVoltage();
@@ -344,12 +339,20 @@ public class compTeleop extends OpMode {
         if(timer.time() >= 90 && timer.time() <= 120 ){
             robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
         } else {
-            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
         }
 
         //Activate LED Change when cone picked up
-        if(voltage > .5){
+        if(voltage > .005){
             robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            robot.clawGrab().setPosition(clawClose);
+        }
+
+        //Emergency Mode
+        while(robot.gyro().isCalibrating()){
+            robot.Blinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+            telemetry.addLine("Gyro is Calibrating!!");
+            telemetry.update();
         }
 
 
